@@ -1,6 +1,6 @@
-# vietime
+# Vietime - Theo dấu thời gian
 
-A new Flutter project.
+Vietime Mobile Application
 
 ## Getting Started
 
