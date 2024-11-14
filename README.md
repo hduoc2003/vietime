@@ -1,4 +1,4 @@
-# Vietime
+# Vietime - Theo dấu thời gian
 
 Vietime Mobile Application
 
