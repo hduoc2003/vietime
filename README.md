@@ -1,6 +1,6 @@
-# Vietime
+# vietime - Theo dấu thời gian
 
-Vietime Mobile Application
+vietime Mobile Application
 
 ## Getting Started
 

@@ -17,7 +17,7 @@ void main() {
 }
 
 class MyApp extends StatefulWidget {
-  static final title = 'Vietime';
+  static final title = 'vietime';
 
   @override
   _MyAppState createState() => _MyAppState();
