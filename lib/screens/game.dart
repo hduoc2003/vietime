@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vietime/entity/card.dart';
 import 'package:vietime/screens/study.dart';
 
 class GamePage extends StatefulWidget {
@@ -23,33 +24,69 @@ class _GamePageState extends State<GamePage> {
               onPressed: () {
                 // Create a mock list of questions
                 final mockQuestions = [
-                  Question(
+                  Flashcard(
+                    id: "1",
+                    deckId: "1",
                     question: "What is the capital of France?",
-                    answers: ["Paris", "London", "Berlin", "Madrid"],
                     correctAnswer: "Paris",
+                    answers: ["London", "Berlin", "Madrid"],
+                    createdAt: DateTime.now(),
+                    userId: "user1",
+                    lastReview: DateTime.now(),
+                    nextReview: DateTime.now(),
+                    numReviews: 0,
+                    sm2N: 1,
+                    sm2EF: 2.5,
+                    sm2I: 3,
                     cardType: 0,
-                    sm2Interval: 3,
                   ),
-                  Question(
+                  Flashcard(
+                    id: "2",
+                    deckId: "1",
                     question: "What is the capital of France?1",
-                    answers: ["Pari1s", "Lond1on", "Berli1n", "Ma1drid"],
-                    correctAnswer: "Pari1s",
+                    correctAnswer: "Paris1",
+                    answers: ["London1", "Berlin1", "Madrid1"],
+                    createdAt: DateTime.now(),
+                    userId: "user1",
+                    lastReview: DateTime.now(),
+                    nextReview: DateTime.now(),
+                    numReviews: 0,
+                    sm2N: 1,
+                    sm2EF: 2.5,
+                    sm2I: 1,
                     cardType: 0,
-                    sm2Interval: 1,
                   ),
-                  Question(
+                  Flashcard(
+                    id: "3",
+                    deckId: "2",
                     question: "Which planet is known as the Red Planet?",
-                    answers: ["Earth", "Mars", "Venus", "Jupiter"],
                     correctAnswer: "Mars",
+                    answers: ["Earth", "Venus", "Jupiter"],
+                    createdAt: DateTime.now(),
+                    userId: "user2",
+                    lastReview: DateTime.now(),
+                    nextReview: DateTime.now(),
+                    numReviews: 0,
+                    sm2N: 1,
+                    sm2EF: 2.5,
+                    sm2I: 3,
                     cardType: 1,
-                    sm2Interval: 3,
                   ),
-                  Question(
+                  Flashcard(
+                    id: "4",
+                    deckId: "2",
                     question: "What is the largest mammal in the world?",
-                    answers: ["Lion", "Elephant", "Blue Whale", "Giraffe"],
                     correctAnswer: "Blue Whale",
+                    answers: ["Lion", "Elephant", "Giraffe"],
+                    createdAt: DateTime.now(),
+                    userId: "user2",
+                    lastReview: DateTime.now(),
+                    nextReview: DateTime.now(),
+                    numReviews: 0,
+                    sm2N: 1,
+                    sm2EF: 2.5,
+                    sm2I: 3,
                     cardType: 2,
-                    sm2Interval: 3,
                   ),
                   // Add more mock questions as needed
                 ];

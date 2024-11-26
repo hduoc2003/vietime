@@ -12,27 +12,13 @@ import 'package:iconify_flutter/icons/mdi.dart';
 import 'package:iconify_flutter/icons/pepicons.dart';
 import 'package:iconify_flutter/icons/game_icons.dart';
 import 'package:pausable_timer/pausable_timer.dart';
+import 'package:vietime/entity/card.dart';
 
 import '../custom_widgets/long_button.dart';
 
-class Question {
-  final String question;
-  final List<String> answers;
-  final String correctAnswer;
-  int cardType;
-  final int sm2Interval;
-
-  Question({
-    required this.question,
-    required this.answers,
-    required this.correctAnswer,
-    required this.cardType,
-    required this.sm2Interval,
-  });
-}
-
+//ignore: must_be_immutable
 class StudyScreen extends StatefulWidget {
-  List<Question> questions;
+  List<Flashcard> questions;
 
   StudyScreen({required this.questions});
   @override
@@ -79,7 +65,7 @@ class _StudyScreenState extends State<StudyScreen> with WidgetsBindingObserver {
   void _startTimer() {
     _timer = PausableTimer.periodic(
       Duration(seconds: 1),
-      () {
+          () {
         _secondsTimer++;
       },
     )..start();
@@ -90,7 +76,7 @@ class _StudyScreenState extends State<StudyScreen> with WidgetsBindingObserver {
     // Cancel the timer when the widget is disposed
     _timer.cancel();
     // Remove the observer when the widget is disposed
-    WidgetsBinding.instance?.removeObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
@@ -117,7 +103,7 @@ class _StudyScreenState extends State<StudyScreen> with WidgetsBindingObserver {
     }
     if (!isCorrect || cardType == 0) {
       redCard++;
-      Question q = widget.questions[currentQuestionIndex];
+      Flashcard q = widget.questions[currentQuestionIndex];
       q.cardType = 1;
       widget.questions.add(q);
     }
@@ -197,9 +183,9 @@ class _StudyScreenState extends State<StudyScreen> with WidgetsBindingObserver {
                                 panel: AnswersExpandedPanel(
                                     answers: widget.questions[index].answers,
                                     correctAnswer:
-                                        widget.questions[index].correctAnswer,
+                                    widget.questions[index].correctAnswer,
                                     navigateToNextQuestion:
-                                        _navigateToNextQuestion,
+                                    _navigateToNextQuestion,
                                     increaseProgress: _increaseProgress),
                                 collapsed: Container(
                                   decoration: const BoxDecoration(
@@ -213,7 +199,7 @@ class _StudyScreenState extends State<StudyScreen> with WidgetsBindingObserver {
                                       PanelHeaderRectangle(reverseOrder: true),
                                       Row(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                                        MainAxisAlignment.spaceBetween,
                                         children: [
                                           Padding(
                                             padding: const EdgeInsets.all(15.0),
@@ -271,11 +257,11 @@ class StudyAppBar extends StatelessWidget {
 
   StudyAppBar(
       {required this.blueCard,
-      required this.redCard,
-      required this.greenCard,
-      required this.totalCards,
-      required this.xpEarned,
-      required this.currentCardType});
+        required this.redCard,
+        required this.greenCard,
+        required this.totalCards,
+        required this.xpEarned,
+        required this.currentCardType});
 
   @override
   Widget build(BuildContext context) {
@@ -325,9 +311,9 @@ class StudyAppBar extends StatelessWidget {
                                 ? TextDecoration.underline
                                 : null),
                             decorationColor:
-                                (currentCardType == 0 ? Colors.blue : null),
+                            (currentCardType == 0 ? Colors.blue : null),
                             decorationThickness:
-                                (currentCardType == 0 ? 2 : null),
+                            (currentCardType == 0 ? 2 : null),
                             decorationStyle: (currentCardType == 0
                                 ? TextDecorationStyle.solid
                                 : null),
@@ -347,9 +333,9 @@ class StudyAppBar extends StatelessWidget {
                                 ? TextDecoration.underline
                                 : null),
                             decorationColor:
-                                (currentCardType == 1 ? Colors.red : null),
+                            (currentCardType == 1 ? Colors.red : null),
                             decorationThickness:
-                                (currentCardType == 1 ? 2 : null),
+                            (currentCardType == 1 ? 2 : null),
                             decorationStyle: (currentCardType == 1
                                 ? TextDecorationStyle.solid
                                 : null),
@@ -369,9 +355,9 @@ class StudyAppBar extends StatelessWidget {
                                 ? TextDecoration.underline
                                 : null),
                             decorationColor:
-                                (currentCardType == 2 ? Colors.green : null),
+                            (currentCardType == 2 ? Colors.green : null),
                             decorationThickness:
-                                (currentCardType == 2 ? 2 : null),
+                            (currentCardType == 2 ? 2 : null),
                             decorationStyle: (currentCardType == 2
                                 ? TextDecorationStyle.solid
                                 : null),
@@ -390,7 +376,7 @@ class StudyAppBar extends StatelessWidget {
                     borderRadius: BorderRadius.circular(15),
                   ),
                   padding:
-                      EdgeInsets.only(left: 10, right: 10, top: 6, bottom: 6),
+                  EdgeInsets.only(left: 10, right: 10, top: 6, bottom: 6),
                   child: Text(
                     xpEarned.toString() + ' XP',
                     style: TextStyle(
@@ -432,7 +418,7 @@ class CurvedProgressBar extends StatelessWidget {
           AnimatedContainer(
             duration: Duration(
                 milliseconds:
-                    800), // Adjust the duration for a smoother transition
+                800), // Adjust the duration for a smoother transition
             width: 260 * (progress) + 20, // Use the current progress value
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(
@@ -445,11 +431,11 @@ class CurvedProgressBar extends StatelessWidget {
             child: AnimatedContainer(
               duration: Duration(
                   milliseconds:
-                      800), // Adjust the duration for a smoother transition
+                  800), // Adjust the duration for a smoother transition
               width: max(
                   0, 260 * (progress) - 10), // Use the current progress value
               height:
-                  innerProgressHeight, // Adjust the inner white progress height
+              innerProgressHeight, // Adjust the inner white progress height
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(
                     15.0), // Use slightly smaller radius for the reflection indicator
@@ -474,55 +460,55 @@ class PanelHeaderRectangle extends StatelessWidget {
         child: Column(
           children: reverseOrder
               ? <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10.0, bottom: 3.0),
-                    child: Container(
-                      width: 15, // Adjust the width of the inner rectangle
-                      height: 5, // Adjust the height of the inner rectangle
-                      decoration: BoxDecoration(
-                        color: Color(
-                            0xffC7C6C6), // Change the inner rectangle color
-                        borderRadius: BorderRadius.circular(
-                            10), // Adjust the inner border radius
-                      ),
-                    ),
-                  ),
-                  Container(
-                    width: 30, // Adjust the width of the inner rectangle
-                    height: 5, // Adjust the height of the inner rectangle
-                    decoration: BoxDecoration(
-                      color:
-                          Color(0xffC7C6C6), // Change the inner rectangle color
-                      borderRadius: BorderRadius.circular(
-                          10), // Adjust the inner border radius
-                    ),
-                  ),
-                ]
+            Padding(
+              padding: const EdgeInsets.only(top: 10.0, bottom: 3.0),
+              child: Container(
+                width: 15, // Adjust the width of the inner rectangle
+                height: 5, // Adjust the height of the inner rectangle
+                decoration: BoxDecoration(
+                  color: Color(
+                      0xffC7C6C6), // Change the inner rectangle color
+                  borderRadius: BorderRadius.circular(
+                      10), // Adjust the inner border radius
+                ),
+              ),
+            ),
+            Container(
+              width: 30, // Adjust the width of the inner rectangle
+              height: 5, // Adjust the height of the inner rectangle
+              decoration: BoxDecoration(
+                color:
+                Color(0xffC7C6C6), // Change the inner rectangle color
+                borderRadius: BorderRadius.circular(
+                    10), // Adjust the inner border radius
+              ),
+            ),
+          ]
               : <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10.0, bottom: 3.0),
-                    child: Container(
-                      width: 30, // Adjust the width of the inner rectangle
-                      height: 5, // Adjust the height of the inner rectangle
-                      decoration: BoxDecoration(
-                        color: Color(
-                            0xffC7C6C6), // Change the inner rectangle color
-                        borderRadius: BorderRadius.circular(
-                            10), // Adjust the inner border radius
-                      ),
-                    ),
-                  ),
-                  Container(
-                    width: 15, // Adjust the width of the inner rectangle
-                    height: 5, // Adjust the height of the inner rectangle
-                    decoration: BoxDecoration(
-                      color:
-                          Color(0xffC7C6C6), // Change the inner rectangle color
-                      borderRadius: BorderRadius.circular(
-                          10), // Adjust the inner border radius
-                    ),
-                  ),
-                ],
+            Padding(
+              padding: const EdgeInsets.only(top: 10.0, bottom: 3.0),
+              child: Container(
+                width: 30, // Adjust the width of the inner rectangle
+                height: 5, // Adjust the height of the inner rectangle
+                decoration: BoxDecoration(
+                  color: Color(
+                      0xffC7C6C6), // Change the inner rectangle color
+                  borderRadius: BorderRadius.circular(
+                      10), // Adjust the inner border radius
+                ),
+              ),
+            ),
+            Container(
+              width: 15, // Adjust the width of the inner rectangle
+              height: 5, // Adjust the height of the inner rectangle
+              decoration: BoxDecoration(
+                color:
+                Color(0xffC7C6C6), // Change the inner rectangle color
+                borderRadius: BorderRadius.circular(
+                    10), // Adjust the inner border radius
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -536,11 +522,11 @@ class AnswersExpandedPanel extends StatefulWidget {
   final Function(bool) increaseProgress;
   AnswersExpandedPanel(
       {required this.answers,
-      required this.correctAnswer,
-      required this.navigateToNextQuestion,
-      required this.increaseProgress});
+        required this.correctAnswer,
+        required this.navigateToNextQuestion,
+        required this.increaseProgress});
 
-  List<bool> selectedAnswers = List.filled(4, false);
+  final List<bool> selectedAnswers = List.filled(4, false);
 
   @override
   _AnswersExpandedPanelState createState() => _AnswersExpandedPanelState();
@@ -582,12 +568,12 @@ class _AnswersExpandedPanelState extends State<AnswersExpandedPanel> {
                               }
                             }
                             widget.selectedAnswers[index] =
-                                !widget.selectedAnswers[index];
+                            !widget.selectedAnswers[index];
                             if (widget.selectedAnswers[index]) {
                               isCorrect =
-                                  (widget.answers[index] == widget.correctAnswer
-                                      ? 1
-                                      : 0);
+                              (widget.answers[index] == widget.correctAnswer
+                                  ? 1
+                                  : 0);
                             } else {
                               isCorrect = -1;
                             }
@@ -604,30 +590,30 @@ class _AnswersExpandedPanelState extends State<AnswersExpandedPanel> {
                               colors: [
                                 widget.selectedAnswers[index]
                                     ? (isCheckAnswerButtonClicked
-                                        ? (widget.answers[index] ==
-                                                widget.correctAnswer
-                                            ? Color(0xff85f274)
-                                            : Color(0xfff27474))
-                                        : Color(0xff74CCF2))
+                                    ? (widget.answers[index] ==
+                                    widget.correctAnswer
+                                    ? Color(0xff85f274)
+                                    : Color(0xfff27474))
+                                    : Color(0xff74CCF2))
                                     : Color(0xffC7C6C6),
                                 widget.selectedAnswers[index]
                                     ? (isCheckAnswerButtonClicked
-                                        ? (widget.answers[index] ==
-                                                widget.correctAnswer
-                                            ? Color(0xffdefcd9)
-                                            : Color(0xfffcd9d9))
-                                        : Color(0xffd9f6fc))
+                                    ? (widget.answers[index] ==
+                                    widget.correctAnswer
+                                    ? Color(0xffdefcd9)
+                                    : Color(0xfffcd9d9))
+                                    : Color(0xffd9f6fc))
                                     : Colors.white
                               ],
                             ),
                             border: Border.all(
                               color: widget.selectedAnswers[index]
                                   ? (isCheckAnswerButtonClicked
-                                      ? (widget.answers[index] ==
-                                              widget.correctAnswer
-                                          ? Color(0xff85f274)
-                                          : Color(0xfff27474))
-                                      : Color(0xff74CCF2))
+                                  ? (widget.answers[index] ==
+                                  widget.correctAnswer
+                                  ? Color(0xff85f274)
+                                  : Color(0xfff27474))
+                                  : Color(0xff74CCF2))
                                   : Color(0xffC7C6C6),
                               width: 3.0,
                             ),
@@ -653,7 +639,7 @@ class _AnswersExpandedPanelState extends State<AnswersExpandedPanel> {
                       milliseconds: 180), // Adjust the animation duration
                   height: isCheckAnswerButtonClicked ? 130 : 0,
                   color:
-                      (isCorrect == 1 ? Color(0xffd6fcb8) : Color(0xfffcb8b8)),
+                  (isCorrect == 1 ? Color(0xffd6fcb8) : Color(0xfffcb8b8)),
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Align(
@@ -694,13 +680,13 @@ class _AnswersExpandedPanelState extends State<AnswersExpandedPanel> {
                   outerBoxColor: (isCorrect == -1
                       ? Color(0xffC7C6C6)
                       : ((!isCheckAnswerButtonClicked || isCorrect == 1)
-                          ? Color(0xff3a8c40)
-                          : Color(0xffc43535))), // Set your desired color
+                      ? Color(0xff3a8c40)
+                      : Color(0xffc43535))), // Set your desired color
                   innerBoxColor: (isCorrect == -1
                       ? Color(0xfff0f2f0)
                       : ((!isCheckAnswerButtonClicked || isCorrect == 1)
-                          ? Color(0xff75E840)
-                          : Color(0xffe84040))), // Set your desired color
+                      ? Color(0xff75E840)
+                      : Color(0xffe84040))), // Set your desired color
                   textColor: Colors.white, // Set your desired color
                   onTap: () {
                     if (isCorrect == -1) {
