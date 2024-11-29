@@ -14,6 +14,8 @@ class Deck {
   int curNewCards;
   int curReviewCards;
   String descriptionImgPath;
+  int totalCards;
+  int totalNewCards;
 
   Deck({
     required this.id,
@@ -28,15 +30,23 @@ class Deck {
     this.curNewCards = 0,
     this.curReviewCards = 0,
     this.descriptionImgPath = "",
+    required this.totalCards,
+    required this.totalNewCards
   }) : lastReview = ( lastReview_ ?? DateTime.now() );
 }
 
 class DeckWithReviewCards {
   Deck deck;
+  int numBlueCards;
+  int numRedCards;
+  int numGreenCards;
   List<Flashcard> cards;
 
   DeckWithReviewCards({
     required this.deck,
+    required this.numBlueCards,
+    required this.numRedCards,
+    required this.numGreenCards,
     required this.cards,
   });
 }

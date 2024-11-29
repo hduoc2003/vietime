@@ -14,6 +14,7 @@ import 'package:iconify_flutter/icons/game_icons.dart';
 import 'package:pausable_timer/pausable_timer.dart';
 import 'package:vietime/entity/card.dart';
 
+import '../custom_widgets/animated_progress_bar.dart';
 import '../custom_widgets/long_button.dart';
 
 //ignore: must_be_immutable
@@ -280,7 +281,7 @@ class StudyAppBar extends StatelessWidget {
                   },
                 ),
               ),
-              CurvedProgressBar(progress: progress), // Progress bar
+              AnimatedProgressBar(progress: progress, width: 280, height: 20,), // Progress bar
               IconButton(
                 icon: Icon(Icons.more_vert, size: 32), // More icon
                 onPressed: () {
@@ -389,60 +390,6 @@ class StudyAppBar extends StatelessWidget {
               ],
             ),
           )
-        ],
-      ),
-    );
-  }
-}
-
-class CurvedProgressBar extends StatelessWidget {
-  final double progress;
-  final double innerProgressHeight;
-
-  CurvedProgressBar({required this.progress, this.innerProgressHeight = 5.5});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 20.0, // Adjust the height as needed
-      child: Stack(
-        children: <Widget>[
-          Container(
-            width: 280,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(
-                  15.0), // Use slightly smaller radius for the reflection indicator
-              color: Color(0xffD9D9D9), // Color of the reflection indicator
-            ),
-          ),
-          AnimatedContainer(
-            duration: Duration(
-                milliseconds:
-                800), // Adjust the duration for a smoother transition
-            width: 260 * (progress) + 20, // Use the current progress value
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(
-                  15.0), // Use slightly smaller radius for the progress indicator
-              color: Color(0xff75E840), // Color of the progress indicator
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 15.0, top: 4.5),
-            child: AnimatedContainer(
-              duration: Duration(
-                  milliseconds:
-                  800), // Adjust the duration for a smoother transition
-              width: max(
-                  0, 260 * (progress) - 10), // Use the current progress value
-              height:
-              innerProgressHeight, // Adjust the inner white progress height
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(
-                    15.0), // Use slightly smaller radius for the reflection indicator
-                color: Color(0xff98F46D), // Color of the reflection indicator
-              ),
-            ),
-          ),
         ],
       ),
     );

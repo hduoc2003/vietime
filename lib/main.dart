@@ -38,11 +38,12 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  Future<bool> handleWillPop(BuildContext context) async {
+  Future<void> handleWillPop(BuildContext context) async {
     final now = DateTime.now();
     final backButtonHasNotBeenPressedOrSnackBarHasBeenClosed =
         backButtonPressTime == null ||
-            now.difference(backButtonPressTime!) > const Duration(milliseconds: 2700);
+            now.difference(backButtonPressTime!) >
+                const Duration(milliseconds: 2700);
 
     if (backButtonHasNotBeenPressedOrSnackBarHasBeenClosed) {
       backButtonPressTime = now;
@@ -52,9 +53,11 @@ class _MyAppState extends State<MyApp> {
         duration: const Duration(milliseconds: 2500),
         noAction: true,
       );
-      return false;
+
+      return;
     }
-    return true;
+    SystemNavigator.pop();
+    return;
   }
 
   @override
@@ -79,8 +82,14 @@ class _MyAppState extends State<MyApp> {
       home: Builder(builder: (context) {
         return Scaffold(
           resizeToAvoidBottomInset: false,
-          body: WillPopScope(
-            onWillPop: () => handleWillPop(context),
+          body: PopScope(
+            canPop: false,
+            onPopInvoked: (bool didPop) {
+              if (didPop) {
+                return;
+              }
+              handleWillPop(context);
+            },
             child: SafeArea(
               child: Row(
                 children: [
