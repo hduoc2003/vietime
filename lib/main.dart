@@ -5,8 +5,8 @@ import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'package:iconify_flutter/iconify_flutter.dart';
 import 'package:iconify_flutter/icons/ri.dart';
 import 'package:vietime/helpers/logging.dart';
-import 'package:vietime/screens/game.dart';
-import 'package:vietime/screens/home/home.dart';
+import 'package:vietime/screens/game_screen.dart';
+import 'package:vietime/screens/home/home_screen.dart';
 import 'package:vietime/screens/profile.dart';
 import 'package:vietime/screens/search.dart';
 

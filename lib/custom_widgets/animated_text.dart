@@ -24,7 +24,7 @@ class AnimatedText extends StatelessWidget {
   final Curve decelerationCurve;
   final VoidCallback? onDone;
 
-  const AnimatedText({
+  const AnimatedText({super.key,
     required this.text,
     this.style,
     this.textScaleFactor,
@@ -40,7 +40,7 @@ class AnimatedText extends StatelessWidget {
     this.fadingEdgeStartFraction = 0.0,
     this.fadingEdgeEndFraction = 0.0,
     this.numberOfRounds,
-    this.startPadding = 0.0,
+    this.startPadding = -9.0,
     this.accelerationDuration = Duration.zero,
     this.accelerationCurve = Curves.decelerate,
     this.decelerationDuration = Duration.zero,
@@ -68,10 +68,10 @@ class AnimatedText extends StatelessWidget {
 
         if (tp.didExceedMaxLines) {
           return SizedBox(
-            height: tp.height + 10,
-            width: constraints.maxWidth,
+            height: tp.height + 4,
+            width: constraints.maxWidth - 2,
             child: wrapped.Marquee(
-              text: '  $text${" " * 30}',
+              text: '  $text${" " * 25}',
               style: style,
               textScaleFactor: textScaleFactor,
               textDirection: textDirection,
@@ -95,7 +95,7 @@ class AnimatedText extends StatelessWidget {
           );
         } else {
           return SizedBox(
-            width: constraints.maxWidth,
+            width: constraints.maxWidth - 2,
             child: Text(
               text,
               style: style,
