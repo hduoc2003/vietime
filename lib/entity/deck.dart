@@ -3,7 +3,7 @@ import 'package:vietime/entity/card.dart';
 
 class Deck {
   String id;
-  bool isGlobal;
+  bool isPublic;
   String name;
   String description;
   DateTime createdAt;
@@ -22,7 +22,7 @@ class Deck {
 
   Deck({
     required this.id,
-    required this.isGlobal,
+    required this.isPublic,
     required this.name,
     required this.description,
     required this.createdAt,

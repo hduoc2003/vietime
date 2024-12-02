@@ -10,15 +10,17 @@ import '../../../custom_widgets/animated_progress_bar.dart';
 import '../../../custom_widgets/animated_text.dart';
 import '../../../custom_widgets/custom_physics.dart';
 import '../../../entity/deck.dart';
+import '../../deck_screen.dart';
 
 List<DeckWithReviewCards> mockDecksList = [
   // Mock DeckWithReviewCards 1
   DeckWithReviewCards(
     deck: Deck(
         id: '1',
-        isGlobal: false,
+        isPublic: false,
         name: 'Hoàng thành Thăng Long',
-        description: 'Description for Deck 1',
+        description:
+        'Bộ thẻ về Hoàng thành Thăng Long nằm ở Hoàng Diệu, Điện Biên, Ba Đình, Hà Nội',
         createdAt: DateTime.now(),
         userId: 'user1',
         descriptionImgPath:
@@ -37,8 +39,8 @@ List<DeckWithReviewCards> mockDecksList = [
   DeckWithReviewCards(
     deck: Deck(
         id: '2',
-        isGlobal: true,
-        name: 'Chùa với tên siêu dài chẳng hạn',
+        isPublic: true,
+        name: 'Chùa với tên siêu dài chẳng hạn siêu siêu dài dài và siêu dài',
         description: 'Description for Global Deck',
         createdAt: DateTime.now(),
         userId: 'user2',
@@ -58,7 +60,7 @@ List<DeckWithReviewCards> mockDecksList = [
   DeckWithReviewCards(
     deck: Deck(
         id: '3',
-        isGlobal: false,
+        isPublic: false,
         name: 'Deck 3',
         description: 'Description for Deck 3',
         createdAt: DateTime.now(),
@@ -77,7 +79,7 @@ List<DeckWithReviewCards> mockDecksList = [
   DeckWithReviewCards(
     deck: Deck(
         id: '4',
-        isGlobal: true,
+        isPublic: true,
         name: 'Global Deck 2',
         description: 'Description for Global Deck 2',
         createdAt: DateTime.now(),
@@ -96,7 +98,7 @@ List<DeckWithReviewCards> mockDecksList = [
   DeckWithReviewCards(
     deck: Deck(
         id: '5',
-        isGlobal: false,
+        isPublic: false,
         name: 'Deck 5',
         description: 'Description for Deck 5',
         createdAt: DateTime.now(),
@@ -151,9 +153,9 @@ class DeckHorizontalList extends StatelessWidget {
                     if (itemIndex < decksList.length) {
                       final item = decksList[itemIndex];
                       if (deckType == 0) {
-                        return getUserDeckTile(item);
+                        return getUserDeckTile(item, context);
                       } else {
-                        return getPublicDeckTile(item);
+                        return getPublicDeckTile(item, context);
                       }
                     } else {
                       return const SizedBox(); // Return an empty widget if the index is out of bounds
@@ -169,9 +171,16 @@ class DeckHorizontalList extends StatelessWidget {
   }
 }
 
-Widget getUserDeckTile(DeckWithReviewCards item) {
+Widget getUserDeckTile(DeckWithReviewCards item, BuildContext context) {
   return GestureDetector(
-    onTap: () => {},
+    onTap: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => DeckScreen(deckData: item),
+        ),
+      );
+    },
     child: Container(
       decoration: BoxDecoration(
         color: Colors.grey[100], // Add a slightly grey background color
@@ -273,9 +282,16 @@ Widget getUserDeckTile(DeckWithReviewCards item) {
   );
 }
 
-Widget getPublicDeckTile(DeckWithReviewCards item) {
+Widget getPublicDeckTile(DeckWithReviewCards item, BuildContext context) {
   return GestureDetector(
-    onTap: () => {},
+    onTap: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => DeckScreen(deckData: item),
+        ),
+      );
+    },
     child: Container(
       decoration: BoxDecoration(
         color: Colors.grey[100], // Add a slightly grey background color

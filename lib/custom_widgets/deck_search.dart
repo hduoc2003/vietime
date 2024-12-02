@@ -10,6 +10,8 @@ import 'package:vietime/helpers/string.dart';
 
 import '../entity/deck.dart';
 import '../helpers/validate.dart';
+import '../screens/deck_screen.dart';
+import 'deck_list_info_bar.dart';
 
 class DeckSearch extends SearchDelegate {
   final List<DeckWithReviewCards> data;
@@ -23,8 +25,6 @@ class DeckSearch extends SearchDelegate {
         IconButton(
           icon: const Iconify(Ri.search_eye_line),
           tooltip: "Tìm kiêm",
-          padding: EdgeInsets.zero,
-          constraints: BoxConstraints(),
           onPressed: () {},
         )
       else
@@ -33,8 +33,6 @@ class DeckSearch extends SearchDelegate {
             query = '';
           },
           tooltip: "Xóa",
-          padding: EdgeInsets.zero,
-          constraints: BoxConstraints(),
           icon: const Icon(
             Icons.clear_rounded,
           ),
@@ -47,8 +45,6 @@ class DeckSearch extends SearchDelegate {
     return IconButton(
       icon: const Icon(Icons.arrow_back_rounded),
       tooltip: "Quay lại",
-      padding: EdgeInsets.zero,
-      constraints: BoxConstraints(),
       onPressed: () {
         close(context, null);
       },
@@ -129,7 +125,7 @@ class DeckSearch extends SearchDelegate {
           suggestionList[index].deck.name,
           overflow: TextOverflow.ellipsis,
         ),
-        subtitle: suggestionList[index].deck.isGlobal ? Row(
+        subtitle: suggestionList[index].deck.isPublic ? Row(
           children: [
             Text(
               "Đánh giá: ",
@@ -182,7 +178,12 @@ class DeckSearch extends SearchDelegate {
           deckItem: suggestionList[index],
         ),
         onTap: () {
-          // TODO: You're gonna do this soon :))
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => DeckScreen(deckData: suggestionList[index]),
+            ),
+          );
         },
       ),
     );
@@ -226,23 +227,39 @@ class DeckSearch extends SearchDelegate {
       });
       suggestionList = filteredData;
     }
-    return ListView.builder(
-        physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsets.only(top: 10, bottom: 10),
-        shrinkWrap: true,
-        itemCount: suggestionList.length,
-        itemBuilder: (context, index) {
-          DeckWithReviewCards item = suggestionList[index];
-          if (item.deck.isGlobal) {
-            return PublicDeckTile(
-              item: item,
-            );
-          } else {
-            return UserDeckTile(
-              item: item,
-            );
-          }
-        });
+    return Column(
+      children: [
+        DeckListInfoBar(
+          numberOfDecks: suggestionList.length,
+          onAddPressed: () {
+            // Add button pressed
+          },
+          onFilterPressed: () {
+            // Filter button pressed
+          },
+          onStudyAllPressed: () {
+            // Study All button pressed
+          },
+        ),
+        ListView.builder(
+            physics: const BouncingScrollPhysics(),
+            padding: const EdgeInsets.only(top: 10, bottom: 10),
+            shrinkWrap: true,
+            itemCount: suggestionList.length,
+            itemBuilder: (context, index) {
+              DeckWithReviewCards item = suggestionList[index];
+              if (item.deck.isPublic) {
+                return PublicDeckTile(
+                  item: item,
+                );
+              } else {
+                return UserDeckTile(
+                  item: item,
+                );
+              }
+            }),
+      ],
+    );
   }
 
   @override
