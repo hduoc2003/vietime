@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:iconify_flutter/iconify_flutter.dart';
-import 'package:iconify_flutter/icons/carbon.dart';
+import 'package:iconify_flutter/icons/mdi.dart';
 import 'package:iconify_flutter/icons/ri.dart';
 import 'package:vietime/entity/deck.dart';
 
 class DeckPopupMenu extends StatefulWidget {
   final DeckWithReviewCards deckItem;
+  final Iconify icon;
   const DeckPopupMenu({
     super.key,
     required this.deckItem,
+    required this.icon,
   });
 
   @override
@@ -19,7 +21,8 @@ class _DeckPopupMenuState extends State<DeckPopupMenu> {
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton(
-      icon: const Iconify(Carbon.settings_adjust),
+      icon: widget.icon,
+      position: PopupMenuPosition.under,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(15.0)),
       ),
@@ -29,12 +32,12 @@ class _DeckPopupMenuState extends State<DeckPopupMenu> {
           child: Row(
             children: [
               Iconify(
-                Ri.settings_4_fill,
-                size: 20,
+                Mdi.cards_playing_spade_multiple,
+                size: 22,
                 color: Theme.of(context).iconTheme.color,
               ),
               const SizedBox(width: 10.0),
-              Text("Cài đặt"),
+              Text("Tham số"),
             ],
           ),
         ),
@@ -44,7 +47,7 @@ class _DeckPopupMenuState extends State<DeckPopupMenu> {
             children: [
               Iconify(
                 Ri.delete_bin_2_fill,
-                size: 20,
+                size: 22,
                 color: Theme.of(context).iconTheme.color,
               ),
               const SizedBox(width: 10.0),

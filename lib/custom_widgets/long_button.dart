@@ -47,9 +47,11 @@ class LongButton extends StatelessWidget {
               child: Text(
                 text,
                 style: TextStyle(
-                  color: textColor,
-                  fontSize: 23,
-                  fontWeight: FontWeight.w900,
+                    color: textColor,
+                    fontSize: 23,
+                    fontWeight: FontWeight.w900,
+                    wordSpacing: 2.0,
+                    letterSpacing: 0.8
                 ),
               ),
             ),

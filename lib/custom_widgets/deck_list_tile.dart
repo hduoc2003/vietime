@@ -1,14 +1,15 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:iconify_flutter/iconify_flutter.dart';
+import 'package:iconify_flutter/icons/carbon.dart';
 import 'package:iconify_flutter/icons/ion.dart';
 import 'package:iconify_flutter/icons/mdi.dart';
 import 'package:vietime/custom_widgets/deck_popup_menu.dart';
 import 'package:vietime/custom_widgets/love_button.dart';
 import 'package:vietime/custom_widgets/three_card_type_number_row.dart';
-import 'package:iconify_flutter/icons/carbon.dart';
 import '../entity/deck.dart';
 import '../helpers/validate.dart';
+import '../screens/deck_screen.dart';
 import 'animated_progress_bar.dart';
 import 'animated_text.dart';
 
@@ -20,18 +21,26 @@ class UserDeckTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => {},
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => DeckScreen(deckData: item),
+          ),
+        );
+      },
       child: Container(
         decoration: BoxDecoration(
           color: Colors.grey[100],
           borderRadius: BorderRadius.circular(30.0),
         ),
-        margin: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 4),
+        margin: const EdgeInsets.only(left: 5.0, right: 5.0, bottom: 8),
         child: Row(
           children: [
             Expanded(
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 10),
+                padding:
+                const EdgeInsets.symmetric(horizontal: 8.0, vertical: 10),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -51,17 +60,20 @@ class UserDeckTile extends StatelessWidget {
                           fit: BoxFit.cover,
                           errorWidget: (context, _, __) => const Image(
                             fit: BoxFit.cover,
-                            image: AssetImage('assets/deck_placeholder.png'),
+                            image:
+                            AssetImage('assets/deck_placeholder.png'),
                           ),
                           imageUrl: item.deck.descriptionImgPath,
                           placeholder: (context, url) => const Image(
                             fit: BoxFit.cover,
-                            image: AssetImage('assets/deck_placeholder.png'),
+                            image:
+                            AssetImage('assets/deck_placeholder.png'),
                           ),
                         )
                             : const Image(
                           fit: BoxFit.cover,
-                          image: AssetImage('assets/deck_placeholder.png'),
+                          image:
+                          AssetImage('assets/deck_placeholder.png'),
                         ),
                       ),
                     ),
@@ -100,8 +112,8 @@ class UserDeckTile extends StatelessWidget {
                               AnimatedProgressBar(
                                 width: 150,
                                 height: 14,
-                                progress:
-                                item.deck.totalLearnedCards / item.deck.totalCards,
+                                progress: item.deck.totalLearnedCards /
+                                    item.deck.totalCards,
                                 backgroundColor: const Color(0xffD9D9D9),
                                 progressColor: const Color(0xff40a5e8),
                                 innerProgressColor: const Color(0xff6db7f4),
@@ -130,7 +142,10 @@ class UserDeckTile extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  DeckPopupMenu(deckItem: item),
+                  DeckPopupMenu(
+                    deckItem: item,
+                    icon: const Iconify(Carbon.settings_adjust),
+                  ),
                   LoveDeckButton(deckItem: item)
                 ],
               ),
@@ -150,13 +165,20 @@ class PublicDeckTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => {},
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => DeckScreen(deckData: item),
+          ),
+        );
+      },
       child: Container(
         decoration: BoxDecoration(
           color: Colors.grey[100],
           borderRadius: BorderRadius.circular(30.0),
         ),
-        margin: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 4),
+        margin: const EdgeInsets.only(left: 5.0, right: 5.0, bottom: 8),
         child: Row(
           children: [
             Expanded(
@@ -185,17 +207,20 @@ class PublicDeckTile extends StatelessWidget {
                           fit: BoxFit.cover,
                           errorWidget: (context, _, __) => const Image(
                             fit: BoxFit.cover,
-                            image: AssetImage('assets/deck_placeholder.png'),
+                            image:
+                            AssetImage('assets/deck_placeholder.png'),
                           ),
                           imageUrl: item.deck.descriptionImgPath,
                           placeholder: (context, url) => const Image(
                             fit: BoxFit.cover,
-                            image: AssetImage('assets/deck_placeholder.png'),
+                            image:
+                            AssetImage('assets/deck_placeholder.png'),
                           ),
                         )
                             : const Image(
                           fit: BoxFit.cover,
-                          image: AssetImage('assets/deck_placeholder.png'),
+                          image:
+                          AssetImage('assets/deck_placeholder.png'),
                         ),
                       ),
                     ),
@@ -240,7 +265,8 @@ class PublicDeckTile extends StatelessWidget {
                                 ),
                               ),
                               Padding(
-                                padding: const EdgeInsets.only(left: 6.0, bottom: 2),
+                                padding:
+                                const EdgeInsets.only(left: 6.0, bottom: 2),
                                 child: Iconify(
                                   Mdi.cards_playing,
                                   color: Colors.purple,
@@ -269,7 +295,8 @@ class PublicDeckTile extends StatelessWidget {
                                 ),
                               ),
                               Padding(
-                                padding: const EdgeInsets.only(left: 6.0, bottom: 2),
+                                padding:
+                                const EdgeInsets.only(left: 6.0, bottom: 2),
                                 child: Icon(
                                   Icons.star,
                                   color: Color(0xffedc202),
@@ -285,7 +312,8 @@ class PublicDeckTile extends StatelessWidget {
                                 ),
                               ),
                               Padding(
-                                padding: const EdgeInsets.only(left: 6.0, bottom: 2),
+                                padding:
+                                const EdgeInsets.only(left: 6.0, bottom: 2),
                                 child: Iconify(
                                   Ion.ios_eye,
                                   color: Colors.green,
@@ -307,7 +335,10 @@ class PublicDeckTile extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  DeckPopupMenu(deckItem: item),
+                  DeckPopupMenu(
+                    deckItem: item,
+                    icon: const Iconify(Carbon.settings_adjust),
+                  ),
                   LoveDeckButton(deckItem: item)
                 ],
               ),
