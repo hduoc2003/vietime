@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'package:iconify_flutter/iconify_flutter.dart';
 import 'package:iconify_flutter/icons/ri.dart';
@@ -9,42 +13,68 @@ import 'package:vietime/screens/game_screen.dart';
 import 'package:vietime/screens/home/home_screen.dart';
 import 'package:vietime/screens/profile.dart';
 import 'package:vietime/screens/search.dart';
-
 import 'custom_widgets/custom_physics.dart';
 import 'custom_widgets/snackbar.dart';
 
-void main() {
-  initLogging();
+Future<void> main() async {
+  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+    await Hive.initFlutter('Mystic');
+  } else {
+    await Hive.initFlutter();
+  }
+  await openHiveBox('settings');
+  await openHiveBox('cache', limit: true);
+
+  await initLogging();
   runApp(MyApp());
 }
 
+Future<void> openHiveBox(String boxName, {bool limit = false}) async {
+  final box = await Hive.openBox(boxName).onError((error, stackTrace) async {
+    Logger.root.severe('Failed to open $boxName Box', error, stackTrace);
+    final Directory dir = await getApplicationDocumentsDirectory();
+    final String dirPath = dir.path;
+    File dbFile = File('$dirPath/$boxName.hive');
+    File lockFile = File('$dirPath/$boxName.lock');
+    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+      dbFile = File('$dirPath/Mystic/$boxName.hive');
+      lockFile = File('$dirPath/Mystic/$boxName.lock');
+    }
+    await dbFile.delete();
+    await lockFile.delete();
+    await Hive.openBox(boxName);
+    throw 'Failed to open $boxName Box\nError: $error';
+  });
+  // clear box if it grows large
+  if (limit && box.length > 500) {
+    box.clear();
+  }
+}
+
+
 class MyApp extends StatefulWidget {
-  static final title = 'Vietime';
+  static final title = 'vietime';
 
   @override
   _MyAppState createState() => _MyAppState();
 }
-
 class _MyAppState extends State<MyApp> {
   final ValueNotifier<int> _selectedIndex = ValueNotifier<int>(0);
   final PageController _pageController = PageController();
   DateTime? backButtonPressTime;
 
   void _onItemTapped(int index) {
-    Logger.root.info("TEST INFO");
     _selectedIndex.value = index;
     _pageController.jumpToPage(
       index,
     );
   }
-
   Future<void> handleWillPop(BuildContext context) async {
     final now = DateTime.now();
     final backButtonHasNotBeenPressedOrSnackBarHasBeenClosed =
         backButtonPressTime == null ||
             now.difference(backButtonPressTime!) >
                 const Duration(milliseconds: 2700);
-
     if (backButtonHasNotBeenPressedOrSnackBarHasBeenClosed) {
       backButtonPressTime = now;
       ShowSnackBar().showSnackBar(
@@ -53,24 +83,20 @@ class _MyAppState extends State<MyApp> {
         duration: const Duration(milliseconds: 2500),
         noAction: true,
       );
-
       return;
     }
     SystemNavigator.pop();
     return;
   }
-
   @override
   void initState() {
     super.initState();
   }
-
   @override
   void dispose() {
     _pageController.dispose();
     super.dispose();
   }
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -137,7 +163,6 @@ class _MyAppState extends State<MyApp> {
                           title: Text("Home"),
                           selectedColor: Colors.purple,
                         ),
-
                         /// Search
                         SalomonBottomBarItem(
                           icon: const Iconify(
@@ -147,14 +172,12 @@ class _MyAppState extends State<MyApp> {
                           title: Text("Search"),
                           selectedColor: Colors.orange,
                         ),
-
                         /// Profile
                         SalomonBottomBarItem(
                           icon: Iconify(Ri.game_fill, color: Colors.green),
                           title: Text("Game"),
                           selectedColor: Colors.green,
                         ),
-
                         /// Profile
                         SalomonBottomBarItem(
                           icon: Iconify(Ri.user_5_fill, color: Colors.blue),
