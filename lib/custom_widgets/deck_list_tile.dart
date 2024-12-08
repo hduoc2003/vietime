@@ -1,11 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:iconify_flutter/iconify_flutter.dart';
-import 'package:iconify_flutter/icons/carbon.dart';
+
 import 'package:iconify_flutter/icons/ion.dart';
 import 'package:iconify_flutter/icons/mdi.dart';
-import 'package:vietime/custom_widgets/deck_popup_menu.dart';
-import 'package:vietime/custom_widgets/love_button.dart';
+
 import 'package:vietime/custom_widgets/three_card_type_number_row.dart';
 import '../entity/deck.dart';
 import '../helpers/validate.dart';
@@ -15,8 +14,13 @@ import 'animated_text.dart';
 
 class UserDeckTile extends StatelessWidget {
   final DeckWithReviewCards item;
+  final Widget iconButtonTopRight;
+  final Widget iconButtonBottomRight;
 
-  UserDeckTile({required this.item});
+  UserDeckTile(
+      {required this.item,
+        required this.iconButtonBottomRight,
+        required this.iconButtonTopRight});
 
   @override
   Widget build(BuildContext context) {
@@ -142,11 +146,8 @@ class UserDeckTile extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  DeckPopupMenu(
-                    deckItem: item,
-                    icon: const Iconify(Carbon.settings_adjust),
-                  ),
-                  LoveDeckButton(deckItem: item)
+                  iconButtonTopRight,
+                  iconButtonBottomRight,
                 ],
               ),
             ),
@@ -159,8 +160,13 @@ class UserDeckTile extends StatelessWidget {
 
 class PublicDeckTile extends StatelessWidget {
   final DeckWithReviewCards item;
+  final Widget iconButtonTopRight;
+  final Widget iconButtonBottomRight;
 
-  PublicDeckTile({required this.item});
+  PublicDeckTile(
+      {required this.item,
+        required this.iconButtonBottomRight,
+        required this.iconButtonTopRight});
 
   @override
   Widget build(BuildContext context) {
@@ -334,13 +340,7 @@ class PublicDeckTile extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  DeckPopupMenu(
-                    deckItem: item,
-                    icon: const Iconify(Carbon.settings_adjust),
-                  ),
-                  LoveDeckButton(deckItem: item)
-                ],
+                children: [iconButtonTopRight, iconButtonBottomRight],
               ),
             ),
           ],

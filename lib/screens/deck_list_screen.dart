@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:iconify_flutter/iconify_flutter.dart';
+import 'package:iconify_flutter/icons/carbon.dart';
 import 'package:iconify_flutter/icons/ri.dart';
 import 'package:vietime/custom_widgets/deck_list_info_bar.dart';
 import 'package:vietime/custom_widgets/deck_search.dart';
 
 import '../custom_widgets/deck_list_tile.dart';
+import '../custom_widgets/deck_popup_menu.dart';
+import '../custom_widgets/love_button.dart';
 import '../entity/deck.dart';
 
 class DeckListScreen extends StatelessWidget {
@@ -53,12 +56,20 @@ class DeckListScreen extends StatelessWidget {
                   DeckWithReviewCards item = decksList[index];
                   if (item.deck.isPublic) {
                     return PublicDeckTile(
-                      item: item,
-                    );
+                        item: item,
+                        iconButtonTopRight: DeckPopupMenu(
+                          deckItem: item,
+                          icon: const Iconify(Carbon.settings_adjust),
+                        ),
+                        iconButtonBottomRight: LoveDeckButton(deckItem: item));
                   } else {
                     return UserDeckTile(
-                      item: item,
-                    );
+                        item: item,
+                        iconButtonTopRight: DeckPopupMenu(
+                          deckItem: item,
+                          icon: const Iconify(Carbon.settings_adjust),
+                        ),
+                        iconButtonBottomRight: LoveDeckButton(deckItem: item));
                   }
                 }),
           ],

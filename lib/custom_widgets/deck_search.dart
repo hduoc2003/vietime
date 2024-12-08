@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:iconify_flutter/iconify_flutter.dart';
+import 'package:iconify_flutter/icons/carbon.dart';
 import 'package:iconify_flutter/icons/ion.dart';
 import 'package:iconify_flutter/icons/ri.dart';
 import 'package:vietime/custom_widgets/deck_list_tile.dart';
@@ -12,6 +13,7 @@ import '../entity/deck.dart';
 import '../helpers/validate.dart';
 import '../screens/deck_screen.dart';
 import 'deck_list_info_bar.dart';
+import 'deck_popup_menu.dart';
 
 class DeckSearch extends SearchDelegate {
   final List<DeckWithReviewCards> data;
@@ -125,7 +127,8 @@ class DeckSearch extends SearchDelegate {
           suggestionList[index].deck.name,
           overflow: TextOverflow.ellipsis,
         ),
-        subtitle: suggestionList[index].deck.isPublic ? Row(
+        subtitle: suggestionList[index].deck.isPublic
+            ? Row(
           children: [
             Text(
               "Đánh giá: ",
@@ -167,13 +170,14 @@ class DeckSearch extends SearchDelegate {
               ),
             ),
           ],
-        ) : ThreeCardTypeNumbersRow(
+        )
+            : ThreeCardTypeNumbersRow(
           numBlueCards: suggestionList[index].numBlueCards,
           numRedCards: suggestionList[index].numRedCards,
           numGreenCards: suggestionList[index].numGreenCards,
           fontSize: 14,
           boxSize: 4,
-        ),
+              ),
         trailing: LoveDeckButton(
           deckItem: suggestionList[index],
         ),
@@ -250,12 +254,20 @@ class DeckSearch extends SearchDelegate {
               DeckWithReviewCards item = suggestionList[index];
               if (item.deck.isPublic) {
                 return PublicDeckTile(
-                  item: item,
-                );
+                    item: item,
+                    iconButtonTopRight: DeckPopupMenu(
+                      deckItem: item,
+                      icon: const Iconify(Carbon.settings_adjust),
+                    ),
+                    iconButtonBottomRight: LoveDeckButton(deckItem: item));
               } else {
                 return UserDeckTile(
-                  item: item,
-                );
+                    item: item,
+                    iconButtonTopRight: DeckPopupMenu(
+                      deckItem: item,
+                      icon: const Iconify(Carbon.settings_adjust),
+                    ),
+                    iconButtonBottomRight: LoveDeckButton(deckItem: item));
               }
             }),
       ],

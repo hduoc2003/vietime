@@ -12,7 +12,8 @@ import 'package:vietime/helpers/logging.dart';
 import 'package:vietime/screens/game_screen.dart';
 import 'package:vietime/screens/home/home_screen.dart';
 import 'package:vietime/screens/profile.dart';
-import 'package:vietime/screens/search.dart';
+import 'package:vietime/screens/search_screen.dart';
+import 'package:vietime/screens/study_screen.dart';
 import 'custom_widgets/custom_physics.dart';
 import 'custom_widgets/snackbar.dart';
 
@@ -131,7 +132,7 @@ class _MyAppState extends State<MyApp> {
                             controller: _pageController,
                             children: [
                               HomePage(),
-                              SearchPage(),
+                              SearchPage(allCards: mockQuestions, query: "",),
                               GamePage(),
                               ProfilePage(),
                             ],

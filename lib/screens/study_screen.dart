@@ -1,4 +1,3 @@
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:iconify_flutter/iconify_flutter.dart';
@@ -77,7 +76,22 @@ final mockQuestions = [
     sm2I: 3,
     cardType: 2,
   ),
-  // Add more mock questions as needed
+  Flashcard(
+    id: "5",
+    deckId: "2",
+    question: "Tại sao UNESCO công nhận Hoàng thành Thăng Long - Hà Nội là Di sản Văn hóa Thế giới UNESCO",
+    correctAnswer: "13 thế kỷ lịch sử văn hóa",
+    answers: ["Kiến trúc quân sự phương Tây.", "13 thế kỷ lịch sử văn hóa", "Cuộc chiến chống thuộc địa, tác động toàn cầu.", "Phát triển Phật giáo và Nho giáo"],
+    createdAt: DateTime.now(),
+    userId: "user2",
+    lastReview: DateTime.now(),
+    nextReview: DateTime.now(),
+    numReviews: 0,
+    sm2N: 1,
+    sm2EF: 2.5,
+    sm2I: 3,
+    cardType: 2,
+  ),
 ];
 
 //ignore: must_be_immutable

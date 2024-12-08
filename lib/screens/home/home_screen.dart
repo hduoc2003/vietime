@@ -6,12 +6,14 @@ import 'package:iconify_flutter/icons/ri.dart';
 import 'package:vietime/screens/deck_list_screen.dart';
 import 'package:vietime/screens/home/widgets/deck_horizontal_list.dart';
 import 'package:iconify_flutter/icons/carbon.dart';
-import 'package:iconify_flutter/icons/ri.dart';
+
 
 import 'notification_screen.dart';
 
 class HomePage extends StatefulWidget {
   static const title = 'Home';
+
+  const HomePage({super.key});
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -19,6 +21,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   bool isHeartIconClicked = false;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -45,7 +48,8 @@ class _HomePageState extends State<HomePage> {
     return Row(
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.only(left: 20.0, right: 20, bottom: 20, top: 15),
+          padding: const EdgeInsets.only(
+              left: 20.0, right: 20, bottom: 20, top: 15),
           child: Container(
             width: 60,
             height: 60,
@@ -144,7 +148,8 @@ class _HomePageState extends State<HomePage> {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => DeckListScreen(decksList: mockDecksList,)),
+                      MaterialPageRoute(builder: (context) =>
+                          DeckListScreen(decksList: mockDecksList,)),
                     );
                   },
                   child: Row(
@@ -214,7 +219,8 @@ class _HomePageState extends State<HomePage> {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => DeckListScreen(decksList: mockDecksList,)),
+                      MaterialPageRoute(builder: (context) =>
+                          DeckListScreen(decksList: mockDecksList,)),
                     );
                   },
                   child: Row(
@@ -252,7 +258,4 @@ class _HomePageState extends State<HomePage> {
           )
         ]);
   }
-}
-
-class _NotificationPageRoute {
 }
