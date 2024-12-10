@@ -12,6 +12,7 @@ import '../custom_widgets/animated_progress_bar.dart';
 import '../custom_widgets/deck_popup_menu.dart';
 import '../entity/deck.dart';
 import '../helpers/validate.dart';
+import '../services/mock_data.dart';
 
 class DeckScreen extends StatefulWidget {
   final DeckWithReviewCards deckData;

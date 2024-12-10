@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get_it/get_it.dart';
 import 'package:logging/logging.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
@@ -14,8 +15,12 @@ import 'package:vietime/screens/home/home_screen.dart';
 import 'package:vietime/screens/profile.dart';
 import 'package:vietime/screens/search_screen.dart';
 import 'package:vietime/screens/study_screen.dart';
+import 'package:vietime/services/api_handler.dart';
+import 'package:vietime/services/mock_data.dart';
 import 'custom_widgets/custom_physics.dart';
 import 'custom_widgets/snackbar.dart';
+
+final getIt = GetIt.instance;
 
 Future<void> main() async {
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
@@ -28,6 +33,13 @@ Future<void> main() async {
 
   await initLogging();
   runApp(MyApp());
+}
+
+Future<void> initAPIHandler() async {
+  final APIHanlder apiHanlder = APIHanlder();
+  await apiHanlder.initData();
+  apiHanlder.initNecessaryData();
+  getIt.registerSingleton<APIHanlder>(apiHanlder);
 }
 
 Future<void> openHiveBox(String boxName, {bool limit = false}) async {
