@@ -14,13 +14,13 @@ import 'package:vietime/screens/game_screen.dart';
 import 'package:vietime/screens/home/home_screen.dart';
 import 'package:vietime/screens/profile.dart';
 import 'package:vietime/screens/search_screen.dart';
-import 'package:vietime/screens/study_screen.dart';
+
 import 'package:vietime/services/api_handler.dart';
-import 'package:vietime/services/mock_data.dart';
+
 import 'custom_widgets/custom_physics.dart';
 import 'custom_widgets/snackbar.dart';
 
-final getIt = GetIt.instance;
+
 
 Future<void> main() async {
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
@@ -31,6 +31,7 @@ Future<void> main() async {
   await openHiveBox('settings');
   await openHiveBox('cache', limit: true);
 
+  await initAPIHandler();
   await initLogging();
   runApp(MyApp());
 }
@@ -39,7 +40,7 @@ Future<void> initAPIHandler() async {
   final APIHanlder apiHanlder = APIHanlder();
   await apiHanlder.initData();
   apiHanlder.initNecessaryData();
-  getIt.registerSingleton<APIHanlder>(apiHanlder);
+  GetIt.I.registerSingleton<APIHanlder>(apiHanlder);
 }
 
 Future<void> openHiveBox(String boxName, {bool limit = false}) async {
@@ -66,7 +67,7 @@ Future<void> openHiveBox(String boxName, {bool limit = false}) async {
 
 
 class MyApp extends StatefulWidget {
-  static final title = 'vietime';
+  static final title = 'VietCard';
 
   @override
   _MyAppState createState() => _MyAppState();
@@ -144,7 +145,9 @@ class _MyAppState extends State<MyApp> {
                             controller: _pageController,
                             children: [
                               HomePage(),
-                              SearchPage(allCards: mockQuestions, query: "",),
+                              SearchPage(
+                                query: "",
+                              ),
                               GamePage(),
                               ProfilePage(),
                             ],

@@ -6,7 +6,7 @@ import '../helpers/validate.dart';
 import 'animated_text.dart';
 class CardSearchTile extends StatelessWidget {
   final Card itemCard;
-  final Deck itemDeck;
+  final DeckWithReviewCards itemDeck;
   final Widget iconButtonTopRight;
   final Widget iconButtonBottomRight;
 
@@ -56,7 +56,7 @@ class CardSearchTile extends StatelessWidget {
                       child: SizedBox(
                         width: 75,
                         height: 75,
-                        child: validateURL(itemDeck.descriptionImgPath)
+                        child: validateURL(itemDeck.deck.descriptionImgPath)
                             ? CachedNetworkImage(
                           fit: BoxFit.cover,
                           errorWidget: (context, _, __) => const Image(
@@ -64,7 +64,7 @@ class CardSearchTile extends StatelessWidget {
                             image:
                             AssetImage('assets/deck_placeholder.png'),
                           ),
-                          imageUrl: itemDeck.descriptionImgPath,
+                          imageUrl: itemDeck.deck.descriptionImgPath,
                           placeholder: (context, url) => const Image(
                             fit: BoxFit.cover,
                             image:
@@ -88,7 +88,7 @@ class CardSearchTile extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           AnimatedText(
-                            text: "Thẻ #7 - ${itemDeck.name}",
+                            text: "Thẻ #7 - ${itemDeck.deck.name}",
                             pauseAfterRound: const Duration(seconds: 3),
                             showFadingOnlyWhenScrolling: false,
                             startAfter: const Duration(seconds: 3),

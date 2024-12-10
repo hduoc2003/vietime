@@ -1,14 +1,19 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:hive/hive.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:iconify_flutter/iconify_flutter.dart';
 import 'package:iconify_flutter/icons/ic.dart';
 import 'package:iconify_flutter/icons/mdi.dart';
 import 'package:logging/logging.dart';
 import 'package:vietime/custom_widgets/card_search_tile.dart';
 import 'package:vietime/custom_widgets/deck_list_tile.dart';
+import 'package:vietime/entity/deck.dart';
 import 'package:vietime/entity/search.dart';
-
+import 'package:vietime/services/api_handler.dart';
+import 'package:vietime/services/mock_data.dart';
+import '../custom_widgets/card_search_title.dart';
 import '../custom_widgets/empty_screen.dart';
 import '../custom_widgets/search_bar.dart';
 import '../entity/card.dart';
@@ -16,11 +21,11 @@ import '../entity/card.dart';
 class SearchPage extends StatefulWidget {
   final String query;
   final bool autofocus;
-  final List<Flashcard> allCards;
+
   const SearchPage({
     super.key,
     required this.query,
-    required this.allCards,
+
     this.autofocus = false,
   });
   @override
@@ -34,10 +39,12 @@ class _SearchPageState extends State<SearchPage> {
   bool fetched = false;
   bool done = true;
 
-  List searchHistory =
-  Hive.box('settings').get('searchHistory', defaultValue: []) as List;
+  final ValueNotifier<List> searchHistory = ValueNotifier<List>(
+      Hive.box('settings').get('searchHistory', defaultValue: []) as List);
 
   final TextEditingController _controller = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
+  bool haveText = false;
 
   @override
   void initState() {
@@ -54,6 +61,13 @@ class _SearchPageState extends State<SearchPage> {
   Future<List<SearchResult>> getSearchResults(String query) async {
     Logger.root.info('Getting search results...');
     final List<SearchResult> results = [];
+    for (DeckWithReviewCards deck in mockDecksList) {
+      results.add(SearchResult(
+          deck.deck.isPublic
+              ? ResultType.publicDeckResult
+              : ResultType.userDeckResult,
+          deck));
+    }
     return results;
   }
 
@@ -79,31 +93,43 @@ class _SearchPageState extends State<SearchPage> {
       }
     }
     return SafeArea(
-        child: Column(
-        children: [
-        Expanded(
         child: Scaffold(
         resizeToAvoidBottomInset: false,
         backgroundColor: Colors.transparent,
         body: CustomSearchBar(
         controller: _controller,
-        autofocus: widget.autofocus,
+        haveText: haveText,
+        focusNode: _focusNode,
         hintText: "Tìm kiếm",
-        onQueryChanged: (changedQuery) {
-      return getSearchSuggestions(changedQuery);
+        onQueryCleared: () async {
+      setState(() {
+        haveText = false;
+        fetched = false;
+        query = '';
+        _controller.text = '';
+        status = false;
+        searchedList = [];
+      });
+    },
+    onQueryChanged: (changedQuery) {
+    return getSearchSuggestions(changedQuery);
     },
     onSubmitted: (submittedQuery) async {
     setState(() {
     fetched = false;
+    haveText = true;
+    _focusNode.unfocus();
     query = submittedQuery;
     _controller.text = submittedQuery;
     _controller.selection = TextSelection.fromPosition(
     TextPosition(
     offset: query.length,
-                      ),
-                      );
-                      status = false;
-                      searchedList = [];
+    ),
+    );
+    status = false;
+    searchedList = [];
+    searchHistory.value = Hive.box('settings')
+        .get('searchHistory', defaultValue: []) as List;
     });
     },
     body: Column(
@@ -122,16 +148,19 @@ class _SearchPageState extends State<SearchPage> {
         : (query.isEmpty && widget.query.isEmpty)
     ? SingleChildScrollView(
     padding: const EdgeInsets.symmetric(
-    horizontal: 15,
+    horizontal: 10,
     ),
     physics: const BouncingScrollPhysics(),
-    child: Column(
+    child: ValueListenableBuilder<List>(
+    valueListenable: searchHistory,
+    builder: (context, _searchHistory, widget) {
+    return Column(
     children: [
     Align(
     alignment: Alignment.topLeft,
     child: Wrap(
     children: List<Widget>.generate(
-    searchHistory.length,
+    _searchHistory.length,
     (int index) {
     return Padding(
     padding:
@@ -141,7 +170,7 @@ class _SearchPageState extends State<SearchPage> {
     child: GestureDetector(
     child: Chip(
     label: Text(
-    searchHistory[index]
+    _searchHistory[index]
         .toString(),
     ),
     labelStyle: TextStyle(
@@ -154,7 +183,7 @@ class _SearchPageState extends State<SearchPage> {
     ),
     onDeleted: () {
     setState(() {
-    searchHistory
+    _searchHistory
         .removeAt(index);
     Hive.box('settings')
         .put(
@@ -167,15 +196,17 @@ class _SearchPageState extends State<SearchPage> {
     onTap: () {
     setState(
     () {
+      haveText = true;
+      _focusNode.unfocus();
+    }
     fetched = false;
-    query =
-    searchHistory[index]
+    query = _searchHistory[index]
         .toString()
         .trim();
     _controller.text =
     query;
     status = false;
-    fetched = false;
+
     },
     );
     },
@@ -187,144 +218,156 @@ class _SearchPageState extends State<SearchPage> {
                                         ),
                                       ),
                                     ],
+    );
+  }),
+  )
+      : searchedList.isEmpty
+  ? emptyScreen(
+  context,
+  0,
+  ':( ',
+  100,
+  "Xin lỗi",
+  60,
+  "Không tìm thấy kết quả nào",
+  20,
+  )
+      : Stack(
+  children: [
+  SingleChildScrollView(
+  padding: const EdgeInsets.only(
+  left: 2,
+  right: 2,
+  ),
+  physics: const BouncingScrollPhysics(),
+  child: ListView.builder(
+  physics:
+  const NeverScrollableScrollPhysics(),
+  shrinkWrap: true,
+  itemCount: searchedList.length,
+  itemBuilder: (context, idx) {
+  final itemType = searchedList[idx].type;
+  final APIHanlder apiHandler =
+  GetIt.I<APIHanlder>();
+  if (itemType ==
+  ResultType.userDeckResult) {
+  return UserDeckTile(
+  item: searchedList[idx].data,
+  iconButtonTopRight:
+  const IconButton(
+  icon: Iconify(
+  Mdi.cards_playing_club_multiple,
+  color: Colors.orange,
+  ),
+  tooltip: 'Thể loại: Bộ thẻ',
+  onPressed: null),
+  iconButtonBottomRight:
+  const IconButton(
+  icon: Iconify(
+  Ic.baseline_lock_person,
+  color: Colors.grey),
+  tooltip: 'Không công khai',
+  onPressed: null),
+  );
+  } else if (itemType ==
+  ResultType.publicDeckResult) {
+  return PublicDeckTile(
+  item: searchedList[idx].data,
+  iconButtonTopRight: const IconButton(
+  icon: Iconify(
+  Mdi.cards_playing_club_multiple,
+  color: Colors.orange),
+  tooltip: 'Thể loại: Bộ thẻ',
+  onPressed: null),
+  iconButtonBottomRight:
+  const IconButton(
+  icon: Iconify(
+  Ic.baseline_public,
+  color: Colors.blue),
+  tooltip: 'Công khai',
+  onPressed: null),
+  );
+  } else {
+  return CardSearchTile(
+  itemCard: searchedList[idx].data,
+  itemDeck: apiHandler
+      .idToDeckWithReviewCards[
+  (searchedList[idx].data
+  as Flashcard)
+      .deckId]!,
+  iconButtonTopRight:
+  const IconButton(
+  icon: Iconify(
+  Mdi.cards_playing_club,
+  color: Colors.red),
+  tooltip: 'Thể loại: Thẻ',
+  onPressed: null),
+  iconButtonBottomRight: (apiHandler
+      .idToDeckWithReviewCards[
+  (searchedList[idx].data
+  as Flashcard)
+      .deckId]!
+      .deck
+      .isPublic
+  ? const IconButton(
+  icon: Iconify(
+  Ic.baseline_public,
+  color: Colors.blue),
+  tooltip: 'Công khai',
+  onPressed: null)
+      : const IconButton(
+  icon: Iconify(
+  Ic.baseline_lock_person,
+  color: Colors.grey),
+  tooltip: 'Không công khai',
+  onPressed: null)),
+  );
+  }
+  },
+  ),
                                   ),
-    )
-        : searchedList.isEmpty
-    ? emptyScreen(
-    context,
-    0,
-    ':( ',
-    100,
-    "Xin lỗi",
-    60,
-    "Không tìm thấy kết quả nào",
-    20,
-    )
-        : Stack(
-
-                                      children: [
-    SingleChildScrollView(
-    padding: const EdgeInsets.only(
-    left: 10,
-    right: 10,
+  if (!done)
+  Center(
+  child: SizedBox.square(
+  dimension: circleProgressSize,
+  child: Card(
+  elevation: 10,
+  shape: RoundedRectangleBorder(
+  borderRadius: BorderRadius.circular(
+  15,
+  ),
                                           ),
-    physics:
-    const BouncingScrollPhysics(),
-    child: ListView.builder(
-    physics:
-    const NeverScrollableScrollPhysics(),
-    shrinkWrap: true,
-      itemCount: searchedList.length,
-    itemBuilder: (context, idx) {
-    final itemType =
-    searchedList[idx].type;
-    if (itemType ==
-        ResultType.userDeckResult) {
-      return UserDeckTile(
-        item: searchedList[idx].data,
-        iconButtonTopRight:
-        const IconButton(
-            icon: Iconify(Mdi
-                .cards_playing_club_multiple),
-            tooltip:
-            'Thể loại: Bộ thẻ',
-            onPressed: null),
-        iconButtonBottomRight:
-        const IconButton(
-            icon: Iconify(Ic
-                .baseline_lock_person),
-            tooltip:
-            'Không công khai',
-            onPressed: null),
-      );
-    } else if (itemType ==
-        ResultType.publicDeckResult) {
-      return PublicDeckTile(
-        item: searchedList[idx].data,
-        iconButtonTopRight:
-        const IconButton(
-            icon: Iconify(Mdi
-                .cards_playing_club_multiple),
-            tooltip:
-            'Thể loại: Bộ thẻ',
-            onPressed: null),
-        iconButtonBottomRight:
-        const IconButton(
-            icon: Iconify(Ic
-                .baseline_public),
-            tooltip: 'Công khai',
-            onPressed: null),
-      );
-    } else {
-      return CardSearchTile(
-        itemCard: searchedList[idx].data,
-        itemDeck: searchedList[idx].data,
-        iconButtonTopRight:
-        const IconButton(
-            icon: Iconify(Mdi
-                .cards_playing_club),
-            tooltip:
-            'Thể loại: Thẻ',
-            onPressed: null),
-        iconButtonBottomRight:
-        const IconButton(
-            icon: Iconify(Ic
-                .baseline_lock_person),
-            tooltip:
-            'Không công khai',
-            onPressed: null),
-      );
-    }
-    },
-                                          ),
-                                        ),
-            if (!done)
-      Center(
-    child: SizedBox.square(
-    dimension: circleProgressSize,
-      child: Card(
-        elevation: 10,
-        shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                  BorderRadius.circular(
-                                                    15,
+  clipBehavior: Clip.antiAlias,
+  child: Center(
+  child: Column(
+  mainAxisAlignment:
+  MainAxisAlignment.spaceEvenly,
+  children: [
+  CircularProgressIndicator(
+  valueColor:
+  AlwaysStoppedAnimation<
+  Color>(
+  Theme.of(context)
+      .colorScheme
+      .secondary,
                                                   ),
+  strokeWidth: 5,
                                                 ),
-        clipBehavior: Clip.antiAlias,
-        child: Center(
-          child: Column(
-            mainAxisAlignment:
-            MainAxisAlignment
-                .spaceEvenly,
-            children: [
-              CircularProgressIndicator(
-                valueColor:
-                AlwaysStoppedAnimation<
-                    Color>(
-                  Theme.of(context)
-                      .colorScheme
-                      .secondary,
-                ),
-                strokeWidth: 5,
-              ),
-              Text(
-                "Đang xử lý tìm kiếm",
+  Text(
+  "Đang xử lý tìm kiếm",
+                                                ),
+                                              ],
+                                            ),
+  ),
+  ),
+  ),
+  )
+  ],
+  ),
               ),
             ],
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-      )
-                                      ],
-                                    ),
     ),
-    ],
-                ),
               ),
-            ),
-    ),
-        ],
       ),
     );
   }
