@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:diacritic/diacritic.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive/hive.dart';
@@ -18,6 +19,7 @@ import 'package:vietime/services/mock_data.dart';
 import '../custom_widgets/empty_screen.dart';
 import '../custom_widgets/search_bar.dart';
 import '../entity/card.dart';
+import '../helpers/string.dart';
 
 class SearchPage extends StatefulWidget {
   final String query;
@@ -41,7 +43,9 @@ class _SearchPageState extends State<SearchPage> {
   bool done = true;
 
   final ValueNotifier<List<String>> searchHistory = ValueNotifier<List<String>>(
-      Hive.box('settings').get('searchHistory', defaultValue: []) .cast<String>());
+      Hive.box('settings')
+          .get('searchHistory', defaultValue: []).cast<String>());
+  final ValueNotifier<bool> changeFilter = ValueNotifier<bool>(false);
 
   final TextEditingController _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
@@ -64,17 +68,99 @@ class _SearchPageState extends State<SearchPage> {
 
   Future<List<SearchResult>> getSearchResults(String query) async {
     Logger.root.info('Getting search results...');
+    final List<DeckWithReviewCards> decksList = mockDecksList;
+    final List<Flashcard> cardsList = mockQuestions;
     final List<SearchResult> results = [];
-    for (DeckWithReviewCards deck in mockDecksList) {
+    List<String> queryWords =
+    removeDiacritics(query.toLowerCase()).split(RegExp(r'\s+'));
+    for (DeckWithReviewCards d in decksList) {
+      String rawName = removeDiacritics(d.deck.name.toString().toLowerCase());
+      String rawDes =
+      removeDiacritics(d.deck.description.toString().toLowerCase());
+      int score = 2 * countMatchWords(rawName, queryWords) +
+          countMatchWords(rawDes, queryWords);
+      if (score == 0) {
+        continue;
+      }
       results.add(SearchResult(
-          deck.deck.isPublic
+          d.deck.isPublic
               ? ResultType.publicDeckResult
               : ResultType.userDeckResult,
-          deck));
+          score,
+          d));
     }
-    for (FlashcardSearch f in mockCardSearches) {
-      results.add(SearchResult(ResultType.cardResult, f));
+    for (Flashcard f in cardsList) {
+      String rawContent = "${f.question} ${f.answers.join(" ")}";
+      String content =
+      removePunctuation(removeDiacritics(rawContent.toLowerCase()));
+      int score = countMatchWords(content, queryWords);
+      Logger.root.info(content);
+      Logger.root.info(score);
+      if (score == 0) {
+        continue;
+      }
+      Logger.root.info("OK");
+      List<TextSpan> bestTextSpans = [];
+      List<String> rawWords = rawContent.split(' ');
+      List<String> words = content.split(' ');
+      if (words.length != rawWords.length) {
+        Logger.root.severe(
+            "Raw words length != words length! Something wrong about punctuations");
+      }
+      int maxSegScore = 0;
+      for (int st = 0; st < words.length; ++st) {
+        int segScore = 0;
+        List<TextSpan> textSpans = [];
+        textSpans.add(
+          const TextSpan(
+            text: "...",
+          ),
+        );
+        for (int i = st; i < words.length; ++i) {
+          String word = words[i];
+          int cnt = countMatchWords(word, queryWords);
+          int boldness = 0;
+          if (cnt > 0) {
+            boldness = 1;
+            for (String q in queryWords) {
+              if (word == q) {
+                boldness = 2;
+                break;
+              }
+            }
+          }
+          textSpans.add(TextSpan(
+              text: "${rawWords[i]} ",
+              style: TextStyle(
+                fontWeight: (boldness == 2
+                    ? FontWeight.w900
+                    : (boldness == 1 ? FontWeight.w600 : FontWeight.normal)),
+              )));
+          segScore += boldness;
+        }
+        if (maxSegScore < segScore) {
+          maxSegScore = segScore;
+          bestTextSpans = textSpans;
+        }
+        if (st + 20 >= words.length) {
+          break;
+        }
+      }
+      results.add(SearchResult(
+          ResultType.cardResult,
+          score,
+          FlashcardSearch(
+              f,
+              RichText(
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+                text: TextSpan(
+                  style: const TextStyle(color: Colors.black),
+                  children: bestTextSpans,
+                ),
+              ))));
     }
+    results.sort((a, b) => b.score.compareTo(a.score));
     return results;
   }
 
@@ -140,7 +226,8 @@ class _SearchPageState extends State<SearchPage> {
     );
     status = false;
     searchedList = [];
-    searchHistory.value = Hive.box('settings').get('searchHistory', defaultValue: []).cast<String>();
+    searchHistory.value = Hive.box('settings')
+        .get('searchHistory', defaultValue: []).cast<String>();
     });
     },
     body: Column(
@@ -159,10 +246,10 @@ class _SearchPageState extends State<SearchPage> {
         : (query.isEmpty && widget.query.isEmpty)
     ? SingleChildScrollView(
     padding: const EdgeInsets.symmetric(
-    horizontal: 15, vertical: 10,
+        horizontal: 15, vertical: 10),
     ),
     physics: const BouncingScrollPhysics(),
-    child: ValueListenableBuilder<List>(
+    child: ValueListenableBuilder<List<String>>(
     valueListenable: searchHistory,
     builder: (context, searchHistories, widget) {
     return Column(
@@ -246,8 +333,8 @@ class _SearchPageState extends State<SearchPage> {
     Column(
     children: [
     Padding(
-    padding:
-        const EdgeInsets.only(left: 4.0, top: 5, bottom: 5),
+    padding: const EdgeInsets.only(
+    left: 4.0, top: 5, bottom: 5),
       child: SearchInfoBar(
           numberOfResults:
           searchedList.length,
@@ -260,6 +347,7 @@ class _SearchPageState extends State<SearchPage> {
                   (bool newUserDeckFilter,
                   bool newPublicDeckFilter,
                   bool newCardFilter) {
+    changeFilter.value ^= true;
                 userDeckFilter =
                     newUserDeckFilter;
                 publicDeckFilter =
@@ -283,130 +371,156 @@ class _SearchPageState extends State<SearchPage> {
                 child: Padding(
                   padding:
                   const EdgeInsets.only(top: 8.0),
-                  child: ListView.builder(
-                    physics:
-                    const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: searchedList.length,
-                    itemBuilder: (context, idx) {
-                      final itemType =
-                          searchedList[idx].type;
-                      final APIHanlder apiHandler =
-                      GetIt.I<APIHanlder>();
-                      if (itemType ==
-                          ResultType.userDeckResult) {
-                        return UserDeckTile(
-                          item:
-                          searchedList[idx].data,
-                          iconButtonTopRight:
-                          const IconButton(
-                              icon: Iconify(
-                                Mdi.cards_playing_club_multiple,
-                                color:
-                                Colors.orange,
-                              ),
-                              tooltip:
-                              'Thể loại: Bộ thẻ',
-                              onPressed: null),
-                          iconButtonBottomRight:
-                          const IconButton(
-                              icon: Iconify(
-                                  Ic
-                                      .baseline_lock_person,
-                                  color: Colors
-                                      .grey),
-                              tooltip:
-                              'Không công khai',
-                              onPressed: null),
-                        );
-                      } else if (itemType ==
-                          ResultType
-                              .publicDeckResult) {
-                        return PublicDeckTile(
-                          item:
-                          searchedList[idx].data,
-                          iconButtonTopRight:
-                          const IconButton(
-                              icon: Iconify(
-                                  Mdi
-                                      .cards_playing_club_multiple,
-                                  color: Colors
-                                      .orange),
-                              tooltip:
-                              'Thể loại: Bộ thẻ',
-                              onPressed: null),
-                          iconButtonBottomRight:
-                          const IconButton(
-                              icon: Iconify(
-                                  Ic
-                                      .baseline_public,
-                                  color: Colors
-                                      .blue),
-                              tooltip:
-                              'Công khai',
-                              onPressed: null),
-                        );
-                      } else {
-                        return CardSearchTile(
-                            itemCard: (searchedList[idx]
-                                .data
-                            as FlashcardSearch)
-                                .card,
-                            itemDeck: apiHandler
-                                .idToDeckWithReviewCards[
-  (searchedList[idx].data
-  as FlashcardSearch)
-      .card
-      .deckId]!,
-                          foundTextWidget:
-                          (searchedList[idx].data
-                          as FlashcardSearch)
-                              .searchSentence,
-                          iconButtonTopRight:
-                          const IconButton(
-                              icon: Iconify(
-                                  Mdi
-                                      .cards_playing_club,
-                                  color:
-                                  Colors.red),
-                              tooltip:
-                              'Thể loại: Thẻ',
-                              onPressed: null),
-                          iconButtonBottomRight: (apiHandler
-                              .idToDeckWithReviewCards[
-                          (searchedList[idx].data
+    child: ValueListenableBuilder(
+    valueListenable: changeFilter,
+    builder: (
+    BuildContext context,
+    bool hidden,
+    Widget? child,
+    ) {
+    return ListView.builder(
+    physics:
+    const NeverScrollableScrollPhysics(),
+    shrinkWrap: true,
+    itemCount:
+    searchedList.length,
+    itemBuilder:
+    (context, idx) {
+    final itemType =
+    searchedList[idx]
+        .type;
+    final APIHanlder
+    apiHandler =
+    GetIt.I<APIHanlder>();
+    if (itemType ==
+    ResultType
+        .userDeckResult) {
+    return !userDeckFilter
+    ? const SizedBox()
+        : UserDeckTile(
+    item:
+    searchedList[
+    idx]
+        .data,
+    iconButtonTopRight:
+    const IconButton(
+    icon:
+    Iconify(
+    Mdi.cards_playing_club_multiple,
+    color:
+    Colors.orange,
+    ),
+    tooltip:
+    'Thể loại: Bộ thẻ',
+    onPressed:
+    null),
+    iconButtonBottomRight: const IconButton(
+    icon: Iconify(
+    Ic
+        .baseline_lock_person,
+    color: Colors
+        .grey),
+    tooltip:
+    'Không công khai',
+    onPressed:
+    null),
+    );
+    } else if (itemType ==
+    ResultType
+        .publicDeckResult) {
+    return !publicDeckFilter
+    ? const SizedBox()
+        : PublicDeckTile(
+    item:
+    searchedList[
+    idx]
+        .data,
+    iconButtonTopRight: const IconButton(
+    icon: Iconify(
+    Mdi
+        .cards_playing_club_multiple,
+    color: Colors
+        .orange),
+    tooltip:
+    'Thể loại: Bộ thẻ',
+    onPressed:
+    null),
+    iconButtonBottomRight: const IconButton(
+    icon: Iconify(
+    Ic
+        .baseline_public,
+    color: Colors
+        .blue),
+    tooltip:
+    'Công khai',
+    onPressed:
+    null),
+    );
+    } else {
+    return !cardFilter
+    ? const SizedBox()
+        : CardSearchTile(
+    itemCard: (searchedList[idx]
+        .data
+    as FlashcardSearch)
+        .card,
+    itemDeck: apiHandler
+        .idToDeckWithReviewCards[(searchedList[idx]
+        .data
                           as FlashcardSearch)
                               .card
-                              .deckId]!
-                              .deck
-                              .isPublic
-                              ? const IconButton(
-                              icon: Iconify(
-                                  Ic
-                                      .baseline_public,
-                                  color: Colors
-                                      .blue),
-                              tooltip:
-                              'Công khai',
-                              onPressed: null)
-                              : const IconButton(
-                              icon: Iconify(
-                                  Ic
-                                      .baseline_lock_person,
-                                  color: Colors
-                                      .grey),
-                              tooltip:
-                              'Không công khai',
-                              onPressed: null)),
+        .deckId]!,
+    foundTextWidget:
+    (searchedList[idx].data
+    as FlashcardSearch)
+        .searchSentence,
+    iconButtonTopRight: const IconButton(
+    icon: Iconify(
+    Mdi
+        .cards_playing_club,
+    color: Colors
+        .red),
+    tooltip:
+    'Thể loại: Thẻ',
+    onPressed:
+    null),
+    iconButtonBottomRight: (apiHandler
+        .idToDeckWithReviewCards[(searchedList[idx].data
+    as FlashcardSearch)
+        .card
+        .deckId]!
+        .deck
+        .isPublic
+    ? const IconButton(
+    icon: Iconify(
+    Ic
+        .baseline_public,
+    color: Colors
+        .blue),
+    tooltip:
+    'Công khai',
+    onPressed:
+    null)
+        : const IconButton(
+    icon: Iconify(
+    Ic
+        .baseline_lock_person,
+    color: Colors
+        .grey),
+    tooltip:
+    'Không công khai',
+    onPressed:
+    null)),
+    );
+    }
+    },
                         );
-                      }
-                    },
-                  ),
-                ),
-            ),
-          ),
+    }),
+    ),
+    ),
+    ),
     ],
-                                  ),
+    ),
   if (!done)
   Center(
   child: SizedBox.square(

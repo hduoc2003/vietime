@@ -48,6 +48,8 @@ dependencies:
   hive: ^2.2.3
   get_it: ^7.6.4
 google_search_suggestions: ^1.0.0
+diacritic: ^0.1.4
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

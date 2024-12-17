@@ -9,9 +9,10 @@ enum ResultType {
 
 class SearchResult {
   final ResultType type;
+  final int score;
   final dynamic data;
 
-  SearchResult(this.type, this.data);
+  SearchResult(this.type, this.score, this.data);
 }
 
 class FlashcardSearch {
