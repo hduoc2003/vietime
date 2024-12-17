@@ -7,7 +7,7 @@ import 'package:logging/logging.dart';
 
 class CustomSearchBar extends StatefulWidget {
   final Widget body;
-  final bool focus;
+
   final bool haveText;
   final Widget? leading;
   final String? hintText;
@@ -20,7 +20,7 @@ class CustomSearchBar extends StatefulWidget {
     super.key,
     this.leading,
     this.hintText,
-    this.focus = false,
+
     this.haveText = false,
     this.onQueryChanged,
     required this.onQueryCleared,
@@ -38,7 +38,8 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
   String tempQuery = '';
   String query = '';
 
-  final ValueNotifier<List> suggestionsList = ValueNotifier<List>([]);
+  final ValueNotifier<List<String>> suggestionsList =
+  ValueNotifier<List<String>>([]);
 
   @override
   void initState() {
@@ -74,11 +75,12 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
                 child: ColoredBox(
                   color: Colors.grey[200]!,
                   child: SizedBox(
-                    height: 46.0,
+                    height: 55.0,
                     child: Padding(
                       padding: const EdgeInsets.only(left: 16),
                       child: Center(
                         child: TextField(
+                          style: TextStyle(fontSize: 18),
                           focusNode: widget.focusNode,
                           controller: widget.controller,
                           textAlignVertical: TextAlignVertical.center,
@@ -103,7 +105,8 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
         child: IconButton(
           icon: const Icon(Icons.close_rounded),
           onPressed: () {
-            FocusScope.of(context).requestFocus(widget.focusNode);
+            FocusScope.of(context)
+                .requestFocus(widget.focusNode);
             widget.controller.text = '';
             suggestionsList.value = [];
             query = '';
@@ -130,7 +133,7 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
                             }
     Future.delayed(
     const Duration(
-    milliseconds: 600,
+    milliseconds: 400,
     ),
     () async {
     if (tempQuery == val &&
@@ -139,7 +142,7 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
     query = tempQuery;
     suggestionsList.value =
     await widget.onQueryChanged!(tempQuery)
-    as List;
+    as List<String>;
     }
     },
     );
@@ -147,9 +150,9 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
     onSubmitted: (submittedQuery) {
     query = submittedQuery;
     if (submittedQuery.trim() != '') {
-    List searchQueries = Hive.box('settings')
-        .get('searchHistory', defaultValue: [])
-    as List;
+    List<String> searchQueries = Hive.box('settings')
+        .get('searchHistory',
+    defaultValue: []).cast<String>();
     if (searchQueries.contains(query)) {
     searchQueries.remove(query);
     }
@@ -169,61 +172,45 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
                 ),
               ),
             ),
-            ValueListenableBuilder(
-              valueListenable: hide,
-            BuildContext context,
-            bool hidden,
-    Widget? child,
-    ) {
-                return Visibility(
-                  visible: !hidden,
-                  child: ValueListenableBuilder(
-                    valueListenable: suggestionsList,
-                    builder: (
+    Visibility(
+    visible: widget.focusNode.hasFocus,
+    child: ValueListenableBuilder(
+    valueListenable: suggestionsList,
+    builder: (
     BuildContext context,
     List suggestedList,
     Widget? child,
     ) {
-                      return suggestedList.isEmpty
-                          ? const SizedBox()
-                          : Card(
+    return suggestedList.isEmpty
+    ? const SizedBox()
+        : Card(
+    color: Colors.grey[100],
+    surfaceTintColor: Colors.grey[200],
     margin: const EdgeInsets.symmetric(
     horizontal: 18.0,
     ),
     shape: RoundedRectangleBorder(
     borderRadius: BorderRadius.circular(
     10.0,
-                                ),
     ),
-    elevation: 8.0,
+    ),
+    elevation: 5.0,
     child: SizedBox(
     height: min(
-    MediaQuery.of(context).size.height / 1.75,
-    70.0 * suggestedList.length,
+    MediaQuery.of(context).size.height / 2,
+    50.0 * suggestedList.length,
     ),
     child: ListView.builder(
     physics: const BouncingScrollPhysics(),
     padding: const EdgeInsets.only(
-    top: 10,
+    top: 0,
     bottom: 10,
     ),
-    shrinkWrap: true,
-    itemExtent: 70.0,
-    itemCount: suggestedList.length,
-    itemBuilder: (context, index) {
-    return ListTile(
-    leading:
-    const Icon(CupertinoIcons.search),
-    title: Text(
-    suggestedList[index].toString(),
-    overflow: TextOverflow.ellipsis,
-    ),
     onTap: () {
-    List searchQueries =
+    List<String> searchQueries =
     Hive.box('settings').get(
     'searchHistory',
-    defaultValue: [],
-    ) as List;
+    defaultValue: []).cast<String>();
     if (searchQueries.contains(
     suggestedList[index].toString(),
     )) {
@@ -239,25 +226,23 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
     searchQueries =
     searchQueries.sublist(0, 15);
     }
-    Hive.box('settings').put(
-    'searchHistory', searchQueries);
+    Hive.box('settings')
+        .put('searchHistory', searchQueries);
     widget.onSubmitted(
     suggestedList[index].toString(),
-    );
-    },
                                     );
     },
+    );
+    },
     ),
     ),
     );
-                    },
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
-      ],
-    );
-  }
+  },
+  ),
+  ),
+  ],
+  ),
+  ],
+  );
+}
 }

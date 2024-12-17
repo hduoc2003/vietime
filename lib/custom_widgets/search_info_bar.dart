@@ -21,12 +21,12 @@ class SearchInfoBar extends StatelessWidget {
             children: [
               Text(
                 '$numberOfResults',
-                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 17.0, fontWeight: FontWeight.bold),
               ),
               SizedBox(width: 6.0),
               Text(
                 'kết quả',
-                style: TextStyle(fontSize: 16.0),
+                style: TextStyle(fontSize: 17.0),
               ),
             ],
           ),
@@ -40,11 +40,11 @@ class SearchInfoBar extends StatelessWidget {
                   'Lọc',
                   style: TextStyle(
                     color: Colors.black,
-                    fontSize: 16,
+                    fontSize: 17,
                   ),
                 ),
-                SizedBox(width: 8,),
-                Icon(Icons.filter_list, color: Colors.black),
+                SizedBox(width: 10,),
+                Icon(Icons.filter_list, color: Colors.black, size: 30),
               ],
             ),
           )

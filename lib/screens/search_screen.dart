@@ -40,8 +40,8 @@ class _SearchPageState extends State<SearchPage> {
   bool fetched = false;
   bool done = true;
 
-  final ValueNotifier<List> searchHistory = ValueNotifier<List>(
-      Hive.box('settings').get('searchHistory', defaultValue: []) as List);
+  final ValueNotifier<List<String>> searchHistory = ValueNotifier<List<String>>(
+      Hive.box('settings').get('searchHistory', defaultValue: []) .cast<String>());
 
   final TextEditingController _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
@@ -79,7 +79,12 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Future<List<String>> getSearchSuggestions(String query) async {
-    final List<String> results = [];
+    if (query == '') {
+      return [];
+    }
+    final List<String> results = await GetIt.I<APIHanlder>()
+        .googleSearchSuggestions
+        .fetchSuggestions(query);
     return results;
   }
 
@@ -135,15 +140,14 @@ class _SearchPageState extends State<SearchPage> {
     );
     status = false;
     searchedList = [];
-    searchHistory.value = Hive.box('settings')
-        .get('searchHistory', defaultValue: []) as List;
+    searchHistory.value = Hive.box('settings').get('searchHistory', defaultValue: []).cast<String>();
     });
     },
     body: Column(
     children: [
     const Padding(
     padding: EdgeInsets.only(
-    top: 58,
+    top: 65,
     left: 20,
     ),
     ),
@@ -155,7 +159,7 @@ class _SearchPageState extends State<SearchPage> {
         : (query.isEmpty && widget.query.isEmpty)
     ? SingleChildScrollView(
     padding: const EdgeInsets.symmetric(
-    horizontal: 10,
+    horizontal: 15, vertical: 10,
     ),
     physics: const BouncingScrollPhysics(),
     child: ValueListenableBuilder<List>(
@@ -195,7 +199,7 @@ class _SearchPageState extends State<SearchPage> {
     Hive.box('settings')
         .put(
     'searchHistory',
-    searchHistory,
+        searchHistories
     );
     });
     },
@@ -243,7 +247,7 @@ class _SearchPageState extends State<SearchPage> {
     children: [
     Padding(
     padding:
-        const EdgeInsets.only(left: 4.0),
+        const EdgeInsets.only(left: 4.0, top: 5, bottom: 5),
       child: SearchInfoBar(
           numberOfResults:
           searchedList.length,

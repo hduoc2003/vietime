@@ -82,15 +82,15 @@ class _FilterDialogState extends State<FilterDialog> {
         ],
       ),
       insetPadding: EdgeInsets.symmetric(horizontal: 20),
-      actionsPadding: EdgeInsets.only(left: 10, right: 30, bottom: 10),
-      contentPadding: EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 5),
+      actionsPadding: EdgeInsets.only(left: 5, right: 15, bottom: 10),
+      contentPadding: EdgeInsets.only(left: 10, right: 10, top: 20, bottom: 5),
       actions: [
         TextButton(
           onPressed: () {
             Navigator.of(context).pop();
           },
           child: Text(
-            'Cancel',
+            'HỦY',
             style: TextStyle(
                 fontSize: 16, color: Colors.red, fontWeight: FontWeight.bold),
           ),
@@ -103,7 +103,7 @@ class _FilterDialogState extends State<FilterDialog> {
             Navigator.of(context).pop();
           },
           child: Text(
-            'Accept',
+            'CHẤP NHẬN',
             style: TextStyle(
                 fontSize: 16, color: Colors.blue, fontWeight: FontWeight.bold),
           ),

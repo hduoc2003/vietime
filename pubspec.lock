@@ -163,6 +163,14 @@ packages:
         url: "https://pub.dev"
       source: hosted
       version: "7.6.4"
+      google_search_suggestions:
+        dependency: "direct main"
+        description:
+          name: google_search_suggestions
+          sha256: "06b2ada11bb510891cb511fee3666ab06fbc514cce5026233afa8df4615f962e"
+          url: "https://pub.dev"
+        source: hosted
+        version: "1.0.0"
   hive:
     dependency: "direct main"
     description:
@@ -183,10 +191,10 @@ packages:
     dependency: transitive
     description:
       name: http
-      sha256: "759d1a329847dd0f39226c688d3e06a6b8679668e350e2891a6474f8b4bb8525"
+      sha256: "5895291c13fa8a3bd82e76d5627f69e0d85ca6a30dcac95c4ea19a5d555879c2"
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.0"
+    version: "0.13.6"
   http_parser:
     dependency: transitive
     description:
@@ -535,7 +543,15 @@ packages:
       sha256: "5bc72e1e45e941d825fd7468b9b4cc3b9327942649aeb6fc5cdbf135f0a86e84"
       url: "https://pub.dev"
     source: hosted
-    version: "6.3.0"
+    version: "6.2.2"
+      xml2json:
+        dependency: transitive
+        description:
+          name: xml2json
+          sha256: c8cb35b83cce879c2ea86951fd257f4e765b0030a0298b35cf94f2b3d0f32095
+          url: "https://pub.dev"
+        source: hosted
+        version: "5.3.6"
 sdks:
   dart: ">=3.1.0-185.0.dev <4.0.0"
   flutter: ">=3.10.0"
