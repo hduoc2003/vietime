@@ -1,5 +1,8 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import '../entity/card.dart';
 import '../entity/deck.dart';
+import '../entity/search.dart';
 
 List<DeckWithReviewCards> mockDecksList = [
   // Mock DeckWithReviewCards 1
@@ -171,9 +174,15 @@ final mockQuestions = [
   Flashcard(
     id: "5",
     deckId: "2",
-    question: "Tại sao UNESCO công nhận Hoàng thành Thăng Long - Hà Nội là Di sản Văn hóa Thế giới UNESCO",
+    question:
+    "Tại sao UNESCO công nhận Hoàng thành Thăng Long - Hà Nội là Di sản Văn hóa Thế giới UNESCO",
     correctAnswer: "13 thế kỷ lịch sử văn hóa",
-    answers: ["Kiến trúc quân sự phương Tây.", "13 thế kỷ lịch sử văn hóa", "Cuộc chiến chống thuộc địa, tác động toàn cầu.", "Phát triển Phật giáo và Nho giáo"],
+    answers: [
+      "Kiến trúc quân sự phương Tây.",
+      "13 thế kỷ lịch sử văn hóa",
+      "Cuộc chiến chống thuộc địa, tác động toàn cầu.",
+      "Phát triển Phật giáo và Nho giáo"
+    ],
     createdAt: DateTime.now(),
     userId: "user2",
     lastReview: DateTime.now(),
@@ -184,4 +193,53 @@ final mockQuestions = [
     sm2I: 3,
     cardType: 2,
   ),
+];
+
+List<FlashcardSearch> mockCardSearches = [
+  FlashcardSearch(
+      mockQuestions[0],
+      RichText(
+        maxLines: 3, // Set the maximum number of lines
+        overflow: TextOverflow.ellipsis, // Use ellipsis for overflow
+        text: TextSpan(
+          children: <TextSpan>[
+            TextSpan(
+              text: '... This is a sentence with ',
+              style: TextStyle(color: Colors.black),
+            ),
+            TextSpan(
+              text: 'bold',
+              style:
+              TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+            ),
+            TextSpan(
+                text:
+                ' words. This is a long sentence that will be truncated with ellipsis.',
+                style: TextStyle(color: Colors.black)),
+          ],
+        ),
+      )),
+  FlashcardSearch(
+      mockQuestions[4],
+      RichText(
+        maxLines: 3,
+        overflow: TextOverflow.ellipsis,
+        text: TextSpan(
+          children: <TextSpan>[
+            TextSpan(
+              text: '... This is a sentence with ',
+              style: TextStyle(color: Colors.black),
+            ),
+            TextSpan(
+              text: 'really bold',
+              style:
+              TextStyle(fontWeight: FontWeight.w900, color: Colors.black),
+            ),
+            TextSpan(
+                text:
+                ' words. This is a long sentence that will be truncated with ellipsis.',
+                style: TextStyle(color: Colors.black)),
+          ],
+        ),
+      )),
 ];

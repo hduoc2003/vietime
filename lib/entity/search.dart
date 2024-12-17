@@ -1,3 +1,6 @@
+import 'package:flutter/cupertino.dart';
+import 'package:vietime/entity/card.dart';
+
 enum ResultType {
   userDeckResult,
   publicDeckResult,
@@ -9,4 +12,11 @@ class SearchResult {
   final dynamic data;
 
   SearchResult(this.type, this.data);
+}
+
+class FlashcardSearch {
+  final Flashcard card;
+  final RichText searchSentence;
+
+  FlashcardSearch(this.card, this.searchSentence);
 }

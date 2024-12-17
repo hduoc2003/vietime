@@ -61,7 +61,7 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
                 16.0,
                 10.0,
                 16.0,
-                15.0,
+                0.0,
               ),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(
@@ -74,9 +74,9 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
                 child: ColoredBox(
                   color: Colors.grey[200]!,
                   child: SizedBox(
-                    height: 50.0,
+                    height: 46.0,
                     child: Padding(
-                      padding: const EdgeInsets.only(left: 16, top: 0),
+                      padding: const EdgeInsets.only(left: 16),
                       child: Center(
                         child: TextField(
                           focusNode: widget.focusNode,

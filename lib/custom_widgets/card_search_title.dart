@@ -1,18 +1,21 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
+import '../entity/card.dart';
 import '../entity/deck.dart';
 import '../helpers/validate.dart';
 import 'animated_text.dart';
 class CardSearchTile extends StatelessWidget {
-  final Card itemCard;
+  final Flashcard itemCard;
   final DeckWithReviewCards itemDeck;
+  final RichText foundTextWidget;
   final Widget iconButtonTopRight;
   final Widget iconButtonBottomRight;
 
   CardSearchTile(
       {required this.itemCard,
         required this.itemDeck,
+        required this.foundTextWidget,
         required this.iconButtonBottomRight,
         required this.iconButtonTopRight});
 
@@ -99,6 +102,10 @@ class CardSearchTile extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             defaultAlignment: TextAlign.start,
                           ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 2.0),
+                            child: foundTextWidget,
+                          )
                         ],
                       ),
                     ),

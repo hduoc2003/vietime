@@ -25,7 +25,7 @@ class DeckListInfoBar extends StatelessWidget {
             children: [
               Text(
                 '$numberOfDecks',
-                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
               ),
               SizedBox(width: 6.0),
               Text(
@@ -56,29 +56,4 @@ class DeckListInfoBar extends StatelessWidget {
       ),
     );
   }
-}
-
-// Example usage:
-void main() {
-  runApp(
-    MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Deck List'),
-        ),
-        body: DeckListInfoBar(
-          numberOfDecks: 5,
-          onAddPressed: () {
-            // Add button pressed
-          },
-          onFilterPressed: () {
-            // Filter button pressed
-          },
-          onStudyAllPressed: () {
-            // Study All button pressed
-          },
-        ),
-      ),
-    ),
-  );
 }

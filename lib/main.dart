@@ -67,7 +67,7 @@ Future<void> openHiveBox(String boxName, {bool limit = false}) async {
 
 
 class MyApp extends StatefulWidget {
-  static final title = 'VietCard';
+  static final title = 'Vietime';
 
   @override
   _MyAppState createState() => _MyAppState();

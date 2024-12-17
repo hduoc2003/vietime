@@ -9,11 +9,12 @@ import 'package:iconify_flutter/icons/mdi.dart';
 import 'package:logging/logging.dart';
 import 'package:vietime/custom_widgets/card_search_tile.dart';
 import 'package:vietime/custom_widgets/deck_list_tile.dart';
+import 'package:vietime/custom_widgets/search_filter.dart';
+import 'package:vietime/custom_widgets/search_info_bar.dart';
 import 'package:vietime/entity/deck.dart';
 import 'package:vietime/entity/search.dart';
 import 'package:vietime/services/api_handler.dart';
 import 'package:vietime/services/mock_data.dart';
-import '../custom_widgets/card_search_title.dart';
 import '../custom_widgets/empty_screen.dart';
 import '../custom_widgets/search_bar.dart';
 import '../entity/card.dart';
@@ -45,6 +46,9 @@ class _SearchPageState extends State<SearchPage> {
   final TextEditingController _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
   bool haveText = false;
+  bool userDeckFilter = true;
+  bool publicDeckFilter = true;
+  bool cardFilter = true;
 
   @override
   void initState() {
@@ -67,6 +71,9 @@ class _SearchPageState extends State<SearchPage> {
               ? ResultType.publicDeckResult
               : ResultType.userDeckResult,
           deck));
+    }
+    for (FlashcardSearch f in mockCardSearches) {
+      results.add(SearchResult(ResultType.cardResult, f));
     }
     return results;
   }
@@ -136,7 +143,7 @@ class _SearchPageState extends State<SearchPage> {
     children: [
     const Padding(
     padding: EdgeInsets.only(
-    top: 70,
+    top: 58,
     left: 20,
     ),
     ),
@@ -153,14 +160,14 @@ class _SearchPageState extends State<SearchPage> {
     physics: const BouncingScrollPhysics(),
     child: ValueListenableBuilder<List>(
     valueListenable: searchHistory,
-    builder: (context, _searchHistory, widget) {
+    builder: (context, searchHistories, widget) {
     return Column(
     children: [
     Align(
     alignment: Alignment.topLeft,
     child: Wrap(
     children: List<Widget>.generate(
-    _searchHistory.length,
+    searchHistories.length,
     (int index) {
     return Padding(
     padding:
@@ -170,7 +177,7 @@ class _SearchPageState extends State<SearchPage> {
     child: GestureDetector(
     child: Chip(
     label: Text(
-    _searchHistory[index]
+    searchHistories[index]
         .toString(),
     ),
     labelStyle: TextStyle(
@@ -183,7 +190,7 @@ class _SearchPageState extends State<SearchPage> {
     ),
     onDeleted: () {
     setState(() {
-    _searchHistory
+    searchHistories
         .removeAt(index);
     Hive.box('settings')
         .put(
@@ -196,15 +203,13 @@ class _SearchPageState extends State<SearchPage> {
     onTap: () {
     setState(
     () {
-      haveText = true;
-      _focusNode.unfocus();
-    }
-    fetched = false;
-    query = _searchHistory[index]
+      query = searchHistories[index]
         .toString()
         .trim();
-    _controller.text =
-    query;
+    _controller.text = query;
+      haveText = true;
+      _focusNode.unfocus();
+      fetched = false;
     status = false;
 
     },
@@ -234,97 +239,169 @@ class _SearchPageState extends State<SearchPage> {
   )
       : Stack(
   children: [
-  SingleChildScrollView(
-  padding: const EdgeInsets.only(
-  left: 2,
-  right: 2,
-  ),
-  physics: const BouncingScrollPhysics(),
-  child: ListView.builder(
-  physics:
-  const NeverScrollableScrollPhysics(),
-  shrinkWrap: true,
-  itemCount: searchedList.length,
-  itemBuilder: (context, idx) {
-  final itemType = searchedList[idx].type;
-  final APIHanlder apiHandler =
-  GetIt.I<APIHanlder>();
-  if (itemType ==
-  ResultType.userDeckResult) {
-  return UserDeckTile(
-  item: searchedList[idx].data,
-  iconButtonTopRight:
-  const IconButton(
-  icon: Iconify(
-  Mdi.cards_playing_club_multiple,
-  color: Colors.orange,
-  ),
-  tooltip: 'Thể loại: Bộ thẻ',
-  onPressed: null),
-  iconButtonBottomRight:
-  const IconButton(
-  icon: Iconify(
-  Ic.baseline_lock_person,
-  color: Colors.grey),
-  tooltip: 'Không công khai',
-  onPressed: null),
-  );
-  } else if (itemType ==
-  ResultType.publicDeckResult) {
-  return PublicDeckTile(
-  item: searchedList[idx].data,
-  iconButtonTopRight: const IconButton(
-  icon: Iconify(
-  Mdi.cards_playing_club_multiple,
-  color: Colors.orange),
-  tooltip: 'Thể loại: Bộ thẻ',
-  onPressed: null),
-  iconButtonBottomRight:
-  const IconButton(
-  icon: Iconify(
-  Ic.baseline_public,
-  color: Colors.blue),
-  tooltip: 'Công khai',
-  onPressed: null),
-  );
-  } else {
-  return CardSearchTile(
-  itemCard: searchedList[idx].data,
-  itemDeck: apiHandler
-      .idToDeckWithReviewCards[
+    Column(
+    children: [
+    Padding(
+    padding:
+        const EdgeInsets.only(left: 4.0),
+      child: SearchInfoBar(
+          numberOfResults:
+          searchedList.length,
+          onFilterPressed: () {
+            showFilterDialog(
+              context,
+              userDeckFilter,
+              publicDeckFilter,
+              cardFilter,
+                  (bool newUserDeckFilter,
+                  bool newPublicDeckFilter,
+                  bool newCardFilter) {
+                userDeckFilter =
+                    newUserDeckFilter;
+                publicDeckFilter =
+                    newPublicDeckFilter;
+                cardFilter = newCardFilter;
+                applyFilters(
+                    userDeckFilter,
+                    publicDeckFilter,
+                    cardFilter);
+              },
+            );
+          }),
+    ),
+          Divider(
+            height: 1,
+          ),
+          Expanded(
+            child: SingleChildScrollView(
+                physics:
+                const BouncingScrollPhysics(),
+                child: Padding(
+                  padding:
+                  const EdgeInsets.only(top: 8.0),
+                  child: ListView.builder(
+                    physics:
+                    const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: searchedList.length,
+                    itemBuilder: (context, idx) {
+                      final itemType =
+                          searchedList[idx].type;
+                      final APIHanlder apiHandler =
+                      GetIt.I<APIHanlder>();
+                      if (itemType ==
+                          ResultType.userDeckResult) {
+                        return UserDeckTile(
+                          item:
+                          searchedList[idx].data,
+                          iconButtonTopRight:
+                          const IconButton(
+                              icon: Iconify(
+                                Mdi.cards_playing_club_multiple,
+                                color:
+                                Colors.orange,
+                              ),
+                              tooltip:
+                              'Thể loại: Bộ thẻ',
+                              onPressed: null),
+                          iconButtonBottomRight:
+                          const IconButton(
+                              icon: Iconify(
+                                  Ic
+                                      .baseline_lock_person,
+                                  color: Colors
+                                      .grey),
+                              tooltip:
+                              'Không công khai',
+                              onPressed: null),
+                        );
+                      } else if (itemType ==
+                          ResultType
+                              .publicDeckResult) {
+                        return PublicDeckTile(
+                          item:
+                          searchedList[idx].data,
+                          iconButtonTopRight:
+                          const IconButton(
+                              icon: Iconify(
+                                  Mdi
+                                      .cards_playing_club_multiple,
+                                  color: Colors
+                                      .orange),
+                              tooltip:
+                              'Thể loại: Bộ thẻ',
+                              onPressed: null),
+                          iconButtonBottomRight:
+                          const IconButton(
+                              icon: Iconify(
+                                  Ic
+                                      .baseline_public,
+                                  color: Colors
+                                      .blue),
+                              tooltip:
+                              'Công khai',
+                              onPressed: null),
+                        );
+                      } else {
+                        return CardSearchTile(
+                            itemCard: (searchedList[idx]
+                                .data
+                            as FlashcardSearch)
+                                .card,
+                            itemDeck: apiHandler
+                                .idToDeckWithReviewCards[
   (searchedList[idx].data
-  as Flashcard)
+  as FlashcardSearch)
+      .card
       .deckId]!,
-  iconButtonTopRight:
-  const IconButton(
-  icon: Iconify(
-  Mdi.cards_playing_club,
-  color: Colors.red),
-  tooltip: 'Thể loại: Thẻ',
-  onPressed: null),
-  iconButtonBottomRight: (apiHandler
-      .idToDeckWithReviewCards[
-  (searchedList[idx].data
-  as Flashcard)
-      .deckId]!
-      .deck
-      .isPublic
-  ? const IconButton(
-  icon: Iconify(
-  Ic.baseline_public,
-  color: Colors.blue),
-  tooltip: 'Công khai',
-  onPressed: null)
-      : const IconButton(
-  icon: Iconify(
-  Ic.baseline_lock_person,
-  color: Colors.grey),
-  tooltip: 'Không công khai',
-  onPressed: null)),
-  );
-  }
-  },
-  ),
+                          foundTextWidget:
+                          (searchedList[idx].data
+                          as FlashcardSearch)
+                              .searchSentence,
+                          iconButtonTopRight:
+                          const IconButton(
+                              icon: Iconify(
+                                  Mdi
+                                      .cards_playing_club,
+                                  color:
+                                  Colors.red),
+                              tooltip:
+                              'Thể loại: Thẻ',
+                              onPressed: null),
+                          iconButtonBottomRight: (apiHandler
+                              .idToDeckWithReviewCards[
+                          (searchedList[idx].data
+                          as FlashcardSearch)
+                              .card
+                              .deckId]!
+                              .deck
+                              .isPublic
+                              ? const IconButton(
+                              icon: Iconify(
+                                  Ic
+                                      .baseline_public,
+                                  color: Colors
+                                      .blue),
+                              tooltip:
+                              'Công khai',
+                              onPressed: null)
+                              : const IconButton(
+                              icon: Iconify(
+                                  Ic
+                                      .baseline_lock_person,
+                                  color: Colors
+                                      .grey),
+                              tooltip:
+                              'Không công khai',
+                              onPressed: null)),
+                        );
+                      }
+                    },
+                  ),
+                ),
+            ),
+          ),
+    ],
                                   ),
   if (!done)
   Center(
