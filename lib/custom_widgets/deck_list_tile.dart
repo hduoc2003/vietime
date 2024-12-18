@@ -1,10 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:iconify_flutter/iconify_flutter.dart';
-
 import 'package:iconify_flutter/icons/ion.dart';
 import 'package:iconify_flutter/icons/mdi.dart';
-
 import 'package:vietime/custom_widgets/three_card_type_number_row.dart';
 import '../entity/deck.dart';
 import '../helpers/validate.dart';

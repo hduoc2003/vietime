@@ -21,7 +21,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   bool isHeartIconClicked = false;
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -48,8 +47,7 @@ class _HomePageState extends State<HomePage> {
     return Row(
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.only(
-              left: 20.0, right: 20, bottom: 20, top: 15),
+          padding: const EdgeInsets.only(left: 20.0, right: 20, bottom: 20, top: 15),
           child: Container(
             width: 60,
             height: 60,
@@ -148,8 +146,7 @@ class _HomePageState extends State<HomePage> {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) =>
-                          DeckListScreen(decksList: mockDecksList,)),
+                      MaterialPageRoute(builder: (context) => DeckListScreen(decksList: mockDecksList,)),
                     );
                   },
                   child: Row(
@@ -219,8 +216,7 @@ class _HomePageState extends State<HomePage> {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) =>
-                          DeckListScreen(decksList: mockDecksList,)),
+                      MaterialPageRoute(builder: (context) => DeckListScreen(decksList: mockDecksList,)),
                     );
                   },
                   child: Row(

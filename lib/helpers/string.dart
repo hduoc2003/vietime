@@ -1,4 +1,3 @@
-
 int countMatchWords(String s, List<String> words) {
   int count = 0;
   for (String word in words) {

@@ -178,7 +178,7 @@ class DeckSearch extends SearchDelegate {
           numGreenCards: suggestionList[index].numGreenCards,
           fontSize: 14,
           boxSize: 4,
-              ),
+        ),
         trailing: LoveDeckButton(
           deckItem: suggestionList[index],
         ),
