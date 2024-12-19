@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:iconify_flutter/iconify_flutter.dart';
-import 'package:iconify_flutter/icons/iconoir.dart';
+import 'package:iconify_flutter/icons/ph.dart';
+import 'package:vietime/custom_widgets/animated_progress_bar.dart';
+import 'package:colorful_iconify_flutter/icons/fxemoji.dart';
 
 class ProfilePage extends StatefulWidget {
-  static const title = 'Profile';
-
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
@@ -12,371 +12,230 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
+    double progressBarWidth = MediaQuery.of(context).size.width * 0.7;
     return Scaffold(
-      appBar: AppBar(
-        title: Text(ProfilePage.title),
-        //backgroundColor: Colors.white,
-      ),
-      body: SingleChildScrollView(
-        child: Container(
-          padding: EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Row(
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  SizedBox(height: 80,),
                   CircleAvatar(
-                      radius: 50,
-                      //profile avvatar
-                      backgroundImage: NetworkImage(
-                          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRWWyI6x_quKAbCoFfUURPsDVmCt2YedWcYrXVDrrQquXWg29Q17C1As1QdafXyYxMk8fo&usqp=CAU'))
-                ],
-              ),
-              Container(
-                padding: EdgeInsets.all(10),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      children: [
-                        //User name
-                        Container(
-                          child: Text(
-                            'Nguyen Van B',
-                            style: TextStyle(
-                                color: Colors.grey[800],
-                                fontSize: 25,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        //User professional
-                        Container(
-                          child: Text(
-                            'Student',
-                            style: TextStyle(
-                                color: Colors.blueGrey[400],
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600),
-                          ),
-                        ),
-                      ],
+                    radius: 60,
+                    backgroundImage: AssetImage(
+                        'assets/user_avatar.png'), // Replace with your image asset
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    'HynDuf',
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
                     ),
-                    Row(
-                      children: [
-                        Container(
-                          height: 40,
-                          width: 40,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(50),
-                            border:
-                                Border.all(width: 1, color: Color(0xFFFFFFFF)),
+                  ),
+                  SizedBox(height: 10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Column(
+                        children: [
+                          Image.asset(
+                            'assets/bronze.png', // Replace with your ranking icon asset
+                            height: 58,
+                            width: 58,
                           ),
-                          child: Center(
-                            child: Icon(
-                              Icons.message,
-                              color: Colors.blueGrey[500],
-                            ),
+                          SizedBox(height: 8),
+                          Text(
+                            'II', // Replace with your roman character
+                            style: TextStyle(
+                                fontWeight: FontWeight.w900,
+                                color: Colors.brown,
+                                fontSize: 18),
                           ),
-                        ),
-                        Container(
-                            //Something was wrong
-                            ),
-                      ],
-                    )
-                  ],
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.only(top: 20),
-                child: Divider(
-                  thickness: 1,
-                  color: Colors.blueGrey[200],
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Container(
-                    padding: EdgeInsets.only(top: 30),
+                        ],
+                      ),
+                      SizedBox(width: 16),
+                      Column(
+                        children: [
+                          AnimatedProgressBar(
+                              width: progressBarWidth,
+                              height: 23,
+                              progress: 0.8),
+                          SizedBox(height: 8),
+                          Row(
+                            children: [
+                              Iconify(Ph.lightning_fill, color: Colors.yellow),
+                              SizedBox(width: 4),
+                              Text(
+                                '13 / 20',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  Divider(),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 8),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(
-                          child: Text(
-                            '203',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w800, fontSize: 20),
+                        // Heading
+                        Text(
+                          'Thông số',
+                          style: TextStyle(
+                            fontSize: 24.0, // Adjust the font size as needed
+                            fontWeight: FontWeight.w900,
                           ),
                         ),
-                        Container(
-                          child: Text(
-                            'Follower',
-                            style:
-                                TextStyle(fontSize: 15, color: Colors.blueGrey),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  Container(
-                    padding: EdgeInsets.only(top: 30),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Container(
-                          child: Text(
-                            '932',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w800, fontSize: 20),
-                          ),
-                        ),
-                        Container(
-                          child: Text(
-                            'Following',
-                            style:
-                                TextStyle(fontSize: 15, color: Colors.blueGrey),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  Container(
-                    padding: EdgeInsets.only(top: 30),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Container(
-                          child: Text(
-                            '30',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w800, fontSize: 20),
-                          ),
-                        ),
-                        Container(
-                          child: Text('Cards',
-                              style: TextStyle(
-                                  fontSize: 15, color: Colors.blueGrey)),
-                        )
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              Container(
-                padding: EdgeInsets.only(top: 20),
-                child: Divider(
-                  thickness: 1,
-                  color: Colors.blueGrey[200],
-                ),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    padding: EdgeInsets.only(top: 30),
-                    child: Text(
-                      'Achievement',
-                      style: TextStyle(
-                          fontSize: 20,
-                          color: Colors.blueGrey,
-                          fontWeight: FontWeight.w900),
-                    ),
-                  ),
-                  Container(
-                    padding: EdgeInsets.only(top: 20, left: 10, right: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Container(
-                          width: 100,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30),
-                            color: Colors.grey[300],
-                          ),
-                          child: Center(
-                              child: Text(
-                            'Sharpshooter',
-                            style: TextStyle(color: Colors.blueGrey),
-                          )),
-                        ),
-                        Container(
-                          width: 100,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30),
-                            color: Colors.grey[300],
-                          ),
-                          child: Center(
-                              child: Text(
-                            'Wildfire',
-                            style: TextStyle(color: Colors.blueGrey),
-                          )),
-                        ),
-                        Container(
-                          width: 100,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30),
-                            color: Colors.grey[300],
-                          ),
-                          child: Center(
-                              child: Text(
-                            'Sage',
-                            style: TextStyle(color: Colors.blueGrey),
-                          )),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    padding: EdgeInsets.only(top: 20, left: 10, right: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Container(
-                          width: 100,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30),
-                            color: Colors.grey[300],
-                          ),
-                          child: Center(
-                            child: Text(
-                              'Sentinel',
-                              style: TextStyle(color: Colors.blueGrey),
+
+                        SizedBox(
+                            height:
+                                16.0), // Add some space between heading and grid
+
+                        // Grid
+                        GridView.count(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 12.0,
+                          mainAxisSpacing: 12.0,
+                          childAspectRatio: (350 / 141),
+                          shrinkWrap: true,
+                          children: [
+                            // Streak cell
+                            GridCell(
+                              icon: Iconify(
+                                Fxemoji.fire,
+                                size: 30,
+                              ),
+                              title: '5',
+                              subtitle: 'Streak',
                             ),
-                          ),
-                        ),
-                        Container(
-                          width: 100,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30),
-                            color: Colors.grey[300],
-                          ),
-                          child: Center(
-                            child: Text(
-                              'Twisted',
-                              style: TextStyle(color: Colors.blueGrey),
+                            GridCell(
+                              icon: Image.asset(
+                                'assets/bolt.png',
+                                height: 30,
+                                fit: BoxFit.cover,
+                              ),
+                              title: '1000',
+                              subtitle: 'Kinh nghiệm',
                             ),
-                          ),
-                        ),
-                        Container(
-                          width: 100,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30),
-                            color: Colors.grey[300],
-                          ),
-                          child: Center(
-                            child: Text(
-                              'Master',
-                              style: TextStyle(color: Colors.blueGrey),
+                            GridCell(
+                              icon: Image.asset(
+                                'assets/bronze.png',
+                                height: 30,
+                                fit: BoxFit.cover,
+                              ),
+                              title: 'Bronze',
+                              subtitle: 'Xếp hạng',
                             ),
-                          ),
+                            GridCell(
+                              icon: Image.asset(
+                                'assets/medal.png',
+                                height: 30,
+                                fit: BoxFit.cover,
+                              ),
+                              title: '3',
+                              subtitle: 'Thành tích',
+                            ),
+                          ],
                         ),
                       ],
                     ),
                   )
                 ],
               ),
-              Container(
-                padding: EdgeInsets.only(top: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      child: Text(
-                        'Favorite',
-                        style: TextStyle(
-                            fontSize: 20,
-                            color: Colors.blueGrey,
-                            fontWeight: FontWeight.w900),
-                      ),
+            ),
+          ),
+          Positioned(
+            top: 25.0,
+            right: 25.0,
+            child: Container(
+              height: 55.0,
+              width: 55.0,
+              child: FittedBox(
+                child: FloatingActionButton(
+                  backgroundColor: Colors.white,
+                  elevation: 5,
+                  onPressed: () {},
+                  tooltip: 'Settings',
+                  child: Icon(
+                    Icons.settings,
+                    color: Colors.grey[700]!,
+                    size: 32,
+                  ),
+                  shape: CircleBorder(
+                    side: BorderSide(
+                      color: Colors.grey[200]!, // Set border color
+                      width: 2.0, // Set border width
                     ),
-                    Container(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            height: 250,
-                            width: MediaQuery.of(context).size.width,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(30),
-                              child: Image.network(
-                                  'https://pld.net.vn/uploads/wp-content/uploads/2021/04/sach-hay-ve-van-hoa-viet-nam-cover-780x470-1.png'),
-                            ),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                padding: EdgeInsets.only(top: 10, left: 10),
-                                child: Text(
-                                  'Culture of Vietnam',
-                                  style: TextStyle(
-                                      color: Colors.blueGrey,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20),
-                                ),
-                              ),
-                              Container(
-                                child: Icon(
-                                  Icons.favorite,
-                                  color: Colors.red,
-                                ),
-                              )
-                            ],
-                          )
-                        ],
-                      ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.only(top: 50),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            height: 250,
-                            width: MediaQuery.of(context).size.width,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(30),
-                              child: Image.network(
-                                  'https://luocsutocviet.files.wordpress.com/2021/12/acfaswcfaswcf.jpg'),
-                            ),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                padding: EdgeInsets.only(top: 10, left: 10),
-                                child: Text(
-                                  'History of Vietnam',
-                                  style: TextStyle(
-                                      color: Colors.blueGrey,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20),
-                                ),
-                              ),
-                              Container(
-                                child: Icon(
-                                  Icons.favorite,
-                                  color: Colors.red,
-                                ),
-                              )
-                            ],
-                          )
-                        ],
-                      ),
-                    )
-                  ],
+                  ),
+                  heroTag: null,
                 ),
-              )
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class GridCell extends StatelessWidget {
+  final Widget icon; // Icon for the left side
+  final String title; // Main text (number)
+  final String subtitle; // Subtitle explaining
+
+  const GridCell({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 20,
+      padding: EdgeInsets.all(8.0),
+      decoration: BoxDecoration(
+        border: Border.all(
+            color: Colors.grey[300]!,
+            width: 2), // Grey border with increased weight
+        borderRadius: BorderRadius.circular(18.0),
+      ),
+      child: Row(
+        children: [
+          // Icon on the left
+          icon,
+          SizedBox(width: 15.0),
+
+          // Main text and subtitle in a column
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: TextStyle(
+                  fontWeight: FontWeight.w900,
+                  fontSize: 17,
+                ),
+              ),
+              Text(
+                subtitle,
+                style: TextStyle(fontSize: 16.0, color: Colors.grey),
+              ),
             ],
           ),
-        ),
+        ],
       ),
     );
   }
