@@ -19,8 +19,8 @@ class DeckHorizontalList extends StatelessWidget {
 
   DeckHorizontalList(
       {this.itemCountPerGroup = 4,
-        required this.deckType,
-        required this.decksList});
+      required this.deckType,
+      required this.decksList});
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +83,7 @@ Widget getUserDeckTile(DeckWithReviewCards item, BuildContext context) {
       decoration: BoxDecoration(
         color: Colors.grey[100], // Add a slightly grey background color
         borderRadius:
-        BorderRadius.circular(30.0), // Optional: Add rounded corners
+            BorderRadius.circular(30.0), // Optional: Add rounded corners
       ),
       padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10),
       margin: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5),
@@ -101,21 +101,21 @@ Widget getUserDeckTile(DeckWithReviewCards item, BuildContext context) {
             height: 75,
             child: validateURL(item.deck.descriptionImgPath)
                 ? CachedNetworkImage(
-              fit: BoxFit.cover,
-              errorWidget: (context, _, __) => const Image(
-                fit: BoxFit.cover,
-                image: AssetImage('assets/deck_placeholder.png'),
-              ),
-              imageUrl: item.deck.descriptionImgPath,
-              placeholder: (context, url) => const Image(
-                fit: BoxFit.cover,
-                image: AssetImage('assets/deck_placeholder.png'),
-              ),
-            )
+                    fit: BoxFit.cover,
+                    errorWidget: (context, _, __) => const Image(
+                      fit: BoxFit.cover,
+                      image: AssetImage('assets/deck_placeholder.png'),
+                    ),
+                    imageUrl: item.deck.descriptionImgPath,
+                    placeholder: (context, url) => const Image(
+                      fit: BoxFit.cover,
+                      image: AssetImage('assets/deck_placeholder.png'),
+                    ),
+                  )
                 : const Image(
-              fit: BoxFit.cover,
-              image: AssetImage('assets/deck_placeholder.png'),
-            ),
+                    fit: BoxFit.cover,
+                    image: AssetImage('assets/deck_placeholder.png'),
+                  ),
           ),
         ),
 
@@ -137,7 +137,7 @@ Widget getUserDeckTile(DeckWithReviewCards item, BuildContext context) {
                   seconds: 3,
                 ),
                 style:
-                const TextStyle(fontWeight: FontWeight.w900, fontSize: 17),
+                    const TextStyle(fontWeight: FontWeight.w900, fontSize: 17),
                 crossAxisAlignment: CrossAxisAlignment.start,
                 defaultAlignment: TextAlign.start,
               ),
@@ -194,7 +194,7 @@ Widget getPublicDeckTile(DeckWithReviewCards item, BuildContext context) {
       decoration: BoxDecoration(
         color: Colors.grey[100], // Add a slightly grey background color
         borderRadius:
-        BorderRadius.circular(30.0), // Optional: Add rounded corners
+            BorderRadius.circular(30.0), // Optional: Add rounded corners
       ),
       padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10),
       margin: EdgeInsets.symmetric(horizontal: 5.0, vertical: 5),
@@ -212,21 +212,21 @@ Widget getPublicDeckTile(DeckWithReviewCards item, BuildContext context) {
             height: 75,
             child: validateURL(item.deck.descriptionImgPath)
                 ? CachedNetworkImage(
-              fit: BoxFit.cover,
-              errorWidget: (context, _, __) => const Image(
-                fit: BoxFit.cover,
-                image: AssetImage('assets/deck_placeholder.png'),
-              ),
-              imageUrl: item.deck.descriptionImgPath,
-              placeholder: (context, url) => const Image(
-                fit: BoxFit.cover,
-                image: AssetImage('assets/deck_placeholder.png'),
-              ),
-            )
+                    fit: BoxFit.cover,
+                    errorWidget: (context, _, __) => const Image(
+                      fit: BoxFit.cover,
+                      image: AssetImage('assets/deck_placeholder.png'),
+                    ),
+                    imageUrl: item.deck.descriptionImgPath,
+                    placeholder: (context, url) => const Image(
+                      fit: BoxFit.cover,
+                      image: AssetImage('assets/deck_placeholder.png'),
+                    ),
+                  )
                 : const Image(
-              fit: BoxFit.cover,
-              image: AssetImage('assets/deck_placeholder.png'),
-            ),
+                    fit: BoxFit.cover,
+                    image: AssetImage('assets/deck_placeholder.png'),
+                  ),
           ),
         ),
 
@@ -248,7 +248,7 @@ Widget getPublicDeckTile(DeckWithReviewCards item, BuildContext context) {
                   seconds: 3,
                 ),
                 style:
-                const TextStyle(fontWeight: FontWeight.w900, fontSize: 17),
+                    const TextStyle(fontWeight: FontWeight.w900, fontSize: 17),
                 crossAxisAlignment: CrossAxisAlignment.start,
                 defaultAlignment: TextAlign.start,
               ),

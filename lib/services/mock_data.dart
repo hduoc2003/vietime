@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
 import '../entity/card.dart';
 import '../entity/deck.dart';
 import '../entity/search.dart';
@@ -12,11 +13,11 @@ List<DeckWithReviewCards> mockDecksList = [
         isPublic: false,
         name: 'Hoàng thành Thăng Long',
         description:
-        'Bộ thẻ về Hoàng thành Thăng Long nằm ở Hoàng Diệu, Điện Biên, Ba Đình, Hà Nội',
+            'Bộ thẻ về Hoàng thành Thăng Long nằm ở Hoàng Diệu, Điện Biên, Ba Đình, Hà Nội',
         createdAt: DateTime.now(),
         userId: 'user1',
         descriptionImgPath:
-        "https://static.vinwonders.com/production/hoang-thanh-thang-long-2.jpg",
+            "https://static.vinwonders.com/production/hoang-thanh-thang-long-2.jpg",
         totalCards: 25,
         totalLearnedCards: 14,
         views: 1500,
@@ -37,7 +38,7 @@ List<DeckWithReviewCards> mockDecksList = [
         createdAt: DateTime.now(),
         userId: 'user2',
         descriptionImgPath:
-        "https://ik.imagekit.io/tvlk/blog/2022/09/chua-mot-cot-1.jpg?tr=dpr-2,w-675",
+            "https://ik.imagekit.io/tvlk/blog/2022/09/chua-mot-cot-1.jpg?tr=dpr-2,w-675",
         totalCards: 25,
         totalLearnedCards: 3,
         views: 450,
@@ -175,7 +176,7 @@ final mockQuestions = [
     id: "5",
     deckId: "2",
     question:
-    "Tại sao UNESCO công nhận Hoàng thành Thăng Long - Hà Nội là Di sản Văn hóa Thế giới UNESCO",
+        "Tại sao UNESCO công nhận Hoàng thành Thăng Long - Hà Nội là Di sản Văn hóa Thế giới UNESCO",
     correctAnswer: "13 thế kỷ lịch sử văn hóa",
     answers: [
       "Kiến trúc quân sự phương Tây.",
@@ -233,11 +234,11 @@ List<FlashcardSearch> mockCardSearches = [
             TextSpan(
               text: 'really bold',
               style:
-              TextStyle(fontWeight: FontWeight.w900, color: Colors.black),
+                  TextStyle(fontWeight: FontWeight.w900, color: Colors.black),
             ),
             TextSpan(
                 text:
-                ' words. This is a long sentence that will be truncated with ellipsis.',
+                    ' words. This is a long sentence that will be truncated with ellipsis.',
                 style: TextStyle(color: Colors.black)),
           ],
         ),

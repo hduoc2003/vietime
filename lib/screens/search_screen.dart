@@ -70,11 +70,11 @@ class _SearchPageState extends State<SearchPage> {
     final List<Flashcard> cardsList = mockQuestions;
     final List<SearchResult> results = [];
     List<String> queryWords =
-    removeDiacritics(query.toLowerCase()).split(RegExp(r'\s+'));
+        removeDiacritics(query.toLowerCase()).split(RegExp(r'\s+'));
     for (DeckWithReviewCards d in decksList) {
       String rawName = removeDiacritics(d.deck.name.toString().toLowerCase());
       String rawDes =
-      removeDiacritics(d.deck.description.toString().toLowerCase());
+          removeDiacritics(d.deck.description.toString().toLowerCase());
       int score = 2 * countMatchWords(rawName, queryWords) +
           countMatchWords(rawDes, queryWords);
       if (score == 0) {
@@ -90,7 +90,7 @@ class _SearchPageState extends State<SearchPage> {
     for (Flashcard f in cardsList) {
       String rawContent = "${f.question} ${f.answers.join(" ")}";
       String content =
-      removePunctuation(removeDiacritics(rawContent.toLowerCase()));
+          removePunctuation(removeDiacritics(rawContent.toLowerCase()));
       int score = countMatchWords(content, queryWords);
       Logger.root.info(content);
       Logger.root.info(score);
@@ -239,323 +239,323 @@ class _SearchPageState extends State<SearchPage> {
               Expanded(
                 child: (!fetched)
                     ? const Center(
-                  child: CircularProgressIndicator(),
-                )
+                        child: CircularProgressIndicator(),
+                      )
                     : (query.isEmpty && widget.query.isEmpty)
-                    ? SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 15, vertical: 10),
-                  physics: const BouncingScrollPhysics(),
-                  child: ValueListenableBuilder<List<String>>(
-                      valueListenable: searchHistory,
-                      builder: (context, searchHistories, widget) {
-                        return Column(
-                          children: [
-                            Align(
-                              alignment: Alignment.topLeft,
-                              child: Wrap(
-                                children: List<Widget>.generate(
-                                  searchHistories.length,
-                                      (int index) {
-                                    return Padding(
-                                      padding:
-                                      const EdgeInsets.symmetric(
-                                        horizontal: 5.0,
-                                      ),
-                                      child: GestureDetector(
-                                        child: Chip(
-                                          label: Text(
-                                            searchHistories[index]
-                                                .toString(),
-                                          ),
-                                          labelStyle: TextStyle(
-                                            color: Theme.of(context)
-                                                .textTheme
-                                                .bodyLarge!
-                                                .color,
-                                            fontWeight:
-                                            FontWeight.normal,
-                                          ),
-                                          onDeleted: () {
-                                            setState(() {
-                                              searchHistories
-                                                  .removeAt(index);
-                                              Hive.box('settings')
-                                                  .put(
-                                                'searchHistory',
-                                                searchHistories,
-                                              );
-                                            });
-                                          },
-                                        ),
-                                        onTap: () {
-                                          setState(
-                                                () {
-                                              query = searchHistories[
-                                              index]
-                                                  .toString()
-                                                  .trim();
-                                              _controller.text =
-                                                  query;
-                                              haveText = true;
-                                              _focusNode.unfocus();
-                                              fetched = false;
-                                              status = false;
-                                            },
-                                          );
-                                        },
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-                            ),
-                          ],
-                        );
-                      }),
-                )
-                    : searchedList.isEmpty
-                    ? emptyScreen(
-                  context,
-                  0,
-                  ':( ',
-                  100,
-                  "Xin lỗi",
-                  60,
-                  "Không tìm thấy kết quả nào",
-                  20,
-                )
-                    : Stack(
-                  children: [
-                    Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(
-                              left: 4.0, top: 5, bottom: 5),
-                          child: SearchInfoBar(
-                              numberOfResults:
-                              searchedList.length,
-                              onFilterPressed: () {
-                                showFilterDialog(
-                                  context,
-                                  userDeckFilter,
-                                  publicDeckFilter,
-                                  cardFilter,
-                                      (bool newUserDeckFilter,
-                                      bool newPublicDeckFilter,
-                                      bool newCardFilter) {
-                                    changeFilter.value ^= true;
-                                    userDeckFilter =
-                                        newUserDeckFilter;
-                                    publicDeckFilter =
-                                        newPublicDeckFilter;
-                                    cardFilter = newCardFilter;
-                                    applyFilters(
-                                        userDeckFilter,
-                                        publicDeckFilter,
-                                        cardFilter);
-                                  },
-                                );
-                              }),
-                        ),
-                        Divider(
-                          height: 1,
-                        ),
-                        Expanded(
-                          child: SingleChildScrollView(
-                            physics:
-                            const BouncingScrollPhysics(),
-                            child: Padding(
-                              padding:
-                              const EdgeInsets.only(top: 8.0),
-                              child: ValueListenableBuilder(
-                                  valueListenable: changeFilter,
-                                  builder: (
-                                      BuildContext context,
-                                      bool hidden,
-                                      Widget? child,
-                                      ) {
-                                    return ListView.builder(
-                                      physics:
-                                      const NeverScrollableScrollPhysics(),
-                                      shrinkWrap: true,
-                                      itemCount:
-                                      searchedList.length,
-                                      itemBuilder:
-                                          (context, idx) {
-                                        final itemType =
-                                            searchedList[idx]
-                                                .type;
-                                        final APIHanlder
-                                        apiHandler =
-                                        GetIt.I<APIHanlder>();
-                                        if (itemType ==
-                                            ResultType
-                                                .userDeckResult) {
-                                          return !userDeckFilter
-                                              ? const SizedBox()
-                                              : UserDeckTile(
-                                            item:
-                                            searchedList[
-                                            idx]
-                                                .data,
-                                            iconButtonTopRight:
-                                            const IconButton(
-                                                icon:
-                                                Iconify(
-                                                  Mdi.cards_playing_club_multiple,
-                                                  color:
-                                                  Colors.orange,
+                        ? SingleChildScrollView(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 15, vertical: 10),
+                            physics: const BouncingScrollPhysics(),
+                            child: ValueListenableBuilder<List<String>>(
+                                valueListenable: searchHistory,
+                                builder: (context, searchHistories, widget) {
+                                  return Column(
+                                    children: [
+                                      Align(
+                                        alignment: Alignment.topLeft,
+                                        child: Wrap(
+                                          children: List<Widget>.generate(
+                                            searchHistories.length,
+                                            (int index) {
+                                              return Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                  horizontal: 5.0,
                                                 ),
-                                                tooltip:
-                                                'Thể loại: Bộ thẻ',
-                                                onPressed:
-                                                null),
-                                            iconButtonBottomRight: const IconButton(
-                                                icon: Iconify(
-                                                    Ic
-                                                        .baseline_lock_person,
-                                                    color: Colors
-                                                        .grey),
-                                                tooltip:
-                                                'Không công khai',
-                                                onPressed:
-                                                null),
-                                          );
-                                        } else if (itemType ==
-                                            ResultType
-                                                .publicDeckResult) {
-                                          return !publicDeckFilter
-                                              ? const SizedBox()
-                                              : PublicDeckTile(
-                                            item:
-                                            searchedList[
-                                            idx]
-                                                .data,
-                                            iconButtonTopRight: const IconButton(
-                                                icon: Iconify(
-                                                    Mdi
-                                                        .cards_playing_club_multiple,
-                                                    color: Colors
-                                                        .orange),
-                                                tooltip:
-                                                'Thể loại: Bộ thẻ',
-                                                onPressed:
-                                                null),
-                                            iconButtonBottomRight: const IconButton(
-                                                icon: Iconify(
-                                                    Ic
-                                                        .baseline_public,
-                                                    color: Colors
-                                                        .blue),
-                                                tooltip:
-                                                'Công khai',
-                                                onPressed:
-                                                null),
-                                          );
-                                        } else {
-                                          return !cardFilter
-                                              ? const SizedBox()
-                                              : CardSearchTile(
-                                            itemCard: (searchedList[idx]
-                                                .data
-                                            as FlashcardSearch)
-                                                .card,
-                                            itemDeck: apiHandler
-                                                .idToDeckWithReviewCards[(searchedList[idx]
-                                                .data
-                                            as FlashcardSearch)
-                                                .card
-                                                .deckId]!,
-                                            foundTextWidget:
-                                            (searchedList[idx].data
-                                            as FlashcardSearch)
-                                                .searchSentence,
-                                            iconButtonTopRight: const IconButton(
-                                                icon: Iconify(
-                                                    Mdi
-                                                        .cards_playing_club,
-                                                    color: Colors
-                                                        .red),
-                                                tooltip:
-                                                'Thể loại: Thẻ',
-                                                onPressed:
-                                                null),
-                                            iconButtonBottomRight: (apiHandler
-                                                .idToDeckWithReviewCards[(searchedList[idx].data
-                                            as FlashcardSearch)
-                                                .card
-                                                .deckId]!
-                                                .deck
-                                                .isPublic
-                                                ? const IconButton(
-                                                icon: Iconify(
-                                                    Ic
-                                                        .baseline_public,
-                                                    color: Colors
-                                                        .blue),
-                                                tooltip:
-                                                'Công khai',
-                                                onPressed:
-                                                null)
-                                                : const IconButton(
-                                                icon: Iconify(
-                                                    Ic
-                                                        .baseline_lock_person,
-                                                    color: Colors
-                                                        .grey),
-                                                tooltip:
-                                                'Không công khai',
-                                                onPressed:
-                                                null)),
-                                          );
-                                        }
-                                      },
-                                    );
-                                  }),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    if (!done)
-                      Center(
-                        child: SizedBox.square(
-                          dimension: circleProgressSize,
-                          child: Card(
-                            elevation: 10,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                15,
-                              ),
-                            ),
-                            clipBehavior: Clip.antiAlias,
-                            child: Center(
-                              child: Column(
-                                mainAxisAlignment:
-                                MainAxisAlignment.spaceEvenly,
+                                                child: GestureDetector(
+                                                  child: Chip(
+                                                    label: Text(
+                                                      searchHistories[index]
+                                                          .toString(),
+                                                    ),
+                                                    labelStyle: TextStyle(
+                                                      color: Theme.of(context)
+                                                          .textTheme
+                                                          .bodyLarge!
+                                                          .color,
+                                                      fontWeight:
+                                                          FontWeight.normal,
+                                                    ),
+                                                    onDeleted: () {
+                                                      setState(() {
+                                                        searchHistories
+                                                            .removeAt(index);
+                                                        Hive.box('settings')
+                                                            .put(
+                                                          'searchHistory',
+                                                          searchHistories,
+                                                        );
+                                                      });
+                                                    },
+                                                  ),
+                                                  onTap: () {
+                                                    setState(
+                                                      () {
+                                                        query = searchHistories[
+                                                                index]
+                                                            .toString()
+                                                            .trim();
+                                                        _controller.text =
+                                                            query;
+                                                        haveText = true;
+                                                        _focusNode.unfocus();
+                                                        fetched = false;
+                                                        status = false;
+                                                      },
+                                                    );
+                                                  },
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                }),
+                          )
+                        : searchedList.isEmpty
+                            ? emptyScreen(
+                                context,
+                                0,
+                                ':( ',
+                                100,
+                                "Xin lỗi",
+                                60,
+                                "Không tìm thấy kết quả nào",
+                                20,
+                              )
+                            : Stack(
                                 children: [
-                                  CircularProgressIndicator(
-                                    valueColor:
-                                    AlwaysStoppedAnimation<
-                                        Color>(
-                                      Theme.of(context)
-                                          .colorScheme
-                                          .secondary,
-                                    ),
-                                    strokeWidth: 5,
+                                  Column(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 4.0, top: 5, bottom: 5),
+                                        child: SearchInfoBar(
+                                            numberOfResults:
+                                                searchedList.length,
+                                            onFilterPressed: () {
+                                              showFilterDialog(
+                                                context,
+                                                userDeckFilter,
+                                                publicDeckFilter,
+                                                cardFilter,
+                                                (bool newUserDeckFilter,
+                                                    bool newPublicDeckFilter,
+                                                    bool newCardFilter) {
+                                                  changeFilter.value ^= true;
+                                                  userDeckFilter =
+                                                      newUserDeckFilter;
+                                                  publicDeckFilter =
+                                                      newPublicDeckFilter;
+                                                  cardFilter = newCardFilter;
+                                                  applyFilters(
+                                                      userDeckFilter,
+                                                      publicDeckFilter,
+                                                      cardFilter);
+                                                },
+                                              );
+                                            }),
+                                      ),
+                                      Divider(
+                                        height: 1,
+                                      ),
+                                      Expanded(
+                                        child: SingleChildScrollView(
+                                          physics:
+                                              const BouncingScrollPhysics(),
+                                          child: Padding(
+                                            padding:
+                                                const EdgeInsets.only(top: 8.0),
+                                            child: ValueListenableBuilder(
+                                                valueListenable: changeFilter,
+                                                builder: (
+                                                  BuildContext context,
+                                                  bool hidden,
+                                                  Widget? child,
+                                                ) {
+                                                  return ListView.builder(
+                                                    physics:
+                                                        const NeverScrollableScrollPhysics(),
+                                                    shrinkWrap: true,
+                                                    itemCount:
+                                                        searchedList.length,
+                                                    itemBuilder:
+                                                        (context, idx) {
+                                                      final itemType =
+                                                          searchedList[idx]
+                                                              .type;
+                                                      final APIHanlder
+                                                          apiHandler =
+                                                          GetIt.I<APIHanlder>();
+                                                      if (itemType ==
+                                                          ResultType
+                                                              .userDeckResult) {
+                                                        return !userDeckFilter
+                                                            ? const SizedBox()
+                                                            : UserDeckTile(
+                                                                item:
+                                                                    searchedList[
+                                                                            idx]
+                                                                        .data,
+                                                                iconButtonTopRight:
+                                                                    const IconButton(
+                                                                        icon:
+                                                                            Iconify(
+                                                                          Mdi.cards_playing_club_multiple,
+                                                                          color:
+                                                                              Colors.orange,
+                                                                        ),
+                                                                        tooltip:
+                                                                            'Thể loại: Bộ thẻ',
+                                                                        onPressed:
+                                                                            null),
+                                                                iconButtonBottomRight: const IconButton(
+                                                                    icon: Iconify(
+                                                                        Ic
+                                                                            .baseline_lock_person,
+                                                                        color: Colors
+                                                                            .grey),
+                                                                    tooltip:
+                                                                        'Không công khai',
+                                                                    onPressed:
+                                                                        null),
+                                                              );
+                                                      } else if (itemType ==
+                                                          ResultType
+                                                              .publicDeckResult) {
+                                                        return !publicDeckFilter
+                                                            ? const SizedBox()
+                                                            : PublicDeckTile(
+                                                                item:
+                                                                    searchedList[
+                                                                            idx]
+                                                                        .data,
+                                                                iconButtonTopRight: const IconButton(
+                                                                    icon: Iconify(
+                                                                        Mdi
+                                                                            .cards_playing_club_multiple,
+                                                                        color: Colors
+                                                                            .orange),
+                                                                    tooltip:
+                                                                        'Thể loại: Bộ thẻ',
+                                                                    onPressed:
+                                                                        null),
+                                                                iconButtonBottomRight: const IconButton(
+                                                                    icon: Iconify(
+                                                                        Ic
+                                                                            .baseline_public,
+                                                                        color: Colors
+                                                                            .blue),
+                                                                    tooltip:
+                                                                        'Công khai',
+                                                                    onPressed:
+                                                                        null),
+                                                              );
+                                                      } else {
+                                                        return !cardFilter
+                                                            ? const SizedBox()
+                                                            : CardSearchTile(
+                                                                itemCard: (searchedList[idx]
+                                                                            .data
+                                                                        as FlashcardSearch)
+                                                                    .card,
+                                                                itemDeck: apiHandler
+                                                                    .idToDeckWithReviewCards[(searchedList[idx]
+                                                                            .data
+                                                                        as FlashcardSearch)
+                                                                    .card
+                                                                    .deckId]!,
+                                                                foundTextWidget:
+                                                                    (searchedList[idx].data
+                                                                            as FlashcardSearch)
+                                                                        .searchSentence,
+                                                                iconButtonTopRight: const IconButton(
+                                                                    icon: Iconify(
+                                                                        Mdi
+                                                                            .cards_playing_club,
+                                                                        color: Colors
+                                                                            .red),
+                                                                    tooltip:
+                                                                        'Thể loại: Thẻ',
+                                                                    onPressed:
+                                                                        null),
+                                                                iconButtonBottomRight: (apiHandler
+                                                                        .idToDeckWithReviewCards[(searchedList[idx].data
+                                                                                as FlashcardSearch)
+                                                                            .card
+                                                                            .deckId]!
+                                                                        .deck
+                                                                        .isPublic
+                                                                    ? const IconButton(
+                                                                        icon: Iconify(
+                                                                            Ic
+                                                                                .baseline_public,
+                                                                            color: Colors
+                                                                                .blue),
+                                                                        tooltip:
+                                                                            'Công khai',
+                                                                        onPressed:
+                                                                            null)
+                                                                    : const IconButton(
+                                                                        icon: Iconify(
+                                                                            Ic
+                                                                                .baseline_lock_person,
+                                                                            color: Colors
+                                                                                .grey),
+                                                                        tooltip:
+                                                                            'Không công khai',
+                                                                        onPressed:
+                                                                            null)),
+                                                              );
+                                                      }
+                                                    },
+                                                  );
+                                                }),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  Text(
-                                    "Đang xử lý tìm kiếm",
-                                  ),
+                                  if (!done)
+                                    Center(
+                                      child: SizedBox.square(
+                                        dimension: circleProgressSize,
+                                        child: Card(
+                                          elevation: 10,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              15,
+                                            ),
+                                          ),
+                                          clipBehavior: Clip.antiAlias,
+                                          child: Center(
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceEvenly,
+                                              children: [
+                                                CircularProgressIndicator(
+                                                  valueColor:
+                                                      AlwaysStoppedAnimation<
+                                                          Color>(
+                                                    Theme.of(context)
+                                                        .colorScheme
+                                                        .secondary,
+                                                  ),
+                                                  strokeWidth: 5,
+                                                ),
+                                                Text(
+                                                  "Đang xử lý tìm kiếm",
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    )
                                 ],
                               ),
-                            ),
-                          ),
-                        ),
-                      )
-                  ],
-                ),
               ),
             ],
           ),

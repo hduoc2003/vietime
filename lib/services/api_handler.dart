@@ -1,4 +1,5 @@
 import 'package:google_search_suggestions/google_search_suggestions.dart';
+
 import '../entity/deck.dart';
 import 'mock_data.dart';
 

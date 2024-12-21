@@ -14,13 +14,10 @@ import 'package:vietime/screens/game_screen.dart';
 import 'package:vietime/screens/home/home_screen.dart';
 import 'package:vietime/screens/profile.dart';
 import 'package:vietime/screens/search_screen.dart';
-
 import 'package:vietime/services/api_handler.dart';
 
 import 'custom_widgets/custom_physics.dart';
 import 'custom_widgets/snackbar.dart';
-
-
 
 Future<void> main() async {
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
@@ -65,13 +62,13 @@ Future<void> openHiveBox(String boxName, {bool limit = false}) async {
   }
 }
 
-
 class MyApp extends StatefulWidget {
   static final title = 'Vietime';
 
   @override
   _MyAppState createState() => _MyAppState();
 }
+
 class _MyAppState extends State<MyApp> {
   final ValueNotifier<int> _selectedIndex = ValueNotifier<int>(0);
   final PageController _pageController = PageController();
@@ -83,12 +80,14 @@ class _MyAppState extends State<MyApp> {
       index,
     );
   }
+
   Future<void> handleWillPop(BuildContext context) async {
     final now = DateTime.now();
     final backButtonHasNotBeenPressedOrSnackBarHasBeenClosed =
         backButtonPressTime == null ||
             now.difference(backButtonPressTime!) >
                 const Duration(milliseconds: 2700);
+
     if (backButtonHasNotBeenPressedOrSnackBarHasBeenClosed) {
       backButtonPressTime = now;
       ShowSnackBar().showSnackBar(
@@ -97,20 +96,24 @@ class _MyAppState extends State<MyApp> {
         duration: const Duration(milliseconds: 2500),
         noAction: true,
       );
+
       return;
     }
     SystemNavigator.pop();
     return;
   }
+
   @override
   void initState() {
     super.initState();
   }
+
   @override
   void dispose() {
     _pageController.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -179,6 +182,7 @@ class _MyAppState extends State<MyApp> {
                           title: Text("Home"),
                           selectedColor: Colors.purple,
                         ),
+
                         /// Search
                         SalomonBottomBarItem(
                           icon: const Iconify(
@@ -188,12 +192,14 @@ class _MyAppState extends State<MyApp> {
                           title: Text("Search"),
                           selectedColor: Colors.orange,
                         ),
+
                         /// Profile
                         SalomonBottomBarItem(
                           icon: Iconify(Ri.game_fill, color: Colors.green),
                           title: Text("Game"),
                           selectedColor: Colors.green,
                         ),
+
                         /// Profile
                         SalomonBottomBarItem(
                           icon: Iconify(Ri.user_5_fill, color: Colors.blue),

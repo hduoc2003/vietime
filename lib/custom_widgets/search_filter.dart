@@ -114,12 +114,12 @@ class _FilterDialogState extends State<FilterDialog> {
 }
 
 void showFilterDialog(
-    BuildContext context,
-    bool initialUserDeckFilter,
-    bool initialPublicDeckFilter,
-    bool initialCardFilter,
-    Function(bool, bool, bool) onFiltersChanged,
-    ) {
+  BuildContext context,
+  bool initialUserDeckFilter,
+  bool initialPublicDeckFilter,
+  bool initialCardFilter,
+  Function(bool, bool, bool) onFiltersChanged,
+) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -134,10 +134,10 @@ void showFilterDialog(
 }
 
 void applyFilters(
-    bool userDeckFilter,
-    bool publicDeckFilter,
-    bool cardFilter,
-    ) {
+  bool userDeckFilter,
+  bool publicDeckFilter,
+  bool cardFilter,
+) {
   // Implement your logic to apply the selected filters
   print('User Deck Filter: $userDeckFilter');
   print('Public Deck Filter: $publicDeckFilter');

@@ -150,30 +150,30 @@ class _HomePageState extends State<HomePage> {
                     );
                   },
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text(
-                        'XEM TẤT CẢ',
-                        textAlign: TextAlign.right,
-                        style: TextStyle(
-                          height: 1.5,
-                          fontWeight: FontWeight.w900,
-                          fontSize: 15,
-                          letterSpacing: 0.3,
-                          color: Colors.orange,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                            'XEM TẤT CẢ',
+                            textAlign: TextAlign.right,
+                            style: TextStyle(
+                              height: 1.5,
+                              fontWeight: FontWeight.w900,
+                              fontSize: 15,
+                              letterSpacing: 0.3,
+                              color: Colors.orange,
+                            ),
+                          ),
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 3.0),
+                          child: Iconify(
+                            Ic.outline_chevron_right,
+                            color: Colors.orange,
+                            size: 32,
+                          ),
                         ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(bottom: 3.0),
-                        child: Iconify(
-                          Ic.outline_chevron_right,
-                          color: Colors.orange,
-                          size: 32,
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
               ],
             ),
           ),

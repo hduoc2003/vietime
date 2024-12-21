@@ -51,21 +51,21 @@ class _DeckScreenState extends State<DeckScreen> {
                 width: maxWidth, // Set your maximum width
                 child: validateURL(descriptionImgPath)
                     ? CachedNetworkImage(
-                  fit: BoxFit.cover,
-                  errorWidget: (context, _, __) => const Image(
-                    fit: BoxFit.cover,
-                    image: AssetImage('assets/deck_placeholder.png'),
-                  ),
-                  imageUrl: descriptionImgPath,
-                  placeholder: (context, url) => const Image(
-                    fit: BoxFit.cover,
-                    image: AssetImage('assets/deck_placeholder.png'),
-                  ),
-                )
+                        fit: BoxFit.cover,
+                        errorWidget: (context, _, __) => const Image(
+                          fit: BoxFit.cover,
+                          image: AssetImage('assets/deck_placeholder.png'),
+                        ),
+                        imageUrl: descriptionImgPath,
+                        placeholder: (context, url) => const Image(
+                          fit: BoxFit.cover,
+                          image: AssetImage('assets/deck_placeholder.png'),
+                        ),
+                      )
                     : const Image(
-                  fit: BoxFit.cover,
-                  image: AssetImage('assets/deck_placeholder.png'),
-                ),
+                        fit: BoxFit.cover,
+                        image: AssetImage('assets/deck_placeholder.png'),
+                      ),
               ),
             ),
           ),
@@ -287,186 +287,186 @@ class _DeckScreenState extends State<DeckScreen> {
   Widget _buildCardTypesRow() {
     return widget.deckData.deck.isPublic
         ? Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _buildInfoColumnPublicDeck(
-              widget.deckData.deck.rating.toStringAsFixed(1),
-              Iconify(
-                Ri.star_smile_fill,
-                color: Colors.orange,
-              ),
-              "Đánh giá",
-              Colors.orange),
-          _buildInfoColumnPublicDeck(
-              widget.deckData.deck.views.toString(),
-              Iconify(
-                Ion.ios_eye,
-                color: Colors.green,
-              ),
-              "Lượt xem",
-              Colors.green),
-        ],
-      ),
-    )
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildInfoColumnPublicDeck(
+                    widget.deckData.deck.rating.toStringAsFixed(1),
+                    Iconify(
+                      Ri.star_smile_fill,
+                      color: Colors.orange,
+                    ),
+                    "Đánh giá",
+                    Colors.orange),
+                _buildInfoColumnPublicDeck(
+                    widget.deckData.deck.views.toString(),
+                    Iconify(
+                      Ion.ios_eye,
+                      color: Colors.green,
+                    ),
+                    "Lượt xem",
+                    Colors.green),
+              ],
+            ),
+          )
         : Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _buildInfoColumn(widget.deckData.numBlueCards.toString(),
-              "Thẻ Mới", Colors.blue),
-          _buildInfoColumn(widget.deckData.numRedCards.toString(),
-              "Đã Quên", Colors.red),
-          _buildInfoColumn(widget.deckData.numGreenCards.toString(),
-              "Ôn Tập", Colors.green),
-        ],
-      ),
-    );
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildInfoColumn(widget.deckData.numBlueCards.toString(),
+                    "Thẻ Mới", Colors.blue),
+                _buildInfoColumn(widget.deckData.numRedCards.toString(),
+                    "Đã Quên", Colors.red),
+                _buildInfoColumn(widget.deckData.numGreenCards.toString(),
+                    "Ôn Tập", Colors.green),
+              ],
+            ),
+          );
   }
 
   Widget _buildScheduleTitleRow() {
     return widget.deckData.deck.isPublic
         ? Padding(
-      padding: const EdgeInsets.only(left: 24.0, right: 16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            "Thông số",
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          IconButton(
-            icon: Icon(Icons.info_outline),
-            onPressed: () {
-              // Show dialog for more information
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: Text("Chất lượng đánh giá"),
-                    content: RichText(
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text:
-                            "Các đánh giá về các bộ thẻ được xác thực kỹ "
-                                "càng trước khi được tính vào thông số cuối cùng",
-                            style: TextStyle(color: Colors.black),
+            padding: const EdgeInsets.only(left: 24.0, right: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Thông số",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(Icons.info_outline),
+                  onPressed: () {
+                    // Show dialog for more information
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text("Chất lượng đánh giá"),
+                          content: RichText(
+                            text: TextSpan(
+                              children: [
+                                TextSpan(
+                                  text:
+                                      "Các đánh giá về các bộ thẻ được xác thực kỹ "
+                                      "càng trước khi được tính vào thông số cuối cùng",
+                                  style: TextStyle(color: Colors.black),
+                                ),
+                              ],
+                            ),
                           ),
-                        ],
-                      ),
-                    ),
-                    actionsPadding:
-                    EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    contentPadding: EdgeInsets.only(
-                        left: 24, right: 24, top: 10, bottom: 0),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: Text("OK"),
-                      ),
-                    ],
-                  );
-                },
-              );
-            },
-          ),
-        ],
-      ),
-    )
+                          actionsPadding:
+                              EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          contentPadding: EdgeInsets.only(
+                              left: 24, right: 24, top: 10, bottom: 0),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text("OK"),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                ),
+              ],
+            ),
+          )
         : Padding(
-      padding: const EdgeInsets.only(left: 24.0, right: 16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            "Lịch học hôm nay",
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
+            padding: const EdgeInsets.only(left: 24.0, right: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Lịch học hôm nay",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(Icons.info_outline),
+                  onPressed: () {
+                    // Show dialog for more information
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text("Ba loại thẻ khi học"),
+                          content: RichText(
+                            text: TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: "Màu ",
+                                  style: TextStyle(color: Colors.black),
+                                ),
+                                TextSpan(
+                                  text: "xanh dương",
+                                  style: TextStyle(
+                                      color: Colors.blue,
+                                      fontWeight: FontWeight.w900),
+                                ),
+                                TextSpan(
+                                  text:
+                                      " nghĩa là những thẻ mới người dùng chưa học bao giờ. "
+                                      "\n\nMàu ",
+                                  style: TextStyle(color: Colors.black),
+                                ),
+                                TextSpan(
+                                  text: "đỏ",
+                                  style: TextStyle(
+                                      color: Colors.red,
+                                      fontWeight: FontWeight.w900),
+                                ),
+                                TextSpan(
+                                  text:
+                                      " nghĩa là những thẻ người dùng đã quên cần học lại. "
+                                      "\n\nMàu ",
+                                  style: TextStyle(color: Colors.black),
+                                ),
+                                TextSpan(
+                                  text: "xanh lá cây",
+                                  style: TextStyle(
+                                      color: Colors.green,
+                                      fontWeight: FontWeight.w900),
+                                ),
+                                TextSpan(
+                                  text:
+                                      " nghĩa là những thẻ người dùng cần ôn tập.",
+                                  style: TextStyle(color: Colors.black),
+                                ),
+                              ],
+                            ),
+                          ),
+                          actionsPadding:
+                              EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          contentPadding: EdgeInsets.only(
+                              left: 24, right: 24, top: 10, bottom: 0),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text("OK"),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                ),
+              ],
             ),
-          ),
-          IconButton(
-            icon: Icon(Icons.info_outline),
-            onPressed: () {
-              // Show dialog for more information
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: Text("Ba loại thẻ khi học"),
-                    content: RichText(
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: "Màu ",
-                            style: TextStyle(color: Colors.black),
-                          ),
-                          TextSpan(
-                            text: "xanh dương",
-                            style: TextStyle(
-                                color: Colors.blue,
-                                fontWeight: FontWeight.w900),
-                          ),
-                          TextSpan(
-                            text:
-                            " nghĩa là những thẻ mới người dùng chưa học bao giờ. "
-                                "\n\nMàu ",
-                            style: TextStyle(color: Colors.black),
-                          ),
-                          TextSpan(
-                            text: "đỏ",
-                            style: TextStyle(
-                                color: Colors.red,
-                                fontWeight: FontWeight.w900),
-                          ),
-                          TextSpan(
-                            text:
-                            " nghĩa là những thẻ người dùng đã quên cần học lại. "
-                                "\n\nMàu ",
-                            style: TextStyle(color: Colors.black),
-                          ),
-                          TextSpan(
-                            text: "xanh lá cây",
-                            style: TextStyle(
-                                color: Colors.green,
-                                fontWeight: FontWeight.w900),
-                          ),
-                          TextSpan(
-                            text:
-                            " nghĩa là những thẻ người dùng cần ôn tập.",
-                            style: TextStyle(color: Colors.black),
-                          ),
-                        ],
-                      ),
-                    ),
-                    actionsPadding:
-                    EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    contentPadding: EdgeInsets.only(
-                        left: 24, right: 24, top: 10, bottom: 0),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: Text("OK"),
-                      ),
-                    ],
-                  );
-                },
-              );
-            },
-          ),
-        ],
-      ),
-    );
+          );
   }
 
   Widget _buildNumberOfCardsRow() {

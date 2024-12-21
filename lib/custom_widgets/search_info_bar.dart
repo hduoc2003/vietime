@@ -44,7 +44,7 @@ class SearchInfoBar extends StatelessWidget {
                   ),
                 ),
                 SizedBox(width: 10,),
-                Icon(Icons.filter_list, color: Colors.black, size: 30),
+                Icon(Icons.filter_list, color: Colors.black, size: 30,),
               ],
             ),
           )

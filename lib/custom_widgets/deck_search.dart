@@ -61,26 +61,26 @@ class DeckSearch extends SearchDelegate {
       suggestionList = data;
     } else {
       List<String> queryWords =
-      removeDiacritics(query.toLowerCase()).split(RegExp(r'\s+'));
+          removeDiacritics(query.toLowerCase()).split(RegExp(r'\s+'));
 
       List<DeckWithReviewCards> filteredData = [
         ...data.where((element) {
           String rawName = removeDiacritics(element.deck.name.toLowerCase());
           String rawDes =
-          removeDiacritics(element.deck.description.toLowerCase());
+              removeDiacritics(element.deck.description.toLowerCase());
           return queryWords.any((queryWord) =>
-          rawName.contains(queryWord) || rawDes.contains(queryWord));
+              rawName.contains(queryWord) || rawDes.contains(queryWord));
         }),
       ];
       filteredData.sort((a, b) {
         String rawNameA =
-        removeDiacritics(a.deck.name.toString().toLowerCase());
+            removeDiacritics(a.deck.name.toString().toLowerCase());
         String rawDesA =
-        removeDiacritics(a.deck.description.toString().toLowerCase());
+            removeDiacritics(a.deck.description.toString().toLowerCase());
         String rawNameB =
-        removeDiacritics(b.deck.name.toString().toLowerCase());
+            removeDiacritics(b.deck.name.toString().toLowerCase());
         String rawDesB =
-        removeDiacritics(b.deck.description.toString().toLowerCase());
+            removeDiacritics(b.deck.description.toString().toLowerCase());
         int countMatchWordsA = countMatchWords(rawNameA, queryWords) +
             countMatchWords(rawDesA, queryWords);
         int countMatchWordsB = countMatchWords(rawNameB, queryWords) +
@@ -107,21 +107,21 @@ class DeckSearch extends SearchDelegate {
             dimension: 50,
             child: validateURL(suggestionList[index].deck.descriptionImgPath)
                 ? CachedNetworkImage(
-              fit: BoxFit.cover,
-              errorWidget: (context, _, __) => const Image(
-                fit: BoxFit.cover,
-                image: AssetImage('assets/deck_placeholder.png'),
-              ),
-              imageUrl: suggestionList[index].deck.descriptionImgPath,
-              placeholder: (context, url) => const Image(
-                fit: BoxFit.cover,
-                image: AssetImage('assets/deck_placeholder.png'),
-              ),
-            )
+                    fit: BoxFit.cover,
+                    errorWidget: (context, _, __) => const Image(
+                      fit: BoxFit.cover,
+                      image: AssetImage('assets/deck_placeholder.png'),
+                    ),
+                    imageUrl: suggestionList[index].deck.descriptionImgPath,
+                    placeholder: (context, url) => const Image(
+                      fit: BoxFit.cover,
+                      image: AssetImage('assets/deck_placeholder.png'),
+                    ),
+                  )
                 : const Image(
-              fit: BoxFit.cover,
-              image: AssetImage('assets/deck_placeholder.png'),
-            ),
+                    fit: BoxFit.cover,
+                    image: AssetImage('assets/deck_placeholder.png'),
+                  ),
           ),
         ),
         title: Text(
@@ -130,55 +130,55 @@ class DeckSearch extends SearchDelegate {
         ),
         subtitle: suggestionList[index].deck.isPublic
             ? Row(
-          children: [
-            Text(
-              "Đánh giá: ",
-              style: TextStyle(
-                fontSize: 14.0,
-                color: Colors.black,
-              ),
-            ),
-            Text(
-              "${suggestionList[index].deck.rating.toStringAsFixed(1)}",
-              style: TextStyle(
-                fontSize: 14.0,
-                color: Colors.black,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 4.0, bottom: 2),
-              child: Icon(
-                Icons.star,
-                color: Color(0xffedc202),
-                size: 18.0,
-              ),
-            ),
-            Text(
-              " ~ ${suggestionList[index].deck.views}",
-              style: TextStyle(
-                fontSize: 14.0,
-                color: Colors.black,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 4.0, bottom: 2),
-              child: Iconify(
-                Ion.ios_eye,
-                color: Colors.green,
-                size: 18.0,
-              ),
-            ),
-          ],
-        )
+                children: [
+                  Text(
+                    "Đánh giá: ",
+                    style: TextStyle(
+                      fontSize: 14.0,
+                      color: Colors.black,
+                    ),
+                  ),
+                  Text(
+                    "${suggestionList[index].deck.rating.toStringAsFixed(1)}",
+                    style: TextStyle(
+                      fontSize: 14.0,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 4.0, bottom: 2),
+                    child: Icon(
+                      Icons.star,
+                      color: Color(0xffedc202),
+                      size: 18.0,
+                    ),
+                  ),
+                  Text(
+                    " ~ ${suggestionList[index].deck.views}",
+                    style: TextStyle(
+                      fontSize: 14.0,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 4.0, bottom: 2),
+                    child: Iconify(
+                      Ion.ios_eye,
+                      color: Colors.green,
+                      size: 18.0,
+                    ),
+                  ),
+                ],
+              )
             : ThreeCardTypeNumbersRow(
-          numBlueCards: suggestionList[index].numBlueCards,
-          numRedCards: suggestionList[index].numRedCards,
-          numGreenCards: suggestionList[index].numGreenCards,
-          fontSize: 14,
-          boxSize: 4,
-        ),
+                numBlueCards: suggestionList[index].numBlueCards,
+                numRedCards: suggestionList[index].numRedCards,
+                numGreenCards: suggestionList[index].numGreenCards,
+                fontSize: 14,
+                boxSize: 4,
+              ),
         trailing: LoveDeckButton(
           deckItem: suggestionList[index],
         ),
@@ -204,26 +204,26 @@ class DeckSearch extends SearchDelegate {
       suggestionList = data;
     } else {
       List<String> queryWords =
-      removeDiacritics(query.toLowerCase()).split(RegExp(r'\s+'));
+          removeDiacritics(query.toLowerCase()).split(RegExp(r'\s+'));
 
       List filteredData = [
         ...data.where((element) {
           String rawName = removeDiacritics(element.deck.name.toLowerCase());
           String rawDes =
-          removeDiacritics(element.deck.description.toLowerCase());
+              removeDiacritics(element.deck.description.toLowerCase());
           return queryWords.any((queryWord) =>
-          rawName.contains(queryWord) || rawDes.contains(queryWord));
+              rawName.contains(queryWord) || rawDes.contains(queryWord));
         }),
       ];
       filteredData.sort((a, b) {
         String rawNameA =
-        removeDiacritics(a.deck.name.toString().toLowerCase());
+            removeDiacritics(a.deck.name.toString().toLowerCase());
         String rawDesA =
-        removeDiacritics(a.deck.description.toString().toLowerCase());
+            removeDiacritics(a.deck.description.toString().toLowerCase());
         String rawNameB =
-        removeDiacritics(b.deck.name.toString().toLowerCase());
+            removeDiacritics(b.deck.name.toString().toLowerCase());
         String rawDesB =
-        removeDiacritics(b.deck.description.toString().toLowerCase());
+            removeDiacritics(b.deck.description.toString().toLowerCase());
         int countMatchWordsA = countMatchWords(rawNameA, queryWords) +
             countMatchWords(rawDesA, queryWords);
         int countMatchWordsB = countMatchWords(rawNameB, queryWords) +
@@ -281,7 +281,7 @@ class DeckSearch extends SearchDelegate {
     return theme.copyWith(
       primaryColor: Theme.of(context).colorScheme.secondary,
       textSelectionTheme:
-      const TextSelectionThemeData(cursorColor: Colors.black),
+          const TextSelectionThemeData(cursorColor: Colors.black),
       hintColor: Colors.black54,
       primaryIconTheme: theme.primaryIconTheme.copyWith(color: Colors.black),
       textTheme: theme.textTheme.copyWith(
@@ -291,7 +291,7 @@ class DeckSearch extends SearchDelegate {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor:
-        Colors.grey[200], // Set the background color of the rounded box
+            Colors.grey[200], // Set the background color of the rounded box
         focusedBorder: OutlineInputBorder(
           borderSide: BorderSide.none, // Remove the border for focused state
           borderRadius: BorderRadius.circular(
