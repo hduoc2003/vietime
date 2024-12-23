@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:iconify_flutter/iconify_flutter.dart';
 import 'package:iconify_flutter/icons/ic.dart';
 import 'package:iconify_flutter/icons/mdi.dart';
@@ -7,6 +8,7 @@ import 'package:vietime/screens/deck_list_screen.dart';
 import 'package:vietime/screens/home/widgets/deck_horizontal_list.dart';
 import 'package:iconify_flutter/icons/carbon.dart';
 
+import '../../services/api_handler.dart';
 import '../../services/mock_data.dart';
 import 'notification_screen.dart';
 
@@ -47,7 +49,8 @@ class _HomePageState extends State<HomePage> {
     return Row(
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.only(left: 20.0, right: 20, bottom: 20, top: 15),
+          padding:
+              const EdgeInsets.only(left: 20.0, right: 20, bottom: 20, top: 15),
           child: Container(
             width: 60,
             height: 60,
@@ -146,41 +149,44 @@ class _HomePageState extends State<HomePage> {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => DeckListScreen(decksList: mockDecksList,)),
+                      MaterialPageRoute(
+                          builder: (context) => DeckListScreen(
+                                decksList: GetIt.I<APIHanlder>().userDecks,
+                              )),
                     );
                   },
                   child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text(
-                            'XEM TẤT CẢ',
-                            textAlign: TextAlign.right,
-                            style: TextStyle(
-                              height: 1.5,
-                              fontWeight: FontWeight.w900,
-                              fontSize: 15,
-                              letterSpacing: 0.3,
-                              color: Colors.orange,
-                            ),
-                          ),
-                        Padding(
-                          padding: EdgeInsets.only(bottom: 3.0),
-                          child: Iconify(
-                            Ic.outline_chevron_right,
-                            color: Colors.orange,
-                            size: 32,
-                          ),
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        'XEM TẤT CẢ',
+                        textAlign: TextAlign.right,
+                        style: TextStyle(
+                          height: 1.5,
+                          fontWeight: FontWeight.w900,
+                          fontSize: 15,
+                          letterSpacing: 0.3,
+                          color: Colors.orange,
                         ),
-                      ],
-                    ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 3.0),
+                        child: Iconify(
+                          Ic.outline_chevron_right,
+                          color: Colors.orange,
+                          size: 32,
+                        ),
+                      ),
+                    ],
                   ),
+                ),
               ],
             ),
           ),
           DeckHorizontalList(
             itemCountPerGroup: 3,
             deckType: 0,
-            decksList: mockDecksList,
+            decksList: GetIt.I<APIHanlder>().userDecks,
           )
         ]);
   }
@@ -216,7 +222,10 @@ class _HomePageState extends State<HomePage> {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => DeckListScreen(decksList: mockDecksList,)),
+                      MaterialPageRoute(
+                          builder: (context) => DeckListScreen(
+                                decksList: GetIt.I<APIHanlder>().publicDecks,
+                              )),
                     );
                   },
                   child: Row(
@@ -250,7 +259,7 @@ class _HomePageState extends State<HomePage> {
           DeckHorizontalList(
             itemCountPerGroup: 2,
             deckType: 1,
-            decksList: mockDecksList,
+            decksList: GetIt.I<APIHanlder>().publicDecks,
           )
         ]);
   }

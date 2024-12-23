@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:logging/logging.dart';
@@ -24,6 +25,8 @@ import 'custom_widgets/custom_physics.dart';
 import 'custom_widgets/snackbar.dart';
 
 Future<void> main() async {
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
     await Hive.initFlutter('Vietime');
   } else {
@@ -35,6 +38,8 @@ Future<void> main() async {
   await initAPIHandler();
   await initLogging();
   runApp(MyApp());
+  await Future.delayed(const Duration(milliseconds: 1));
+  FlutterNativeSplash.remove();
 }
 
 Future<void> initAPIHandler() async {
@@ -76,30 +81,8 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final ValueNotifier<int> _selectedIndex = ValueNotifier<int>(0);
   final PageController _pageController = PageController();
-  DateTime? backButtonPressTime;
   bool isLoggedIn = false;
-  final _storage = const FlutterSecureStorage();
-  void checkLogin() async {
-    String? refreshToken = await _storage.read(key: 'refresh_token');
-    if (refreshToken == null) {
-      isLoggedIn = false;
-      return;
-    } else {
-      APIHelper.refreshTokens(refreshToken).then((result) {
-        if (result['accessToken']!.isNotEmpty) {
-          // Token refresh successful, update your app's authentication state
-          // Access the new refresh token and access token as needed
-          String newRefreshToken = result['newRefreshToken']!;
-          String accessToken = result['accessToken']!;
-          isLoggedIn = true;
-        } else {
-          // Token refresh failed or unauthorized, handle accordingly
-          isLoggedIn = false;
-        }
-      });
-    }
-    isLoggedIn = false;
-  }
+  DateTime? backButtonPressTime;
 
   void _onItemTapped(int index) {
     _selectedIndex.value = index;
@@ -132,14 +115,14 @@ class _MyAppState extends State<MyApp> {
 
   void _onSuccessLogIn() {
     setState(() {
-      isLoggedIn = true;
+      isLoggedIn = GetIt.I<APIHanlder>().isLoggedIn;
     });
   }
 
   @override
   void initState() {
     super.initState();
-    checkLogin();
+    isLoggedIn = GetIt.I<APIHanlder>().isLoggedIn;
   }
 
   @override
@@ -157,95 +140,99 @@ class _MyAppState extends State<MyApp> {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: Builder(builder: (context) {
-        return isLoggedIn ? Scaffold(
-          resizeToAvoidBottomInset: false,
-          body: PopScope(
-            canPop: false,
-            onPopInvoked: (bool didPop) {
-              if (didPop) {
-                return;
-              }
-              handleWillPop(context);
-            },
-            child: SafeArea(
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Column(
+        return isLoggedIn
+            ? Scaffold(
+                resizeToAvoidBottomInset: false,
+                body: PopScope(
+                  canPop: false,
+                  onPopInvoked: (bool didPop) {
+                    if (didPop) {
+                      return;
+                    }
+                    handleWillPop(context);
+                  },
+                  child: SafeArea(
+                    child: Row(
                       children: [
                         Expanded(
-                          child: PageView(
-                            physics: NeverScrollableScrollPhysics(),
-                            onPageChanged: (index) {
-                              _selectedIndex.value = index;
-                            },
-                            controller: _pageController,
+                          child: Column(
                             children: [
-                              HomePage(),
-                              SearchPage(
-                                query: "",
+                              Expanded(
+                                child: PageView(
+                                  physics: NeverScrollableScrollPhysics(),
+                                  onPageChanged: (index) {
+                                    _selectedIndex.value = index;
+                                  },
+                                  controller: _pageController,
+                                  children: [
+                                    HomePage(),
+                                    SearchPage(
+                                      query: "",
+                                    ),
+                                    // GamePage(),
+                                    ProfilePage(),
+                                  ],
+                                ),
                               ),
-                              // GamePage(),
-                              ProfilePage(),
                             ],
                           ),
                         ),
                       ],
                     ),
                   ),
-                ],
-              ),
-            ),
-          ),
-          bottomNavigationBar: SafeArea(
-            child: ValueListenableBuilder(
-                valueListenable: _selectedIndex,
-                builder: (BuildContext context, int indexValue, Widget? child) {
-                  return AnimatedContainer(
-                    duration: const Duration(milliseconds: 100),
-                    height: 60,
-                    child: SalomonBottomBar(
-                      currentIndex: indexValue,
-                      onTap: (i) => _onItemTapped(i),
-                      items: [
-                        /// Home
-                        SalomonBottomBarItem(
-                          // icon: Icon(Iconsax.home_1),
-                          icon: const Iconify(Ri.home_smile_2_fill,
-                              color: Colors.purple),
-                          title: Text("Home"),
-                          selectedColor: Colors.purple,
-                        ),
+                ),
+                bottomNavigationBar: SafeArea(
+                  child: ValueListenableBuilder(
+                      valueListenable: _selectedIndex,
+                      builder: (BuildContext context, int indexValue,
+                          Widget? child) {
+                        return AnimatedContainer(
+                          duration: const Duration(milliseconds: 100),
+                          height: 60,
+                          child: SalomonBottomBar(
+                            currentIndex: indexValue,
+                            onTap: (i) => _onItemTapped(i),
+                            items: [
+                              /// Home
+                              SalomonBottomBarItem(
+                                // icon: Icon(Iconsax.home_1),
+                                icon: const Iconify(Ri.home_smile_2_fill,
+                                    color: Colors.purple),
+                                title: Text("Home"),
+                                selectedColor: Colors.purple,
+                              ),
 
-                        /// Search
-                        SalomonBottomBarItem(
-                          icon: const Iconify(
-                            Ri.search_eye_fill,
-                            color: Colors.orange,
+                              /// Search
+                              SalomonBottomBarItem(
+                                icon: const Iconify(
+                                  Ri.search_eye_fill,
+                                  color: Colors.orange,
+                                ),
+                                title: Text("Search"),
+                                selectedColor: Colors.orange,
+                              ),
+
+                              /// Profile
+                              // SalomonBottomBarItem(
+                              //   icon: Iconify(Ri.game_fill, color: Colors.green),
+                              //   title: Text("Game"),
+                              //   selectedColor: Colors.green,
+                              // ),
+
+                              /// Profile
+                              SalomonBottomBarItem(
+                                icon:
+                                    Iconify(Ri.user_5_fill, color: Colors.blue),
+                                title: Text("Profile"),
+                                selectedColor: Colors.blue,
+                              ),
+                            ],
                           ),
-                          title: Text("Search"),
-                          selectedColor: Colors.orange,
-                        ),
-
-                        /// Profile
-                        // SalomonBottomBarItem(
-                        //   icon: Iconify(Ri.game_fill, color: Colors.green),
-                        //   title: Text("Game"),
-                        //   selectedColor: Colors.green,
-                        // ),
-
-                        /// Profile
-                        SalomonBottomBarItem(
-                          icon: Iconify(Ri.user_5_fill, color: Colors.blue),
-                          title: Text("Profile"),
-                          selectedColor: Colors.blue,
-                        ),
-                      ],
-                    ),
-                  );
-                }),
-          ),
-        ) : LoginPage(onSuccessLogIn: _onSuccessLogIn);
+                        );
+                      }),
+                ),
+              )
+            : LoginPage(onSuccessLogIn: _onSuccessLogIn);
       }),
     );
   }

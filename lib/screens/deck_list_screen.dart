@@ -11,7 +11,7 @@ import '../custom_widgets/love_button.dart';
 import '../entity/deck.dart';
 
 class DeckListScreen extends StatelessWidget {
-  final List<DeckWithReviewCards> decksList;
+  final List<DeckWithCards> decksList;
 
   DeckListScreen({required this.decksList});
   @override
@@ -53,7 +53,7 @@ class DeckListScreen extends StatelessWidget {
                 shrinkWrap: true,
                 itemCount: decksList.length,
                 itemBuilder: (context, index) {
-                  DeckWithReviewCards item = decksList[index];
+                  DeckWithCards item = decksList[index];
                   if (item.deck.isPublic) {
                     return PublicDeckTile(
                         item: item,
