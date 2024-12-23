@@ -1,6 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.vietime.vietime">
    <application
+        android:allowBackup="false"
+        android:fullBackupContent="false"
         android:label="vietime"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">

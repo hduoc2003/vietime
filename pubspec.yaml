@@ -49,6 +49,9 @@ dependencies:
   get_it: ^7.6.4
   google_search_suggestions: ^1.0.0
   diacritic: ^0.1.4
+  flutter_secure_storage: ^9.0.0
+  flutter_dotenv: ^5.1.0
+  http: ^0.13.6
 
 dev_dependencies:
   flutter_test:
@@ -78,6 +81,7 @@ flutter:
   #   - images/a_dot_ham.jpeg
   assets:
     - assets/
+    - .env
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 

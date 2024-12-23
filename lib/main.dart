@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:logging/logging.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -9,9 +11,11 @@ import 'package:path_provider/path_provider.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'package:iconify_flutter/iconify_flutter.dart';
 import 'package:iconify_flutter/icons/ri.dart';
+import 'package:vietime/helpers/api.dart';
 import 'package:vietime/helpers/logging.dart';
 import 'package:vietime/screens/game_screen.dart';
 import 'package:vietime/screens/home/home_screen.dart';
+import 'package:vietime/screens/login_screen.dart';
 import 'package:vietime/screens/profile_screen.dart';
 import 'package:vietime/screens/search_screen.dart';
 import 'package:vietime/services/api_handler.dart';
@@ -21,13 +25,13 @@ import 'custom_widgets/snackbar.dart';
 
 Future<void> main() async {
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-    await Hive.initFlutter('Mystic');
+    await Hive.initFlutter('Vietime');
   } else {
     await Hive.initFlutter();
   }
   await openHiveBox('settings');
   await openHiveBox('cache', limit: true);
-
+  await dotenv.load();
   await initAPIHandler();
   await initLogging();
   runApp(MyApp());
@@ -48,8 +52,8 @@ Future<void> openHiveBox(String boxName, {bool limit = false}) async {
     File dbFile = File('$dirPath/$boxName.hive');
     File lockFile = File('$dirPath/$boxName.lock');
     if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-      dbFile = File('$dirPath/Mystic/$boxName.hive');
-      lockFile = File('$dirPath/Mystic/$boxName.lock');
+      dbFile = File('$dirPath/Vietime/$boxName.hive');
+      lockFile = File('$dirPath/Vietime/$boxName.lock');
     }
     await dbFile.delete();
     await lockFile.delete();
@@ -73,6 +77,29 @@ class _MyAppState extends State<MyApp> {
   final ValueNotifier<int> _selectedIndex = ValueNotifier<int>(0);
   final PageController _pageController = PageController();
   DateTime? backButtonPressTime;
+  bool isLoggedIn = false;
+  final _storage = const FlutterSecureStorage();
+  void checkLogin() async {
+    String? refreshToken = await _storage.read(key: 'refresh_token');
+    if (refreshToken == null) {
+      isLoggedIn = false;
+      return;
+    } else {
+      APIHelper.refreshTokens(refreshToken).then((result) {
+        if (result['accessToken']!.isNotEmpty) {
+          // Token refresh successful, update your app's authentication state
+          // Access the new refresh token and access token as needed
+          String newRefreshToken = result['newRefreshToken']!;
+          String accessToken = result['accessToken']!;
+          isLoggedIn = true;
+        } else {
+          // Token refresh failed or unauthorized, handle accordingly
+          isLoggedIn = false;
+        }
+      });
+    }
+    isLoggedIn = false;
+  }
 
   void _onItemTapped(int index) {
     _selectedIndex.value = index;
@@ -106,6 +133,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+    checkLogin();
   }
 
   @override
@@ -123,7 +151,7 @@ class _MyAppState extends State<MyApp> {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: Builder(builder: (context) {
-        return Scaffold(
+        return isLoggedIn ? Scaffold(
           resizeToAvoidBottomInset: false,
           body: PopScope(
             canPop: false,
@@ -211,7 +239,7 @@ class _MyAppState extends State<MyApp> {
                   );
                 }),
           ),
-        );
+        ) : LoginPage();
       }),
     );
   }
