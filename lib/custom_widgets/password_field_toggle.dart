@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 class PasswordFieldWithToggle extends StatefulWidget {
   final TextEditingController controller;
   final String title;
+  final String hintText;
 
   PasswordFieldWithToggle({
     required this.controller,
     required this.title,
+    this.hintText = "",
   });
 
   @override
@@ -47,12 +49,16 @@ class _PasswordFieldWithToggleState extends State<PasswordFieldWithToggle> {
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.0),
             child: TextFormField(
+              style: TextStyle(fontSize: 18),
               keyboardType: TextInputType.text,
               controller: widget.controller,
               obscureText: !_passwordVisible,
               obscuringCharacter: '●',
               decoration: InputDecoration(
                 border: InputBorder.none,
+                hintText: widget.hintText,
+                hintStyle:
+                TextStyle(fontSize: 18.0, color: Colors.grey[400]!),
                 suffixIcon: IconButton(
                   icon: Icon(
                     _passwordVisible ? Icons.visibility : Icons.visibility_off,

@@ -8,9 +8,13 @@ class EditableTextArea extends StatelessWidget {
   final String title;
   final TextEditingController controller;
   final bool isPassword;
+  final String hintText;
 
   EditableTextArea(
-      {required this.title, required this.controller, this.isPassword = false});
+      {required this.title,
+      required this.controller,
+      this.isPassword = false,
+      this.hintText = ""});
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +47,7 @@ class EditableTextArea extends StatelessWidget {
                     obscuringCharacter: '●',
                     readOnly: true,
                     style: TextStyle(fontSize: 18),
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       border: InputBorder.none,
                     ),
                     onTap: () {
@@ -63,6 +67,9 @@ class EditableTextArea extends StatelessWidget {
                     style: TextStyle(fontSize: 18),
                     decoration: InputDecoration(
                       border: InputBorder.none,
+                      hintText: hintText,
+                      hintStyle:
+                          TextStyle(fontSize: 18.0, color: Colors.grey[400]!),
                     ),
                   ),
           ),

@@ -26,7 +26,7 @@ class DeckScreen extends StatefulWidget {
 class _DeckScreenState extends State<DeckScreen> {
   @override
   Widget build(BuildContext context) {
-    String descriptionImgPath = widget.deckData.deck.descriptionImgPath;
+    String descriptionImgPath = widget.deckData.deck.descriptionImgURL;
     double maxWidth = MediaQuery.of(context).size.width * 0.75;
     double maxHeight = MediaQuery.of(context).size.height * 0.29;
     return Scaffold(

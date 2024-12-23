@@ -16,7 +16,7 @@ List<DeckWithReviewCards> mockDecksList = [
             'Bộ thẻ về Hoàng thành Thăng Long nằm ở Hoàng Diệu, Điện Biên, Ba Đình, Hà Nội',
         createdAt: DateTime.now(),
         userId: 'user1',
-        descriptionImgPath:
+        descriptionImgURL:
             "https://static.vinwonders.com/production/hoang-thanh-thang-long-2.jpg",
         totalCards: 25,
         totalLearnedCards: 14,
@@ -37,7 +37,7 @@ List<DeckWithReviewCards> mockDecksList = [
         description: 'Description for Global Deck',
         createdAt: DateTime.now(),
         userId: 'user2',
-        descriptionImgPath:
+        descriptionImgURL:
             "https://ik.imagekit.io/tvlk/blog/2022/09/chua-mot-cot-1.jpg?tr=dpr-2,w-675",
         totalCards: 25,
         totalLearnedCards: 3,
@@ -211,11 +211,11 @@ List<FlashcardSearch> mockCardSearches = [
             TextSpan(
               text: 'bold',
               style:
-              TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+                  TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
             ),
             TextSpan(
                 text:
-                ' words. This is a long sentence that will be truncated with ellipsis.',
+                    ' words. This is a long sentence that will be truncated with ellipsis.',
                 style: TextStyle(color: Colors.black)),
           ],
         ),
