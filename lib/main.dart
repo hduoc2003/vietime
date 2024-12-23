@@ -81,7 +81,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final ValueNotifier<int> _selectedIndex = ValueNotifier<int>(0);
   final PageController _pageController = PageController();
-  bool isLoggedIn = false;
+
   DateTime? backButtonPressTime;
 
   void _onItemTapped(int index) {
@@ -113,16 +113,9 @@ class _MyAppState extends State<MyApp> {
     return;
   }
 
-  void _onSuccessLogIn() {
-    setState(() {
-      isLoggedIn = GetIt.I<APIHanlder>().isLoggedIn;
-    });
-  }
-
   @override
   void initState() {
     super.initState();
-    isLoggedIn = GetIt.I<APIHanlder>().isLoggedIn;
   }
 
   @override
@@ -139,101 +132,103 @@ class _MyAppState extends State<MyApp> {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: Builder(builder: (context) {
-        return isLoggedIn
-            ? Scaffold(
-                resizeToAvoidBottomInset: false,
-                body: PopScope(
-                  canPop: false,
-                  onPopInvoked: (bool didPop) {
-                    if (didPop) {
-                      return;
-                    }
-                    handleWillPop(context);
-                  },
-                  child: SafeArea(
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            children: [
-                              Expanded(
-                                child: PageView(
-                                  physics: NeverScrollableScrollPhysics(),
-                                  onPageChanged: (index) {
-                                    _selectedIndex.value = index;
-                                  },
-                                  controller: _pageController,
-                                  children: [
-                                    HomePage(),
-                                    SearchPage(
-                                      query: "",
+      home: ValueListenableBuilder<bool>(
+          valueListenable: GetIt.I<APIHanlder>().isLoggedIn,
+          builder: (context, value, child) {
+            return value
+                ? Scaffold(
+                    resizeToAvoidBottomInset: false,
+                    body: PopScope(
+                      canPop: false,
+                      onPopInvoked: (bool didPop) {
+                        if (didPop) {
+                          return;
+                        }
+                        handleWillPop(context);
+                      },
+                      child: SafeArea(
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  Expanded(
+                                    child: PageView(
+                                      physics: NeverScrollableScrollPhysics(),
+                                      onPageChanged: (index) {
+                                        _selectedIndex.value = index;
+                                      },
+                                      controller: _pageController,
+                                      children: [
+                                        HomePage(),
+                                        SearchPage(
+                                          query: "",
+                                        ),
+                                        // GamePage(),
+                                        ProfilePage(),
+                                      ],
                                     ),
-                                    // GamePage(),
-                                    ProfilePage(),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
-                  ),
-                ),
-                bottomNavigationBar: SafeArea(
-                  child: ValueListenableBuilder(
-                      valueListenable: _selectedIndex,
-                      builder: (BuildContext context, int indexValue,
-                          Widget? child) {
-                        return AnimatedContainer(
-                          duration: const Duration(milliseconds: 100),
-                          height: 60,
-                          child: SalomonBottomBar(
-                            currentIndex: indexValue,
-                            onTap: (i) => _onItemTapped(i),
-                            items: [
-                              /// Home
-                              SalomonBottomBarItem(
-                                // icon: Icon(Iconsax.home_1),
-                                icon: const Iconify(Ri.home_smile_2_fill,
-                                    color: Colors.purple),
-                                title: Text("Home"),
-                                selectedColor: Colors.purple,
-                              ),
+                    bottomNavigationBar: SafeArea(
+                      child: ValueListenableBuilder(
+                          valueListenable: _selectedIndex,
+                          builder: (BuildContext context, int indexValue,
+                              Widget? child) {
+                            return AnimatedContainer(
+                              duration: const Duration(milliseconds: 100),
+                              height: 60,
+                              child: SalomonBottomBar(
+                                currentIndex: indexValue,
+                                onTap: (i) => _onItemTapped(i),
+                                items: [
+                                  /// Home
+                                  SalomonBottomBarItem(
+                                    // icon: Icon(Iconsax.home_1),
+                                    icon: const Iconify(Ri.home_smile_2_fill,
+                                        color: Colors.purple),
+                                    title: Text("Home"),
+                                    selectedColor: Colors.purple,
+                                  ),
 
-                              /// Search
-                              SalomonBottomBarItem(
-                                icon: const Iconify(
-                                  Ri.search_eye_fill,
-                                  color: Colors.orange,
-                                ),
-                                title: Text("Search"),
-                                selectedColor: Colors.orange,
-                              ),
+                                  /// Search
+                                  SalomonBottomBarItem(
+                                    icon: const Iconify(
+                                      Ri.search_eye_fill,
+                                      color: Colors.orange,
+                                    ),
+                                    title: Text("Search"),
+                                    selectedColor: Colors.orange,
+                                  ),
 
-                              /// Profile
-                              // SalomonBottomBarItem(
-                              //   icon: Iconify(Ri.game_fill, color: Colors.green),
-                              //   title: Text("Game"),
-                              //   selectedColor: Colors.green,
-                              // ),
+                                  /// Profile
+                                  // SalomonBottomBarItem(
+                                  //   icon: Iconify(Ri.game_fill, color: Colors.green),
+                                  //   title: Text("Game"),
+                                  //   selectedColor: Colors.green,
+                                  // ),
 
-                              /// Profile
-                              SalomonBottomBarItem(
-                                icon:
-                                    Iconify(Ri.user_5_fill, color: Colors.blue),
-                                title: Text("Profile"),
-                                selectedColor: Colors.blue,
+                                  /// Profile
+                                  SalomonBottomBarItem(
+                                    icon: Iconify(Ri.user_5_fill,
+                                        color: Colors.blue),
+                                    title: Text("Profile"),
+                                    selectedColor: Colors.blue,
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                        );
-                      }),
-                ),
-              )
-            : LoginPage(onSuccessLogIn: _onSuccessLogIn);
-      }),
+                            );
+                          }),
+                    ),
+                  )
+                : LoginPage();
+          }),
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:hive/hive.dart';
 import 'package:iconify_flutter/iconify_flutter.dart';
 import 'package:iconify_flutter/icons/icon_park_solid.dart';
@@ -6,6 +7,7 @@ import 'package:iconify_flutter/icons/ion.dart';
 import 'package:vietime/custom_widgets/long_button.dart';
 import '../../custom_widgets/editable_text_area.dart';
 import '../../helpers/country_code.dart';
+import '../../services/api_handler.dart';
 
 class SettingsPage extends StatefulWidget {
   @override
@@ -144,11 +146,16 @@ class _SettingsPageState extends State<SettingsPage> {
                         outerBoxColor: Color(0xffc43535),
                         innerBoxColor: Color(0xffe84040),
                         textColor: Colors.white,
-                        onTap: () {},
+                        onTap: () {
+                          GetIt.I<APIHanlder>()
+                              .storage
+                              .delete(key: 'refresh_token');
+                          GetIt.I<APIHanlder>().isLoggedIn.value = false;
+                          Navigator.pop(context);
+                        },
                       ),
                     )
-                  ]
-              ),
+                  ]),
             ),
           ],
         ),
@@ -182,10 +189,7 @@ class CustomAppBar extends StatelessWidget {
             ),
           ),
           TextButton(
-            onPressed: () {
-              // Handle save button press
-              print('Save button pressed');
-            },
+            onPressed: () {},
             child: Text(
               'LƯU',
               style: TextStyle(

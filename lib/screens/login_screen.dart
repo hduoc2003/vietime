@@ -13,8 +13,7 @@ import '../helpers/loader_dialog.dart';
 import '../services/api_handler.dart';
 
 class LoginPage extends StatefulWidget {
-  final Function onSuccessLogIn;
-  LoginPage({required this.onSuccessLogIn});
+  LoginPage();
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -119,9 +118,8 @@ class _LoginPageState extends State<LoginPage> {
                     GetIt.I<APIHanlder>().assignInitData(loginResponse);
                     GetIt.I<APIHanlder>().afterInitData();
                     Navigator.pop(context);
-                    widget.onSuccessLogIn();
+                    GetIt.I<APIHanlder>().isLoggedIn.value = true;
                   }
-
                 });
               },
             ),
@@ -140,7 +138,6 @@ class _LoginPageState extends State<LoginPage> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => SignUpPage(
-                              onSuccessLogIn: widget.onSuccessLogIn,
                             )),
                   );
                 },

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:vietime/entity/card.dart';
 import 'package:vietime/screens/study_screen.dart';
 
@@ -7,10 +8,10 @@ import '../custom_widgets/long_button.dart';
 import '../custom_widgets/password_field_toggle.dart';
 import '../helpers/api.dart';
 import '../helpers/loader_dialog.dart';
+import '../services/api_handler.dart';
 
 class SignUpPage extends StatefulWidget {
-  final Function onSuccessLogIn;
-  SignUpPage({required this.onSuccessLogIn});
+  SignUpPage();
   @override
   _SignUpPageState createState() => _SignUpPageState();
 }
@@ -32,34 +33,35 @@ class _SignUpPageState extends State<SignUpPage> {
         child: Column(children: [
           Padding(
             padding: EdgeInsets.all(16.0),
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-              EditableTextArea(
-                title: 'Tên người dùng',
-                controller: userNameController,
-                hintText: "Nhập tên người dùng",
-              ),
-              SizedBox(height: 16.0),
-              EditableTextArea(
-                title: 'Email',
-                controller: emailController,
-                hintText: "Nhập địa chỉ email",
-              ),
-              SizedBox(height: 16.0),
-              PasswordFieldWithToggle(
-                title: 'Mật khẩu',
-                controller: passwordController,
-                hintText: "Nhập mật khẩu",
-              ),
-              SizedBox(
-                height: 16,
-              ),
-              PasswordFieldWithToggle(
-                title: 'Xác nhận mật khẩu',
-                controller: confirmPasswordController,
-                hintText: "Nhập lại mật khẩu",
-              ),
-            ]),
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  EditableTextArea(
+                    title: 'Tên người dùng',
+                    controller: userNameController,
+                    hintText: "Nhập tên người dùng",
+                  ),
+                  SizedBox(height: 16.0),
+                  EditableTextArea(
+                    title: 'Email',
+                    controller: emailController,
+                    hintText: "Nhập địa chỉ email",
+                  ),
+                  SizedBox(height: 16.0),
+                  PasswordFieldWithToggle(
+                    title: 'Mật khẩu',
+                    controller: passwordController,
+                    hintText: "Nhập mật khẩu",
+                  ),
+                  SizedBox(
+                    height: 16,
+                  ),
+                  PasswordFieldWithToggle(
+                    title: 'Xác nhận mật khẩu',
+                    controller: confirmPasswordController,
+                    hintText: "Nhập lại mật khẩu",
+                  ),
+                ]),
           ),
           if (signupError.isNotEmpty)
             Align(
@@ -99,24 +101,27 @@ class _SignUpPageState extends State<SignUpPage> {
                 }
                 if (passwordController.text != confirmPasswordController.text) {
                   setState(() {
-                    signupError = "Mật khẩu và mật khẩu xác nhận phải giống nhau";
+                    signupError =
+                        "Mật khẩu và mật khẩu xác nhận phải giống nhau";
                   });
                   return;
                 }
                 FocusManager.instance.primaryFocus?.unfocus();
                 showLoaderDialog(context);
                 APIHelper.submitSignupRequest(userNameController.text,
-                        emailController.text, passwordController.text)
+                    emailController.text, passwordController.text)
                     .then((signupResponse) {
-                  Navigator.pop(context);
-                  if (signupResponse.containsKey("refreshToken") &&
-                      signupResponse.containsKey("accessToken")) {
-                    widget.onSuccessLogIn();
+                  if (signupResponse.containsKey("error")) {
                     Navigator.pop(context);
-                  } else {
                     setState(() {
                       signupError = signupResponse["error"]!;
                     });
+                  } else {
+                    GetIt.I<APIHanlder>().assignInitData(signupResponse);
+                    GetIt.I<APIHanlder>().afterInitData();
+                    Navigator.pop(context);
+                    GetIt.I<APIHanlder>().isLoggedIn.value = true;
+                    Navigator.pop(context);
                   }
                 });
               },
