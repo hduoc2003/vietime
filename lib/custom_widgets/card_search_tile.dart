@@ -7,7 +7,7 @@ import '../helpers/validate.dart';
 import 'animated_text.dart';
 class CardSearchTile extends StatelessWidget {
   final Flashcard itemCard;
-  final DeckWithReviewCards itemDeck;
+  final DeckWithCards itemDeck;
   final RichText foundTextWidget;
   final Widget iconButtonTopRight;
   final Widget iconButtonBottomRight;

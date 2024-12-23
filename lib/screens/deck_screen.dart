@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:iconify_flutter/iconify_flutter.dart';
 import 'package:iconify_flutter/icons/ion.dart';
 import 'package:iconify_flutter/icons/mdi.dart';
@@ -12,10 +13,11 @@ import '../custom_widgets/animated_progress_bar.dart';
 import '../custom_widgets/deck_popup_menu.dart';
 import '../entity/deck.dart';
 import '../helpers/validate.dart';
+import '../services/api_handler.dart';
 import '../services/mock_data.dart';
 
 class DeckScreen extends StatefulWidget {
-  final DeckWithReviewCards deckData;
+  final DeckWithCards deckData;
 
   DeckScreen({required this.deckData});
 
@@ -179,23 +181,39 @@ class _DeckScreenState extends State<DeckScreen> {
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                          AnimatedProgressBar(
-                            width: 200,
-                            height: 14,
-                            progress: widget.deckData.deck.totalLearnedCards /
-                                widget.deckData.deck.totalCards,
-                            backgroundColor: const Color(0xffD9D9D9),
-                            progressColor: const Color(0xff40a5e8),
-                            innerProgressColor: const Color(0xff6db7f4),
-                          ),
-                          SizedBox(width: 16.0),
-                          Text(
-                            '${(widget.deckData.deck.totalLearnedCards / widget.deckData.deck.totalCards * 100).toStringAsFixed(0)}%',
-                            style: TextStyle(
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.w900,
-                            ),
-                          ),
+                          (widget.deckData.deck.totalCards == 0)
+                              ? const Text(
+                                  'Chưa có thẻ nào',
+                                  style: TextStyle(
+                                      fontSize: 16.0,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w600),
+                                )
+                              : const SizedBox(),
+                          (widget.deckData.deck.totalCards > 0)
+                              ? AnimatedProgressBar(
+                                  width: 200,
+                                  height: 14,
+                                  progress:
+                                      widget.deckData.deck.totalLearnedCards /
+                                          widget.deckData.deck.totalCards,
+                                  backgroundColor: const Color(0xffD9D9D9),
+                                  progressColor: const Color(0xff40a5e8),
+                                  innerProgressColor: const Color(0xff6db7f4),
+                                )
+                              : const SizedBox(),
+                          (widget.deckData.deck.totalCards > 0)
+                              ? SizedBox(width: 16.0)
+                              : const SizedBox(),
+                          (widget.deckData.deck.totalCards > 0)
+                              ? Text(
+                                  '${(widget.deckData.deck.totalLearnedCards / widget.deckData.deck.totalCards * 100).toStringAsFixed(0)}%',
+                                  style: TextStyle(
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.w900,
+                                  ),
+                                )
+                              : const SizedBox(),
                         ],
                       ),
                     ),
@@ -203,27 +221,42 @@ class _DeckScreenState extends State<DeckScreen> {
               ),
             ),
           ),
-          widget.deckData.deck.isPublic ? LongButton(
-            text: 'LƯU BỘ THẺ',
-            outerBoxColor: Color(0xff1783d1),
-            innerBoxColor: Color(0xff46a4e8),
-            textColor: Colors.white,
-            onTap: () {
-
-            },
-          ) : LongButton(
-            text: 'BẮT ĐẦU HỌC',
-            outerBoxColor: Color(0xff1783d1),
-            innerBoxColor: Color(0xff46a4e8),
-            textColor: Colors.white,
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => StudyScreen(questions: mockQuestions),
-                ),
-              );
-            },
-          ),
+          widget.deckData.deck.isPublic
+              ? LongButton(
+                  text: 'LƯU BỘ THẺ',
+                  outerBoxColor: Color(0xff1783d1),
+                  innerBoxColor: Color(0xff46a4e8),
+                  textColor: Colors.white,
+                  onTap: () {},
+                )
+              : ((widget.deckData.numBlueCards +
+                          widget.deckData.numRedCards +
+                          widget.deckData.numGreenCards >
+                      0)
+                  ? LongButton(
+                      text: 'BẮT ĐẦU HỌC',
+                      outerBoxColor: Color(0xff1783d1),
+                      innerBoxColor: Color(0xff46a4e8),
+                      textColor: Colors.white,
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => StudyScreen(
+                                questions: GetIt.I<APIHanlder>()
+                                    .idToDeckWithReviewCards[
+                                        widget.deckData.deck.id]!
+                                    .cards),
+                          ),
+                        );
+                      },
+                    )
+                  : LongButton(
+                      text: 'ĐÃ HỌC XONG HÔM NAY',
+                      outerBoxColor: Color(0xffC7C6C6),
+                      innerBoxColor: Color(0xfff0f2f0),
+                      textColor: Color(0xffC7C6C6),
+                      onTap: () {},
+                    )),
           SizedBox(
             height: 16,
           )
@@ -470,80 +503,82 @@ class _DeckScreenState extends State<DeckScreen> {
   }
 
   Widget _buildNumberOfCardsRow() {
-    return widget.deckData.deck.isPublic ? Padding(
-      padding: const EdgeInsets.only(left: 24.0, right: 16, bottom: 18),
-      child: Row(
-        children: [
-          Text(
-            "Số lượng:   ",
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
+    return widget.deckData.deck.isPublic
+        ? Padding(
+            padding: const EdgeInsets.only(left: 24.0, right: 16, bottom: 18),
+            child: Row(
+              children: [
+                Text(
+                  "Số lượng:   ",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Text(
+                  widget.deckData.deck.totalCards.toString(),
+                  style: TextStyle(
+                    fontSize: 18.0,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 6.0, bottom: 2),
+                  child: Iconify(
+                    Mdi.cards_playing,
+                    color: Colors.purple,
+                    size: 20.0,
+                  ),
+                ),
+              ],
             ),
-          ),
-          Text(
-            widget.deckData.deck.totalCards.toString(),
-            style: TextStyle(
-              fontSize: 18.0,
-              color: Colors.black,
-              fontWeight: FontWeight.w900,
+          )
+        : Padding(
+            padding: const EdgeInsets.only(left: 24.0, right: 16, bottom: 18),
+            child: Row(
+              children: [
+                Text(
+                  "Số lượng:   ",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Text(
+                  widget.deckData.deck.totalLearnedCards.toString(),
+                  style: TextStyle(
+                    fontSize: 18.0,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+                Text(
+                  "/${widget.deckData.deck.totalCards}",
+                  style: TextStyle(
+                    fontSize: 18.0,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 6.0, bottom: 2),
+                  child: Iconify(
+                    Mdi.cards_playing,
+                    color: Colors.purple,
+                    size: 20.0,
+                  ),
+                ),
+                Text(
+                  "  (đã học / tổng số)",
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 6.0, bottom: 2),
-            child: Iconify(
-              Mdi.cards_playing,
-              color: Colors.purple,
-              size: 20.0,
-            ),
-          ),
-        ],
-      ),
-    ) : Padding(
-      padding: const EdgeInsets.only(left: 24.0, right: 16, bottom: 18),
-      child: Row(
-        children: [
-          Text(
-            "Số lượng:   ",
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          Text(
-            widget.deckData.deck.totalLearnedCards.toString(),
-            style: TextStyle(
-              fontSize: 18.0,
-              color: Colors.black,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-          Text(
-            "/${widget.deckData.deck.totalCards}",
-            style: TextStyle(
-              fontSize: 18.0,
-              color: Colors.black,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 6.0, bottom: 2),
-            child: Iconify(
-              Mdi.cards_playing,
-              color: Colors.purple,
-              size: 20.0,
-            ),
-          ),
-          Text(
-            "  (đã học / tổng số)",
-            style: TextStyle(
-              fontSize: 16.0,
-              color: Colors.black,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
-      ),
-    );
+          );
   }
 }

@@ -15,7 +15,7 @@ import '../../deck_screen.dart';
 class DeckHorizontalList extends StatelessWidget {
   final int itemCountPerGroup;
   final int deckType;
-  final List<DeckWithReviewCards> decksList;
+  final List<DeckWithCards> decksList;
 
   DeckHorizontalList(
       {this.itemCountPerGroup = 4,
@@ -24,7 +24,7 @@ class DeckHorizontalList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double portion = (decksList.length <= itemCountPerGroup) ? 1.0 : 0.84;
+    final double portion = (decksList.length <= itemCountPerGroup) ? 0.96 : 0.84;
     final double listSize = MediaQuery.of(context).size.width * portion;
 
     return Padding(
@@ -69,7 +69,7 @@ class DeckHorizontalList extends StatelessWidget {
   }
 }
 
-Widget getUserDeckTile(DeckWithReviewCards item, BuildContext context) {
+Widget getUserDeckTile(DeckWithCards item, BuildContext context) {
   return GestureDetector(
     onTap: () {
       Navigator.push(
@@ -147,31 +147,35 @@ Widget getUserDeckTile(DeckWithReviewCards item, BuildContext context) {
                   numRedCards: item.numRedCards,
                   numGreenCards: item.numGreenCards),
               SizedBox(height: 4.0),
-              Row(
-                children: [
-                  AnimatedProgressBar(
-                    width: 150, // Adjust the width as needed
-                    height: 14, // Adjust the height as needed
-                    progress: item.deck.totalLearnedCards /
-                        item.deck
-                            .totalCards, // Adjust the progress value as needed
-                    backgroundColor: const Color(0xffD9D9D9),
-                    progressColor: const Color(0xff40a5e8),
-                    innerProgressColor: const Color(0xff6db7f4),
-                  ),
-
-                  // Spacer to add space between the ProgressBar and percentage
-                  SizedBox(width: 16.0),
-
-                  Text(
-                    '${(item.deck.totalLearnedCards / item.deck.totalCards * 100).toStringAsFixed(0)}%', // Replace with actual calculation
-                    style: TextStyle(
-                        fontSize: 16.0,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w900),
-                  ),
-                ],
-              ),
+              (item.deck.totalCards == 0)
+                  ? const Text(
+                      'Chưa có thẻ nào',
+                      style: TextStyle(
+                          fontSize: 16.0,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w600),
+                    )
+                  : Row(
+                      children: [
+                        AnimatedProgressBar(
+                          width: 150,
+                          height: 14,
+                          progress: item.deck.totalLearnedCards /
+                              item.deck.totalCards,
+                          backgroundColor: const Color(0xffD9D9D9),
+                          progressColor: const Color(0xff40a5e8),
+                          innerProgressColor: const Color(0xff6db7f4),
+                        ),
+                        SizedBox(width: 16.0),
+                        Text(
+                          '${(item.deck.totalLearnedCards / item.deck.totalCards * 100).toStringAsFixed(0)}%',
+                          style: TextStyle(
+                              fontSize: 16.0,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w900),
+                        ),
+                      ],
+                    ),
             ],
           ),
         ),
@@ -180,7 +184,7 @@ Widget getUserDeckTile(DeckWithReviewCards item, BuildContext context) {
   );
 }
 
-Widget getPublicDeckTile(DeckWithReviewCards item, BuildContext context) {
+Widget getPublicDeckTile(DeckWithCards item, BuildContext context) {
   return GestureDetector(
     onTap: () {
       Navigator.push(

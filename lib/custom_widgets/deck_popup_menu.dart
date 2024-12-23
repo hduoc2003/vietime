@@ -5,7 +5,7 @@ import 'package:iconify_flutter/icons/ri.dart';
 import 'package:vietime/entity/deck.dart';
 
 class DeckPopupMenu extends StatefulWidget {
-  final DeckWithReviewCards deckItem;
+  final DeckWithCards deckItem;
   final Iconify icon;
   const DeckPopupMenu({
     super.key,

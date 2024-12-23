@@ -6,10 +6,14 @@ import 'package:logging/logging.dart';
 
 class APIHelper {
   static final String baseURL = dotenv.env['SERVER_API_BASE_URL']!;
-  static const String emailUsedError = "User already exists with the given email";
+  static const String emailUsedError =
+      "User already exists with the given email";
+  static const String needLogInAgain = "Need log in again";
+  static const String logInError = 'Email hoặc mật khẩu không hợp lệ';
 
-  static Future<Map<String, String>> refreshTokens(String refreshToken) async {
-    final String apiUrl = '$baseURL/api/refresh';
+  static Future<Map<String, dynamic>> getAllDataWithRefreshToken(
+      String refreshToken) async {
+    final String apiUrl = '$baseURL/api/get-all';
 
     // Create a RefreshTokenRequest object
     final Map<String, dynamic> requestData = {'refresh_token': refreshToken};
@@ -19,46 +23,26 @@ class APIHelper {
         Uri.parse(apiUrl),
         headers: {
           'Content-Type': 'application/json',
-          // Add any additional headers if required
         },
         body: jsonEncode(requestData),
       );
 
       if (response.statusCode == 200) {
-        // Successful response, parse and use the RefreshTokenResponse
-        // Adjust the parsing based on your actual response structure
         final Map<String, dynamic> responseBody = json.decode(response.body);
-        final String newRefreshToken = responseBody['refresh_token'];
-        final String accessToken = responseBody['access_token'];
-
-        // TODO: Implement handling of the successful response
-
-        return {'newRefreshToken': newRefreshToken, 'accessToken': accessToken};
+        return responseBody;
       } else if (response.statusCode == 401) {
-        // Unauthorized, return 2 empty strings
-        return {'newRefreshToken': '', 'accessToken': ''};
+        return {'error': needLogInAgain};
       } else {
-        Logger.root.info('Error: ${response.statusCode}');
-        Logger.root.info('Response: ${response.body}');
-
-        // TODO: Implement handling of error response
-
-        // Return an empty map to indicate failure
-        return {'newRefreshToken': '', 'accessToken': ''};
+        return {'error': needLogInAgain};
       }
     } catch (e) {
-      // Handle any exceptions that may occur during the HTTP request
-      Logger.root.severe('Exception: $e');
-
-      // TODO: Implement handling of exceptions
-
-      // Return an empty map to indicate failure
-      return {'newRefreshToken': '', 'accessToken': ''};
+      return {'error': needLogInAgain};
     }
   }
 
-  static Future<Map<String, String>> submitLoginRequest(String email, String password) async {
-    final String apiUrl = '$baseURL/api/login';
+  static Future<Map<String, dynamic>> submitLoginRequest(
+      String email, String password) async {
+    final String apiUrl = '$baseURL/api/login-get-all';
 
     try {
       final response = await http.post(
@@ -70,27 +54,20 @@ class APIHelper {
       );
       final Map<String, dynamic> responseBody = json.decode(response.body);
       if (response.statusCode == 200) {
-        final String accessToken = responseBody['access_token'];
-        final String refreshToken = responseBody['refresh_token'];
-
-        return {'accessToken': accessToken, 'refreshToken': refreshToken};
+        Logger.root.info("Yes, cool");
+        return responseBody;
       } else if (response.statusCode == 401) {
-        // Unauthorized, return an error message
-        return {'error': 'Email hoặc mật khẩu không hợp lệ'};
+        return {'error': logInError};
       } else {
-        Logger.root.info('Error: ${response.statusCode}');
-        Logger.root.info('Response: ${response.body}');
-
-        return {'error': 'Email hoặc mật khẩu không hợp lệ'};
+        return {'error': logInError};
       }
     } catch (e) {
-      Logger.root.severe('Exception: $e');
-
-      return {'error': 'Email hoặc mật khẩu không hợp lệ'};
+      return {'error': logInError};
     }
   }
 
-  static Future<Map<String, String>> submitSignupRequest(String name, String email, String password) async {
+  static Future<Map<String, String>> submitSignupRequest(
+      String name, String email, String password) async {
     final String apiUrl = '$baseURL/api/signup';
 
     // Create a SignupRequest object
@@ -115,7 +92,9 @@ class APIHelper {
       } else if (response.statusCode == 409) {
         assert(responseBody['error'] == emailUsedError);
         return {'error': 'Email này đã được đăng ký từ trước'};
-      } else if (response.statusCode == 400 || response.statusCode == 409 || response.statusCode == 500) {
+      } else if (response.statusCode == 400 ||
+          response.statusCode == 409 ||
+          response.statusCode == 500) {
         return {'error': "Lỗi xảy ra khi đăng ký tài khoản"};
       } else {
         Logger.root.info('Error: ${response.statusCode}');
