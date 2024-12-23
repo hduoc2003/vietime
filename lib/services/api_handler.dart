@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:get_it/get_it.dart';
 import 'package:google_search_suggestions/google_search_suggestions.dart';
 import 'package:logging/logging.dart';
 import 'package:vietime/entity/search.dart';
@@ -10,7 +12,7 @@ import '../helpers/api.dart';
 import 'mock_data.dart';
 
 class APIHanlder {
-  bool isLoggedIn = false;
+  late ValueNotifier<bool> isLoggedIn;
   String accessToken = "";
   late List<DeckWithCards> userDecks;
   late List<DeckWithCards> publicDecks;
@@ -22,9 +24,13 @@ class APIHanlder {
   Map<String, DeckWithCards> idToDeckWithCards = {};
   final GoogleSearchSuggestions googleSearchSuggestions =
       GoogleSearchSuggestions();
-  final _storage = const FlutterSecureStorage();
+  final storage = const FlutterSecureStorage();
   APIHandler() {}
+
   void assignInitData(Map<String, dynamic> result) {
+    if (result.containsKey('refresh_token')) {
+      storage.write(key: 'refresh_token', value: (result['refresh_token'] as String));
+    }
     userDecks = (result['user_decks'] as List<dynamic>)
             .map((deckJson) => DeckWithCards.fromJson(deckJson))
             .toList() ??
@@ -50,23 +56,23 @@ class APIHanlder {
   }
 
   Future<void> initData() async {
-    String? refreshToken = await _storage.read(key: 'refresh_token');
+    String? refreshToken = await storage.read(key: 'refresh_token');
     if (refreshToken == null) {
-      isLoggedIn = false;
+      isLoggedIn = ValueNotifier<bool>(false);
     } else {
-      APIHelper.getAllDataWithRefreshToken(refreshToken).then((result) {
+      await APIHelper.getAllDataWithRefreshToken(refreshToken).then((result) {
         if (result['error'] != null) {
-          isLoggedIn = false;
+          isLoggedIn = ValueNotifier<bool>(false);
         } else {
           assignInitData(result);
           afterInitData();
+          isLoggedIn = ValueNotifier<bool>(true);
         }
       });
     }
   }
 
   void afterInitData() {
-    isLoggedIn = true;
     for (DeckWithReviewCards deckWithReviewCards in decksReview) {
       idToDeckWithReviewCards[deckWithReviewCards.deck.id] =
           deckWithReviewCards;

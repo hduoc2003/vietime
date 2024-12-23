@@ -54,7 +54,6 @@ class APIHelper {
       );
       final Map<String, dynamic> responseBody = json.decode(response.body);
       if (response.statusCode == 200) {
-        Logger.root.info("Yes, cool");
         return responseBody;
       } else if (response.statusCode == 401) {
         return {'error': logInError};
@@ -66,9 +65,9 @@ class APIHelper {
     }
   }
 
-  static Future<Map<String, String>> submitSignupRequest(
+  static Future<Map<String, dynamic>> submitSignupRequest(
       String name, String email, String password) async {
-    final String apiUrl = '$baseURL/api/signup';
+    final String apiUrl = '$baseURL/api/signup-get-all';
 
     // Create a SignupRequest object
     final Map<String, dynamic> requestData = {
@@ -85,10 +84,7 @@ class APIHelper {
 
       final Map<String, dynamic> responseBody = json.decode(response.body);
       if (response.statusCode == 200) {
-        final String accessToken = responseBody['access_token'];
-        final String refreshToken = responseBody['refresh_token'];
-
-        return {'accessToken': accessToken, 'refreshToken': refreshToken};
+        return responseBody;
       } else if (response.statusCode == 409) {
         assert(responseBody['error'] == emailUsedError);
         return {'error': 'Email này đã được đăng ký từ trước'};
@@ -97,14 +93,9 @@ class APIHelper {
           response.statusCode == 500) {
         return {'error': "Lỗi xảy ra khi đăng ký tài khoản"};
       } else {
-        Logger.root.info('Error: ${response.statusCode}');
-        Logger.root.info('Response: ${response.body}');
-
         return {'error': "Lỗi xảy ra khi đăng ký tài khoản"};
       }
     } catch (e) {
-      Logger.root.severe('Exception: $e');
-
       return {'error': "Lỗi xảy ra khi đăng ký tài khoản"};
     }
   }
