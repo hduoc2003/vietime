@@ -51,7 +51,7 @@ class _HomePageState extends State<HomePage> {
           child: Container(
             width: 60,
             height: 60,
-            child: Image.asset('assets/user_placeholder.png'),
+            child: Image.asset('assets/user_avatar.png'),
           ),
         ),
         Expanded(

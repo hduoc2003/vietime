@@ -3,6 +3,7 @@ import 'package:iconify_flutter/iconify_flutter.dart';
 import 'package:iconify_flutter/icons/ph.dart';
 import 'package:vietime/custom_widgets/animated_progress_bar.dart';
 import 'package:colorful_iconify_flutter/icons/fxemoji.dart';
+import 'package:vietime/screens/settings/settings_screen.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -165,7 +166,14 @@ class _ProfilePageState extends State<ProfilePage> {
                 child: FloatingActionButton(
                   backgroundColor: Colors.white,
                   elevation: 5,
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SettingsPage(),
+                      ),
+                    );
+                  },
                   tooltip: 'Settings',
                   child: Icon(
                     Icons.settings,

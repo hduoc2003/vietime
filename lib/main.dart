@@ -12,7 +12,7 @@ import 'package:iconify_flutter/icons/ri.dart';
 import 'package:vietime/helpers/logging.dart';
 import 'package:vietime/screens/game_screen.dart';
 import 'package:vietime/screens/home/home_screen.dart';
-import 'package:vietime/screens/profile.dart';
+import 'package:vietime/screens/profile_screen.dart';
 import 'package:vietime/screens/search_screen.dart';
 import 'package:vietime/services/api_handler.dart';
 
@@ -151,7 +151,7 @@ class _MyAppState extends State<MyApp> {
                               SearchPage(
                                 query: "",
                               ),
-                              GamePage(),
+                              // GamePage(),
                               ProfilePage(),
                             ],
                           ),
@@ -194,11 +194,11 @@ class _MyAppState extends State<MyApp> {
                         ),
 
                         /// Profile
-                        SalomonBottomBarItem(
-                          icon: Iconify(Ri.game_fill, color: Colors.green),
-                          title: Text("Game"),
-                          selectedColor: Colors.green,
-                        ),
+                        // SalomonBottomBarItem(
+                        //   icon: Iconify(Ri.game_fill, color: Colors.green),
+                        //   title: Text("Game"),
+                        //   selectedColor: Colors.green,
+                        // ),
 
                         /// Profile
                         SalomonBottomBarItem(
