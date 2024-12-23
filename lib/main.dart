@@ -130,6 +130,12 @@ class _MyAppState extends State<MyApp> {
     return;
   }
 
+  void _onSuccessLogIn() {
+    setState(() {
+      isLoggedIn = true;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -169,7 +175,7 @@ class _MyAppState extends State<MyApp> {
                       children: [
                         Expanded(
                           child: PageView(
-                            physics: const CustomPhysics(),
+                            physics: NeverScrollableScrollPhysics(),
                             onPageChanged: (index) {
                               _selectedIndex.value = index;
                             },
@@ -239,7 +245,7 @@ class _MyAppState extends State<MyApp> {
                   );
                 }),
           ),
-        ) : LoginPage();
+        ) : LoginPage(onSuccessLogIn: _onSuccessLogIn);
       }),
     );
   }
