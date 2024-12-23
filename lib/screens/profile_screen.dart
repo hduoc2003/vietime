@@ -14,119 +14,29 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     double progressBarWidth = MediaQuery.of(context).size.width * 0.7;
-    double wallpaperHeight = MediaQuery.of(context).size.height / 3.5 - 20;
     return Scaffold(
       body: Stack(
         children: [
           SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Stack(
-                    children: [
-                      Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: wallpaperHeight,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.rectangle,
-                          image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: AssetImage('assets/wallpaper.jpg'),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                            left: 16, top: wallpaperHeight / 1.8),
-                        child: Container(
-                          width: 140,
-                          height: 140,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: Colors.white,
-                              width: 4.0,
-                            ),
-                          ),
-                          child: CircleAvatar(
-                            radius: 48,
-                            backgroundImage:
-                                AssetImage('assets/user_avatar.png'),
-                          ),
-                        ),
-                      ),
-                    ],
+                  SizedBox(height: 80,),
+                  CircleAvatar(
+                    radius: 60,
+                    backgroundImage: AssetImage(
+                        'assets/user_avatar.png'), // Replace with your image asset
                   ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 16.0),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'HynDuf',
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                  SizedBox(height: 16),
+                  Text(
+                    'HynDuf',
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 16.0),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'Tham gia vào Tháng 11, 2023',
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w900,
-                            color: Colors.grey[500]!),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 5.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        TextButton(
-                          onPressed: () {
-                            // Add your logic for 'X followers' button
-                          },
-                          child: Text(
-                            '2 followers',
-                            style: TextStyle(
-                                color: Colors.blue,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w900),
-                          ),
-                        ),
-                        Text(
-                          '|',
-                          style: TextStyle(
-                              fontSize: 18,
-                              color: Colors.blue,
-                              fontWeight: FontWeight.w900),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            // Add your logic for 'Y following' button
-                          },
-                          child: Text(
-                            '1 following',
-                            style: TextStyle(
-                                color: Colors.blue,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w900),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Divider(),
                   SizedBox(height: 10),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,

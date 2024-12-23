@@ -59,7 +59,7 @@ class CardSearchTile extends StatelessWidget {
                       child: SizedBox(
                         width: 75,
                         height: 75,
-                        child: validateURL(itemDeck.deck.descriptionImgURL)
+                        child: validateURL(itemDeck.deck.descriptionImgPath)
                             ? CachedNetworkImage(
                           fit: BoxFit.cover,
                           errorWidget: (context, _, __) => const Image(
@@ -67,7 +67,7 @@ class CardSearchTile extends StatelessWidget {
                             image:
                             AssetImage('assets/deck_placeholder.png'),
                           ),
-                          imageUrl: itemDeck.deck.descriptionImgURL,
+                          imageUrl: itemDeck.deck.descriptionImgPath,
                           placeholder: (context, url) => const Image(
                             fit: BoxFit.cover,
                             image:

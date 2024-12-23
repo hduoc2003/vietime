@@ -13,7 +13,7 @@ class Deck {
   DateTime lastReview;
   int curNewCards;
   int curReviewCards;
-  String descriptionImgURL;
+  String descriptionImgPath;
   int totalCards;
   int totalLearnedCards;
   int views;
@@ -32,7 +32,7 @@ class Deck {
     lastReview_,
     this.curNewCards = 0,
     this.curReviewCards = 0,
-    this.descriptionImgURL = "",
+    this.descriptionImgPath = "",
     required this.totalCards,
     required this.totalLearnedCards,
     this.views = 0,

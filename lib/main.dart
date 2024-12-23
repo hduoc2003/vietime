@@ -175,7 +175,7 @@ class _MyAppState extends State<MyApp> {
                       children: [
                         Expanded(
                           child: PageView(
-                            physics: NeverScrollableScrollPhysics(),
+                            physics: const CustomPhysics(),
                             onPageChanged: (index) {
                               _selectedIndex.value = index;
                             },
