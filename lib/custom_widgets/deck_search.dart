@@ -105,14 +105,14 @@ class DeckSearch extends SearchDelegate {
           clipBehavior: Clip.antiAlias,
           child: SizedBox.square(
             dimension: 50,
-            child: validateURL(suggestionList[index].deck.descriptionImgPath)
+            child: validateURL(suggestionList[index].deck.descriptionImgURL)
                 ? CachedNetworkImage(
                     fit: BoxFit.cover,
                     errorWidget: (context, _, __) => const Image(
                       fit: BoxFit.cover,
                       image: AssetImage('assets/deck_placeholder.png'),
                     ),
-                    imageUrl: suggestionList[index].deck.descriptionImgPath,
+                    imageUrl: suggestionList[index].deck.descriptionImgURL,
                     placeholder: (context, url) => const Image(
                       fit: BoxFit.cover,
                       image: AssetImage('assets/deck_placeholder.png'),

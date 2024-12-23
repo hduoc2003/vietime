@@ -99,14 +99,14 @@ Widget getUserDeckTile(DeckWithReviewCards item, BuildContext context) {
           child: SizedBox(
             width: 75,
             height: 75,
-            child: validateURL(item.deck.descriptionImgPath)
+            child: validateURL(item.deck.descriptionImgURL)
                 ? CachedNetworkImage(
                     fit: BoxFit.cover,
                     errorWidget: (context, _, __) => const Image(
                       fit: BoxFit.cover,
                       image: AssetImage('assets/deck_placeholder.png'),
                     ),
-                    imageUrl: item.deck.descriptionImgPath,
+                    imageUrl: item.deck.descriptionImgURL,
                     placeholder: (context, url) => const Image(
                       fit: BoxFit.cover,
                       image: AssetImage('assets/deck_placeholder.png'),
@@ -210,14 +210,14 @@ Widget getPublicDeckTile(DeckWithReviewCards item, BuildContext context) {
           child: SizedBox(
             width: 75,
             height: 75,
-            child: validateURL(item.deck.descriptionImgPath)
+            child: validateURL(item.deck.descriptionImgURL)
                 ? CachedNetworkImage(
                     fit: BoxFit.cover,
                     errorWidget: (context, _, __) => const Image(
                       fit: BoxFit.cover,
                       image: AssetImage('assets/deck_placeholder.png'),
                     ),
-                    imageUrl: item.deck.descriptionImgPath,
+                    imageUrl: item.deck.descriptionImgURL,
                     placeholder: (context, url) => const Image(
                       fit: BoxFit.cover,
                       image: AssetImage('assets/deck_placeholder.png'),
