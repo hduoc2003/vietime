@@ -211,11 +211,11 @@ List<FlashcardSearch> mockCardSearches = [
             TextSpan(
               text: 'bold',
               style:
-              TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+                  TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
             ),
             TextSpan(
                 text:
-                ' words. This is a long sentence that will be truncated with ellipsis.',
+                    ' words. This is a long sentence that will be truncated with ellipsis.',
                 style: TextStyle(color: Colors.black)),
           ],
         ),
