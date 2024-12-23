@@ -32,20 +32,21 @@ class _LoginPageState extends State<LoginPage> {
         child: Column(children: [
           Padding(
             padding: EdgeInsets.all(16.0),
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-              EditableTextArea(
-                title: 'Email',
-                controller: emailController,
-                hintText: "Nhập địa chỉ email",
-              ),
-              SizedBox(height: 16.0),
-              PasswordFieldWithToggle(
-                title: 'Mật khẩu',
-                controller: passwordController,
-                hintText: "Nhập mật khẩu",
-              ),
-            ]),
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  EditableTextArea(
+                    title: 'Email',
+                    controller: emailController,
+                    hintText: "Nhập địa chỉ email",
+                  ),
+                  SizedBox(height: 16.0),
+                  PasswordFieldWithToggle(
+                    title: 'Mật khẩu',
+                    controller: passwordController,
+                    hintText: "Nhập mật khẩu",
+                  ),
+                ]),
           ),
           if (loginError.isNotEmpty)
             Align(
@@ -89,12 +90,14 @@ class _LoginPageState extends State<LoginPage> {
               innerBoxColor: Color(0xff46a4e8),
               textColor: Colors.white,
               onTap: () async {
-                if (emailController.text.length < 8 || passwordController.text.length < 8) {
+                if (emailController.text.length < 8 ||
+                    passwordController.text.length < 8) {
                   setState(() {
                     loginError = "Email và mật khẩu phải có ít nhất 8 kí tự";
                   });
                   return;
                 }
+                FocusManager.instance.primaryFocus?.unfocus();
                 showLoaderDialog(context);
                 APIHelper.submitLoginRequest(
                         emailController.text, passwordController.text)
@@ -124,7 +127,10 @@ class _LoginPageState extends State<LoginPage> {
                   // Navigate to SignUpPage
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => SignUpPage()),
+                    MaterialPageRoute(
+                        builder: (context) => SignUpPage(
+                              onSuccessLogIn: widget.onSuccessLogIn,
+                            )),
                   );
                 },
                 child: Text(
