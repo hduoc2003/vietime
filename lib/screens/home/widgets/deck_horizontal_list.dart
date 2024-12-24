@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:iconify_flutter/iconify_flutter.dart';
 import 'package:iconify_flutter/icons/ion.dart';
 import 'package:iconify_flutter/icons/mdi.dart';
@@ -13,6 +14,7 @@ import '../../../custom_widgets/animated_progress_bar.dart';
 import '../../../custom_widgets/animated_text.dart';
 import '../../../custom_widgets/custom_physics.dart';
 import '../../../entity/deck.dart';
+import '../../../services/api_handler.dart';
 import '../../deck_screen.dart';
 
 class DeckHorizontalList extends StatelessWidget {
@@ -74,118 +76,126 @@ class DeckHorizontalList extends StatelessWidget {
 }
 
 Widget getUserDeckTile(DeckWithCards item, BuildContext context) {
-  return GestureDetector(
-    onTap: () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => DeckScreen(deckData: item),
-        ),
-      );
-    },
-    child: Container(
-      decoration: BoxDecoration(
-        color: Colors.grey[100], // Add a slightly grey background color
-        borderRadius:
-            BorderRadius.circular(30.0), // Optional: Add rounded corners
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10),
-      margin: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5),
-      child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        // Leading Section
-        Card(
-          margin: EdgeInsets.zero,
-          elevation: 5,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15.0),
-          ),
-          clipBehavior: Clip.antiAlias,
-          child: SizedBox(
-            width: 75,
-            height: 75,
-            child: validateURL(item.deck.descriptionImgURL)
-                ? CachedNetworkImage(
-                    fit: BoxFit.cover,
-                    errorWidget: (context, _, __) => const Image(
-                      fit: BoxFit.cover,
-                      image: AssetImage('assets/deck_placeholder.png'),
-                    ),
-                    imageUrl: item.deck.descriptionImgURL,
-                    placeholder: (context, url) => const Image(
-                      fit: BoxFit.cover,
-                      image: AssetImage('assets/deck_placeholder.png'),
-                    ),
-                  )
-                : const Image(
-                    fit: BoxFit.cover,
-                    image: AssetImage('assets/deck_placeholder.png'),
-                  ),
-          ),
-        ),
-
-        // Padding between leading and title/subtitle
-        const SizedBox(width: 16.0),
-
-        // Title and Subtitle Section
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              AnimatedText(
-                text: item.deck.name,
-                pauseAfterRound: const Duration(
-                  seconds: 3,
-                ),
-                showFadingOnlyWhenScrolling: false,
-                startAfter: const Duration(
-                  seconds: 3,
-                ),
-                style:
-                    const TextStyle(fontWeight: FontWeight.w900, fontSize: 17),
-                crossAxisAlignment: CrossAxisAlignment.start,
-                defaultAlignment: TextAlign.start,
+  return ValueListenableBuilder(
+      valueListenable: GetIt.I<APIHanlder>().userDecksChanged,
+      builder: (
+        BuildContext context,
+        bool hidden,
+        Widget? child,
+      ) {
+        return GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => DeckScreen(deckData: item),
               ),
-              const SizedBox(height: 4.0),
-              ThreeCardTypeNumbersRow(
-                  numBlueCards: item.numBlueCards,
-                  numRedCards: item.numRedCards,
-                  numGreenCards: item.numGreenCards),
-              SizedBox(height: 4.0),
-              (item.deck.totalCards == 0)
-                  ? const Text(
-                      'Chưa có thẻ nào',
-                      style: TextStyle(
-                          fontSize: 16.0,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w600),
-                    )
-                  : Row(
-                      children: [
-                        AnimatedProgressBar(
-                          width: 150,
-                          height: 14,
-                          progress: item.deck.totalLearnedCards /
-                              item.deck.totalCards,
-                          backgroundColor: const Color(0xffD9D9D9),
-                          progressColor: const Color(0xff40a5e8),
-                          innerProgressColor: const Color(0xff6db7f4),
+            );
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.grey[100], // Add a slightly grey background color
+              borderRadius:
+                  BorderRadius.circular(30.0), // Optional: Add rounded corners
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10),
+            margin: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5),
+            child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              // Leading Section
+              Card(
+                margin: EdgeInsets.zero,
+                elevation: 5,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+                clipBehavior: Clip.antiAlias,
+                child: SizedBox(
+                  width: 75,
+                  height: 75,
+                  child: validateURL(item.deck.descriptionImgURL)
+                      ? CachedNetworkImage(
+                          fit: BoxFit.cover,
+                          errorWidget: (context, _, __) => const Image(
+                            fit: BoxFit.cover,
+                            image: AssetImage('assets/deck_placeholder.png'),
+                          ),
+                          imageUrl: item.deck.descriptionImgURL,
+                          placeholder: (context, url) => const Image(
+                            fit: BoxFit.cover,
+                            image: AssetImage('assets/deck_placeholder.png'),
+                          ),
+                        )
+                      : const Image(
+                          fit: BoxFit.cover,
+                          image: AssetImage('assets/deck_placeholder.png'),
                         ),
-                        SizedBox(width: 16.0),
-                        Text(
-                          '${(item.deck.totalLearnedCards / item.deck.totalCards * 100).toStringAsFixed(0)}%',
-                          style: TextStyle(
-                              fontSize: 16.0,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w900),
-                        ),
-                      ],
+                ),
+              ),
+
+              // Padding between leading and title/subtitle
+              const SizedBox(width: 16.0),
+
+              // Title and Subtitle Section
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AnimatedText(
+                      text: item.deck.name,
+                      pauseAfterRound: const Duration(
+                        seconds: 3,
+                      ),
+                      showFadingOnlyWhenScrolling: false,
+                      startAfter: const Duration(
+                        seconds: 3,
+                      ),
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w900, fontSize: 17),
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      defaultAlignment: TextAlign.start,
                     ),
-            ],
+                    const SizedBox(height: 4.0),
+                    ThreeCardTypeNumbersRow(
+                        numBlueCards: item.numBlueCards,
+                        numRedCards: item.numRedCards,
+                        numGreenCards: item.numGreenCards),
+                    SizedBox(height: 4.0),
+                    (item.deck.totalCards == 0)
+                        ? const Text(
+                            'Chưa có thẻ nào',
+                            style: TextStyle(
+                                fontSize: 16.0,
+                                color: Colors.black,
+                                fontWeight: FontWeight.w600),
+                          )
+                        : Row(
+                            children: [
+                              AnimatedProgressBar(
+                                width: 150,
+                                height: 14,
+                                progress: item.deck.totalLearnedCards /
+                                    item.deck.totalCards,
+                                backgroundColor: const Color(0xffD9D9D9),
+                                progressColor: const Color(0xff40a5e8),
+                                innerProgressColor: const Color(0xff6db7f4),
+                              ),
+                              SizedBox(width: 16.0),
+                              Text(
+                                '${(item.deck.totalLearnedCards / item.deck.totalCards * 100).toStringAsFixed(0)}%',
+                                style: TextStyle(
+                                    fontSize: 16.0,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w900),
+                              ),
+                            ],
+                          ),
+                  ],
+                ),
+              ),
+            ]),
           ),
-        ),
-      ]),
-    ),
-  );
+        );
+      });
 }
 
 Widget getPublicDeckTile(DeckWithCards item, BuildContext context) {

@@ -35,127 +35,134 @@ class _SettingsPageState extends State<SettingsPage> {
           children: [
             CustomAppBar(),
             Expanded(
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.all(16.0),
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            EditableTextArea(
-                              title: 'Tên người dùng',
-                              controller: textArea1Controller,
-                            ),
-                            SizedBox(height: 16.0),
-                            EditableTextArea(
-                              title: 'Email',
-                              controller: textArea2Controller,
-                            ),
-                            SizedBox(height: 16.0),
-                            EditableTextArea(
-                              title: 'Mật khẩu',
-                              controller: textArea3Controller,
-                              isPassword: true,
-                            ),
-                            SizedBox(
-                              height: 16,
-                            ),
-                            Divider(),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              "Cài đặt chung",
-                              style: TextStyle(
-                                fontSize: 26.0,
-                                fontWeight: FontWeight.w900,
+              child: SingleChildScrollView(
+                child: Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              EditableTextArea(
+                                title: 'Tên người dùng',
+                                controller: textArea1Controller,
                               ),
-                            ),
-                            SwitchListTile(
-                              title: const Text(
-                                'Chế độ tối',
-                                style: TextStyle(fontSize: 20),
+                              SizedBox(height: 16.0),
+                              EditableTextArea(
+                                title: 'Email',
+                                controller: textArea2Controller,
                               ),
-                              value: isDarkMode,
-                              contentPadding: EdgeInsets.zero,
-                              onChanged: (bool value) {
-                                setState(() {
-                                  isDarkMode ^= true;
-                                  Hive.box('settings')
-                                      .put('darkMode', isDarkMode);
-                                });
-                              },
-                              secondary: const Iconify(
-                                IconParkSolid.dark_mode,
-                                color: Colors.purple,
+                              SizedBox(height: 16.0),
+                              EditableTextArea(
+                                title: 'Mật khẩu',
+                                controller: textArea3Controller,
+                                isPassword: true,
                               ),
-                            ),
-                            ListTile(
-                              title: Text(
-                                "Ngôn ngữ",
-                                style: const TextStyle(fontSize: 20),
+                              SizedBox(
+                                height: 16,
                               ),
-                              leading: Iconify(Ion.language),
-                              contentPadding: EdgeInsets.zero,
-                              onTap: () {},
-                              trailing: DropdownButton(
-                                value: lang,
+                              Divider(),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                "Cài đặt chung",
                                 style: TextStyle(
-                                  fontSize: 18,
+                                  fontSize: 26.0,
+                                  fontWeight: FontWeight.w900,
                                 ),
-                                underline: const SizedBox(),
-                                onChanged: (String? newValue) {
-                                  if (newValue != null) {
-                                    setState(
-                                      () {
-                                        lang = newValue;
-                                        // MyApp.of(context).setLocale(
-                                        //   Locale.fromSubtags(
-                                        //     languageCode: ConstantCodes
-                                        //         .languageCodes[newValue] ??
-                                        //         'en',
-                                        //   ),
-                                        // );
-                                        Hive.box('settings')
-                                            .put('language', newValue);
-                                      },
-                                    );
-                                  }
-                                },
-                                items: ConstantCodes.languageCodes.keys
-                                    .map<DropdownMenuItem<String>>((language) {
-                                  return DropdownMenuItem<String>(
-                                    value: language,
-                                    child: Text(
-                                      language,
-                                      style: const TextStyle(
-                                          fontSize: 18, color: Colors.black),
-                                    ),
-                                  );
-                                }).toList(),
                               ),
-                              dense: true,
-                            ),
-                          ]),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 16.0),
-                      child: LongButton(
-                        text: 'ĐĂNG XUẤT',
-                        outerBoxColor: Color(0xffc43535),
-                        innerBoxColor: Color(0xffe84040),
-                        textColor: Colors.white,
-                        onTap: () {
-                          GetIt.I<APIHanlder>()
-                              .storage
-                              .delete(key: 'refresh_token');
-                          GetIt.I<APIHanlder>().isLoggedIn.value = false;
-                          Navigator.pop(context);
-                        },
+                              SizedBox(
+                                height: 10,
+                              ),
+                              SwitchListTile(
+                                title: const Text(
+                                  'Chế độ tối',
+                                  style: TextStyle(fontSize: 20),
+                                ),
+                                value: isDarkMode,
+                                contentPadding: EdgeInsets.zero,
+                                onChanged: (bool value) {
+                                  setState(() {
+                                    isDarkMode ^= true;
+                                    Hive.box('settings')
+                                        .put('darkMode', isDarkMode);
+                                  });
+                                },
+                                secondary: const Iconify(
+                                  IconParkSolid.dark_mode,
+                                  color: Colors.purple,
+                                ),
+                              ),
+                              ListTile(
+                                title: Text(
+                                  "Ngôn ngữ",
+                                  style: const TextStyle(fontSize: 20),
+                                ),
+                                leading: Iconify(Ion.language),
+                                contentPadding: EdgeInsets.zero,
+                                onTap: () {},
+                                trailing: DropdownButton(
+                                  value: lang,
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                  ),
+                                  underline: const SizedBox(),
+                                  onChanged: (String? newValue) {
+                                    if (newValue != null) {
+                                      setState(
+                                        () {
+                                          lang = newValue;
+                                          // MyApp.of(context).setLocale(
+                                          //   Locale.fromSubtags(
+                                          //     languageCode: ConstantCodes
+                                          //         .languageCodes[newValue] ??
+                                          //         'en',
+                                          //   ),
+                                          // );
+                                          Hive.box('settings')
+                                              .put('language', newValue);
+                                        },
+                                      );
+                                    }
+                                  },
+                                  items: ConstantCodes.languageCodes.keys
+                                      .map<DropdownMenuItem<String>>((language) {
+                                    return DropdownMenuItem<String>(
+                                      value: language,
+                                      child: Text(
+                                        language,
+                                        style: const TextStyle(
+                                            fontSize: 18, color: Colors.black),
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
+                                dense: true,
+                              ),
+                            ]),
                       ),
-                    )
-                  ]),
+                      SizedBox(
+                        height: 100,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 16.0),
+                        child: LongButton(
+                          text: 'ĐĂNG XUẤT',
+                          outerBoxColor: Color(0xffc43535),
+                          innerBoxColor: Color(0xffe84040),
+                          textColor: Colors.white,
+                          onTap: () {
+                            GetIt.I<APIHanlder>()
+                                .storage
+                                .delete(key: 'refresh_token');
+                            GetIt.I<APIHanlder>().isLoggedIn.value = false;
+                            Navigator.pop(context);
+                          },
+                        ),
+                      )
+                    ]),
+              ),
             ),
           ],
         ),

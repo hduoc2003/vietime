@@ -1,15 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:get_it/get_it.dart';
 import 'package:google_search_suggestions/google_search_suggestions.dart';
-import 'package:logging/logging.dart';
-import 'package:vietime/entity/search.dart';
 
 import '../entity/card.dart';
 import '../entity/deck.dart';
 import '../entity/user.dart';
 import '../helpers/api.dart';
-import 'mock_data.dart';
 
 class APIHanlder {
   late ValueNotifier<bool> isLoggedIn;
@@ -45,24 +41,20 @@ class APIHanlder {
     accessToken = (result['access_token'] as String);
     userDecks = (result['user_decks'] as List<dynamic>)
             .map((deckJson) => DeckWithCards.fromJson(deckJson))
-            .toList() ??
-        [];
+            .toList();
 
     publicDecks = (result['public_decks'] as List<dynamic>)
             .map((deckJson) => DeckWithCards.fromJson(deckJson))
-            .toList() ??
-        [];
+            .toList();
 
     user = User.fromJson(result['user'] ?? {});
 
     decksReview = (result['decks_review'] as List<dynamic>)
             .map((deckJson) => DeckWithReviewCards.fromJson(deckJson))
-            .toList() ??
-        [];
+            .toList();
     allCards = (result['all_cards'] as List<dynamic>)
             .map((cardJson) => Flashcard.fromJson(cardJson))
-            .toList() ??
-        [];
+            .toList();
     allDecks = [...userDecks, ...publicDecks];
   }
 
@@ -124,5 +116,25 @@ class APIHanlder {
     decksReviewChanged.value ^= true;
     allDecksChanged.value ^= true;
     allCardsChanged.value ^= true;
+  }
+
+  void onReviewCardsSuccess(String deckID, Map<String, dynamic> result) {
+    DeckWithReviewCards deckReview = idToDeckWithReviewCards[deckID]!;
+    deckReview.numBlueCards = result['num_blue_cards'] as int;
+    deckReview.numRedCards = result['num_red_cards'] as int;
+    deckReview.numGreenCards = result['num_green_cards'] as int;
+    deckReview.cards = (result['cards'] as List<dynamic>?)
+            ?.map((cardJson) => Flashcard.fromJson(cardJson))
+            .toList() ??
+        [];
+    for (DeckWithCards d in userDecks) {
+      if (d.deck.id == deckID) {
+        d.numBlueCards = deckReview.numBlueCards;
+        d.numRedCards = deckReview.numRedCards;
+        d.numGreenCards = deckReview.numGreenCards;
+      }
+    }
+    decksReviewChanged.value ^= true;
+    userDecksChanged.value ^= true;
   }
 }
