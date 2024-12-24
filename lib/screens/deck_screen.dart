@@ -36,253 +36,273 @@ class _DeckScreenState extends State<DeckScreen> {
     double maxWidth = MediaQuery.of(context).size.width * 0.75;
     double maxHeight = MediaQuery.of(context).size.height * 0.29;
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Thông tin bộ thẻ"),
-        centerTitle: true,
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          // Big image
-          Center(
-            child: Card(
-              margin: EdgeInsets.zero,
-              elevation: 5,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15.0),
-              ),
-              clipBehavior: Clip.antiAlias,
-              child: SizedBox(
-                height: maxHeight, // Set your maximum height
-                width: maxWidth, // Set your maximum width
-                child: validateURL(descriptionImgPath)
-                    ? CachedNetworkImage(
-                        fit: BoxFit.cover,
-                        errorWidget: (context, _, __) => const Image(
-                          fit: BoxFit.cover,
-                          image: AssetImage('assets/deck_placeholder.png'),
-                        ),
-                        imageUrl: descriptionImgPath,
-                        placeholder: (context, url) => const Image(
-                          fit: BoxFit.cover,
-                          image: AssetImage('assets/deck_placeholder.png'),
-                        ),
-                      )
-                    : const Image(
-                        fit: BoxFit.cover,
-                        image: AssetImage('assets/deck_placeholder.png'),
+        appBar: AppBar(
+          title: Text("Thông tin bộ thẻ"),
+          centerTitle: true,
+        ),
+        body: ValueListenableBuilder(
+            valueListenable: widget.deckData.deck.isPublic
+                ? GetIt.I<APIHanlder>().publicDecksChanged
+                : GetIt.I<APIHanlder>().userDecksChanged,
+            builder: (
+              BuildContext context,
+              bool hidden,
+              Widget? child,
+            ) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // Big image
+                  Center(
+                    child: Card(
+                      margin: EdgeInsets.zero,
+                      elevation: 5,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
                       ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(
-                left: 16.0, right: 16, top: 16, bottom: 4),
-            child: Text(
-              widget.deckData.deck.name,
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                IconButton(
-                  icon: Iconify(
-                    Mdi.cards_playing,
-                    color: Colors.purple,
-                    size: 30,
-                  ),
-                  onPressed: () {},
-                ),
-                SizedBox(
-                  width: 5,
-                ),
-                LoveDeckButton(
-                  deckItem: widget.deckData,
-                  size: 30,
-                ),
-                if (!widget.deckData.deck.isPublic)
-                  SizedBox(
-                    width: 5,
-                  ),
-                if (!widget.deckData.deck.isPublic)
-                  DeckPopupMenu(
-                    deckItem: widget.deckData,
-                    icon: const Iconify(
-                      Ri.settings_4_fill,
-                      color: Colors.grey,
-                      size: 30,
+                      clipBehavior: Clip.antiAlias,
+                      child: SizedBox(
+                        height: maxHeight, // Set your maximum height
+                        width: maxWidth, // Set your maximum width
+                        child: validateURL(descriptionImgPath)
+                            ? CachedNetworkImage(
+                                fit: BoxFit.cover,
+                                errorWidget: (context, _, __) => const Image(
+                                  fit: BoxFit.cover,
+                                  image:
+                                      AssetImage('assets/deck_placeholder.png'),
+                                ),
+                                imageUrl: descriptionImgPath,
+                                placeholder: (context, url) => const Image(
+                                  fit: BoxFit.cover,
+                                  image:
+                                      AssetImage('assets/deck_placeholder.png'),
+                                ),
+                              )
+                            : const Image(
+                                fit: BoxFit.cover,
+                                image:
+                                    AssetImage('assets/deck_placeholder.png'),
+                              ),
+                      ),
                     ),
                   ),
-              ],
-            ),
-          ),
-          const Divider(),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  _buildScheduleTitleRow(),
-                  _buildCardTypesRow(),
                   Padding(
                     padding: const EdgeInsets.only(
-                        left: 24.0, right: 16, top: 6, bottom: 4),
-                    child: ExpansionTile(
-                      tilePadding: EdgeInsets.only(right: 16),
-                      childrenPadding: EdgeInsets.zero,
-                      title: const Text(
-                        'Thông tin chi tiết',
-                        style: TextStyle(
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.w600,
+                        left: 16.0, right: 16, top: 16, bottom: 4),
+                    child: Text(
+                      widget.deckData.deck.name,
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        IconButton(
+                          icon: Iconify(
+                            Mdi.cards_playing,
+                            color: Colors.purple,
+                            size: 30,
+                          ),
+                          onPressed: () {},
                         ),
-                      ),
-                      subtitle: Text(
-                        'Mô tả:  ${widget.deckData.deck.description}',
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      children: <Widget>[
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                                left: 8.0, right: 8.0, bottom: 16),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text('Ngày tạo: 22/11/2023'),
-                                SizedBox(
-                                  height: 3,
-                                ),
-                                Text('Vị trí: Hà Nội'),
-                              ],
+                        SizedBox(
+                          width: 5,
+                        ),
+                        LoveDeckButton(
+                          deckItem: widget.deckData,
+                          size: 30,
+                        ),
+                        if (!widget.deckData.deck.isPublic)
+                          SizedBox(
+                            width: 5,
+                          ),
+                        if (!widget.deckData.deck.isPublic)
+                          DeckPopupMenu(
+                            deckItem: widget.deckData,
+                            icon: const Iconify(
+                              Ri.settings_4_fill,
+                              color: Colors.grey,
+                              size: 30,
                             ),
                           ),
-                        ),
                       ],
                     ),
                   ),
-                  _buildNumberOfCardsRow(),
-                  if (!widget.deckData.deck.isPublic)
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          left: 24.0, right: 16, bottom: 18),
-                      child: Row(
+                  const Divider(),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
                         children: [
-                          Text(
-                            "Tiến triển:  ",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
+                          _buildScheduleTitleRow(),
+                          _buildCardTypesRow(),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                left: 24.0, right: 16, top: 6, bottom: 4),
+                            child: ExpansionTile(
+                              tilePadding: EdgeInsets.only(right: 16),
+                              childrenPadding: EdgeInsets.zero,
+                              title: const Text(
+                                'Thông tin chi tiết',
+                                style: TextStyle(
+                                  fontSize: 18.0,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              subtitle: Text(
+                                'Mô tả:  ${widget.deckData.deck.description}',
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              children: <Widget>[
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 8.0, right: 8.0, bottom: 16),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text('Ngày tạo: 22/11/2023'),
+                                        SizedBox(
+                                          height: 3,
+                                        ),
+                                        Text('Vị trí: Hà Nội'),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          (widget.deckData.deck.totalCards == 0)
-                              ? const Text(
-                                  'Chưa có thẻ nào',
-                                  style: TextStyle(
-                                      fontSize: 16.0,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w600),
-                                )
-                              : const SizedBox(),
-                          (widget.deckData.deck.totalCards > 0)
-                              ? AnimatedProgressBar(
-                                  width: 200,
-                                  height: 14,
-                                  progress:
-                                      widget.deckData.deck.totalLearnedCards /
-                                          widget.deckData.deck.totalCards,
-                                  backgroundColor: const Color(0xffD9D9D9),
-                                  progressColor: const Color(0xff40a5e8),
-                                  innerProgressColor: const Color(0xff6db7f4),
-                                )
-                              : const SizedBox(),
-                          (widget.deckData.deck.totalCards > 0)
-                              ? SizedBox(width: 16.0)
-                              : const SizedBox(),
-                          (widget.deckData.deck.totalCards > 0)
-                              ? Text(
-                                  '${(widget.deckData.deck.totalLearnedCards / widget.deckData.deck.totalCards * 100).toStringAsFixed(0)}%',
-                                  style: TextStyle(
-                                    fontSize: 16.0,
-                                    fontWeight: FontWeight.w900,
+                          _buildNumberOfCardsRow(),
+                          if (!widget.deckData.deck.isPublic)
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 24.0, right: 16, bottom: 18),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    "Tiến triển:  ",
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
-                                )
-                              : const SizedBox(),
+                                  (widget.deckData.deck.totalCards == 0)
+                                      ? const Text(
+                                          'Chưa có thẻ nào',
+                                          style: TextStyle(
+                                              fontSize: 16.0,
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.w600),
+                                        )
+                                      : const SizedBox(),
+                                  (widget.deckData.deck.totalCards > 0)
+                                      ? AnimatedProgressBar(
+                                          width: 200,
+                                          height: 14,
+                                          progress: widget.deckData.deck
+                                                  .totalLearnedCards /
+                                              widget.deckData.deck.totalCards,
+                                          backgroundColor:
+                                              const Color(0xffD9D9D9),
+                                          progressColor:
+                                              const Color(0xff40a5e8),
+                                          innerProgressColor:
+                                              const Color(0xff6db7f4),
+                                        )
+                                      : const SizedBox(),
+                                  (widget.deckData.deck.totalCards > 0)
+                                      ? SizedBox(width: 16.0)
+                                      : const SizedBox(),
+                                  (widget.deckData.deck.totalCards > 0)
+                                      ? Text(
+                                          '${(widget.deckData.deck.totalLearnedCards / widget.deckData.deck.totalCards * 100).toStringAsFixed(0)}%',
+                                          style: TextStyle(
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.w900,
+                                          ),
+                                        )
+                                      : const SizedBox(),
+                                ],
+                              ),
+                            ),
                         ],
                       ),
                     ),
+                  ),
+                  widget.deckData.deck.isPublic
+                      ? LongButton(
+                          text: 'LƯU BỘ THẺ',
+                          outerBoxColor: Color(0xff1783d1),
+                          innerBoxColor: Color(0xff46a4e8),
+                          textColor: Colors.white,
+                          onTap: () {
+                            showLoaderDialog(context);
+                            APIHelper.submitCopyDeckRequest(
+                                    widget.deckData.deck.id)
+                                .then((copyDeckResponse) {
+                              if (copyDeckResponse.containsKey("error")) {
+                                Navigator.pop(context);
+                                ErrorDialog.show(context);
+                              } else {
+                                Navigator.of(context)
+                                    .popUntil((route) => route.isFirst);
+                                GetIt.I<APIHanlder>()
+                                    .onCopyDeckSuccess(copyDeckResponse);
+                                ShowSnackBar().showSnackBar(
+                                  context,
+                                  "Đã lưu bộ thẻ vào bộ thẻ cá nhân",
+                                );
+                              }
+                            });
+                          },
+                        )
+                      : ((widget.deckData.numBlueCards +
+                                  widget.deckData.numRedCards +
+                                  widget.deckData.numGreenCards >
+                              0)
+                          ? LongButton(
+                              text: 'BẮT ĐẦU HỌC',
+                              outerBoxColor: Color(0xff1783d1),
+                              innerBoxColor: Color(0xff46a4e8),
+                              textColor: Colors.white,
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => StudyScreen(
+                                        deckID: widget.deckData.deck.id,
+                                        questions: GetIt.I<APIHanlder>()
+                                            .idToDeckWithReviewCards[
+                                                widget.deckData.deck.id]!
+                                            .cards),
+                                  ),
+                                );
+                              },
+                            )
+                          : LongButton(
+                              text: 'ĐÃ HỌC XONG HÔM NAY',
+                              outerBoxColor: Color(0xffC7C6C6),
+                              innerBoxColor: Color(0xfff0f2f0),
+                              textColor: Color(0xffC7C6C6),
+                              onTap: () {},
+                            )),
+                  SizedBox(
+                    height: 16,
+                  )
                 ],
-              ),
-            ),
-          ),
-          widget.deckData.deck.isPublic
-              ? LongButton(
-                  text: 'LƯU BỘ THẺ',
-                  outerBoxColor: Color(0xff1783d1),
-                  innerBoxColor: Color(0xff46a4e8),
-                  textColor: Colors.white,
-                  onTap: () {
-                    showLoaderDialog(context);
-                    APIHelper.submitCopyDeckRequest(widget.deckData.deck.id)
-                        .then((copyDeckResponse) {
-                      if (copyDeckResponse.containsKey("error")) {
-                        Navigator.pop(context);
-                        ErrorDialog.show(context);
-                      } else {
-                        Navigator.of(context).popUntil((route) => route.isFirst);
-                        GetIt.I<APIHanlder>().onCopyDeckSuccess(copyDeckResponse);
-                        ShowSnackBar().showSnackBar(
-                          context,
-                           "Đã lưu bộ thẻ vào bộ thẻ cá nhân",
-                        );
-                      }
-                    });
-                  },
-                )
-              : ((widget.deckData.numBlueCards +
-                          widget.deckData.numRedCards +
-                          widget.deckData.numGreenCards >
-                      0)
-                  ? LongButton(
-                      text: 'BẮT ĐẦU HỌC',
-                      outerBoxColor: Color(0xff1783d1),
-                      innerBoxColor: Color(0xff46a4e8),
-                      textColor: Colors.white,
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => StudyScreen(
-                                questions: GetIt.I<APIHanlder>()
-                                    .idToDeckWithReviewCards[
-                                        widget.deckData.deck.id]!
-                                    .cards),
-                          ),
-                        );
-                      },
-                    )
-                  : LongButton(
-                      text: 'ĐÃ HỌC XONG HÔM NAY',
-                      outerBoxColor: Color(0xffC7C6C6),
-                      innerBoxColor: Color(0xfff0f2f0),
-                      textColor: Color(0xffC7C6C6),
-                      onTap: () {},
-                    )),
-          SizedBox(
-            height: 16,
-          )
-        ],
-      ),
-    );
+              );
+            }));
   }
 
   Widget _buildInfoColumn(String bigNumber, String smallText, Color color) {

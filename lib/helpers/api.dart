@@ -155,4 +155,35 @@ class APIHelper {
       return {'error': generalError};
     }
   }
+
+  static Future<Map<String, dynamic>> submitReviewCardsRequest(String deckID,
+      List<String> learntCardsID, List<bool> isCorrects, int totalXP) async {
+    final String apiUrl = '$baseURL/api/card/review';
+    final Map<String, dynamic> requestData = {
+      'deck_id': deckID,
+      'card_ids': learntCardsID,
+      'is_correct': isCorrects,
+      'total_xp': totalXP,
+    };
+    try {
+      final response = await http.put(
+        Uri.parse(apiUrl),
+        headers: {
+          'Authorization': 'Bearer ${GetIt.I<APIHanlder>().accessToken}',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(requestData),
+      );
+      final Map<String, dynamic> responseBody = json.decode(response.body);
+      if (response.statusCode == 200) {
+        return responseBody;
+      } else if (response.statusCode == 401) {
+        return {'error': generalError};
+      } else {
+        return {'error': generalError};
+      }
+    } catch (e) {
+      return {'error': generalError};
+    }
+  }
 }

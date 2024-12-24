@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
-class DeleteConfirmationDialog extends StatelessWidget {
+class ConfirmationDialog extends StatelessWidget {
   final Function onConfirm;
 
-  DeleteConfirmationDialog({required this.onConfirm});
+  ConfirmationDialog({required this.onConfirm});
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Xác nhận Xóa'),
+      title: Text('Xác nhận'),
       content: Text(
-        'Bạn có chắc chắn muốn xóa không?',
+        'Bạn có chắc chắn không?',
         style: TextStyle(fontSize: 17),
       ),
       insetPadding: EdgeInsets.symmetric(horizontal: 20),
@@ -23,7 +23,7 @@ class DeleteConfirmationDialog extends StatelessWidget {
           },
           child: Text(
             'HỦY',
-            style: TextStyle(fontSize: 17),
+            style: TextStyle(fontSize: 17, color: Colors.red),
           ),
         ),
         TextButton(
@@ -32,8 +32,8 @@ class DeleteConfirmationDialog extends StatelessWidget {
             onConfirm();
           },
           child: Text(
-            'XÓA',
-            style: TextStyle(color: Colors.red, fontSize: 17),
+            'XÁC NHẬN',
+            style: TextStyle(color: Colors.blue, fontSize: 17),
           ),
         ),
       ],
