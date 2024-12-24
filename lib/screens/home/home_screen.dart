@@ -152,6 +152,7 @@ class _HomePageState extends State<HomePage> {
                       MaterialPageRoute(
                           builder: (context) => DeckListScreen(
                                 decksList: GetIt.I<APIHanlder>().userDecks,
+                                isPublic: false,
                               )),
                     );
                   },
@@ -183,11 +184,15 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
-          DeckHorizontalList(
-            itemCountPerGroup: 3,
-            deckType: 0,
-            decksList: GetIt.I<APIHanlder>().userDecks,
-          )
+          ValueListenableBuilder<bool>(
+              valueListenable: GetIt.I<APIHanlder>().userDecksChanged,
+              builder: (context, value, _) {
+                return DeckHorizontalList(
+                  itemCountPerGroup: 3,
+                  deckType: 0,
+                  decksList: GetIt.I<APIHanlder>().userDecks,
+                );
+              })
         ]);
   }
 
@@ -225,6 +230,7 @@ class _HomePageState extends State<HomePage> {
                       MaterialPageRoute(
                           builder: (context) => DeckListScreen(
                                 decksList: GetIt.I<APIHanlder>().publicDecks,
+                                isPublic: true,
                               )),
                     );
                   },

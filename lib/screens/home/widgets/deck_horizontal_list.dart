@@ -1,8 +1,11 @@
+import 'dart:math';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:iconify_flutter/iconify_flutter.dart';
 import 'package:iconify_flutter/icons/ion.dart';
 import 'package:iconify_flutter/icons/mdi.dart';
+import 'package:vietime/custom_widgets/rounded_box_with_text.dart';
 import 'package:vietime/custom_widgets/three_card_type_number_row.dart';
 import 'package:vietime/helpers/validate.dart';
 
@@ -24,15 +27,14 @@ class DeckHorizontalList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double portion = (decksList.length <= itemCountPerGroup) ? 0.96 : 0.84;
+    final double portion =
+        (decksList.length <= itemCountPerGroup) ? 0.96 : 0.84;
     final double listSize = MediaQuery.of(context).size.width * portion;
 
     return Padding(
       padding: const EdgeInsets.only(left: 8.0, right: 4),
       child: SizedBox(
-        height: decksList.length < itemCountPerGroup
-            ? 110.0 * decksList.length
-            : 110.0 * itemCountPerGroup,
+        height: 110.0 * itemCountPerGroup,
         child: Align(
           alignment: Alignment.centerLeft,
           child: ListView.builder(
@@ -40,7 +42,7 @@ class DeckHorizontalList extends StatelessWidget {
             scrollDirection: Axis.horizontal,
             shrinkWrap: true,
             itemExtent: listSize,
-            itemCount: (decksList.length / itemCountPerGroup).ceil(),
+            itemCount: max(1, (decksList.length / itemCountPerGroup).ceil()),
             itemBuilder: (context, index) {
               return SizedBox(
                 width: listSize,
@@ -55,6 +57,8 @@ class DeckHorizontalList extends StatelessWidget {
                       } else {
                         return getPublicDeckTile(item, context);
                       }
+                    } else if (decksList.length < 3) {
+                      return RoundedBoxWithText();
                     } else {
                       return const SizedBox(); // Return an empty widget if the index is out of bounds
                     }

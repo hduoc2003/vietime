@@ -84,6 +84,10 @@ class _MyAppState extends State<MyApp> {
 
   DateTime? backButtonPressTime;
 
+  void _onRebuildMainPage() {
+    setState(() {});
+  }
+
   void _onItemTapped(int index) {
     _selectedIndex.value = index;
     _pageController.jumpToPage(
@@ -116,6 +120,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+    GetIt.I<APIHanlder>().setOnRebuildMainPage(_onRebuildMainPage);
   }
 
   @override
