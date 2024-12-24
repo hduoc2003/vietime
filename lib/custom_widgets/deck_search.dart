@@ -17,7 +17,7 @@ import 'deck_list_info_bar.dart';
 import 'deck_popup_menu.dart';
 
 class DeckSearch extends SearchDelegate {
-  final List<DeckWithReviewCards> data;
+  final List<DeckWithCards> data;
 
   DeckSearch({required this.data});
 
@@ -56,14 +56,14 @@ class DeckSearch extends SearchDelegate {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    final List<DeckWithReviewCards> suggestionList;
+    final List<DeckWithCards> suggestionList;
     if (query.isEmpty) {
       suggestionList = data;
     } else {
       List<String> queryWords =
           removeDiacritics(query.toLowerCase()).split(RegExp(r'\s+'));
 
-      List<DeckWithReviewCards> filteredData = [
+      List<DeckWithCards> filteredData = [
         ...data.where((element) {
           String rawName = removeDiacritics(element.deck.name.toLowerCase());
           String rawDes =
@@ -252,7 +252,7 @@ class DeckSearch extends SearchDelegate {
             shrinkWrap: true,
             itemCount: suggestionList.length,
             itemBuilder: (context, index) {
-              DeckWithReviewCards item = suggestionList[index];
+              DeckWithCards item = suggestionList[index];
               if (item.deck.isPublic) {
                 return PublicDeckTile(
                     item: item,

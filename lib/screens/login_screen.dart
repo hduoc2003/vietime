@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:logging/logging.dart';
 import 'package:vietime/entity/card.dart';
 import 'package:vietime/screens/signup_screen.dart';
 import 'package:vietime/screens/study_screen.dart';
@@ -8,10 +10,10 @@ import '../custom_widgets/long_button.dart';
 import '../custom_widgets/password_field_toggle.dart';
 import '../helpers/api.dart';
 import '../helpers/loader_dialog.dart';
+import '../services/api_handler.dart';
 
 class LoginPage extends StatefulWidget {
-  final Function onSuccessLogIn;
-  LoginPage({required this.onSuccessLogIn});
+  LoginPage();
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -90,10 +92,15 @@ class _LoginPageState extends State<LoginPage> {
               innerBoxColor: Color(0xff46a4e8),
               textColor: Colors.white,
               onTap: () async {
-                if (emailController.text.length < 8 ||
-                    passwordController.text.length < 8) {
+                if (emailController.text.isEmpty) {
                   setState(() {
-                    loginError = "Email và mật khẩu phải có ít nhất 8 kí tự";
+                    loginError = "Email không được để trống";
+                  });
+                  return;
+                }
+                if (passwordController.text.length < 8) {
+                  setState(() {
+                    loginError = "Mật khẩu phải có ít nhất 8 kí tự";
                   });
                   return;
                 }
@@ -102,14 +109,16 @@ class _LoginPageState extends State<LoginPage> {
                 APIHelper.submitLoginRequest(
                         emailController.text, passwordController.text)
                     .then((loginResponse) {
-                  Navigator.pop(context);
-                  if (loginResponse.containsKey("refreshToken") &&
-                      loginResponse.containsKey("accessToken")) {
-                    widget.onSuccessLogIn();
-                  } else {
+                  if (loginResponse.containsKey("error")) {
+                    Navigator.pop(context);
                     setState(() {
                       loginError = loginResponse["error"]!;
                     });
+                  } else {
+                    GetIt.I<APIHanlder>().assignInitData(loginResponse);
+                    GetIt.I<APIHanlder>().afterInitData();
+                    Navigator.pop(context);
+                    GetIt.I<APIHanlder>().isLoggedIn.value = true;
                   }
                 });
               },
@@ -129,7 +138,6 @@ class _LoginPageState extends State<LoginPage> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => SignUpPage(
-                              onSuccessLogIn: widget.onSuccessLogIn,
                             )),
                   );
                 },

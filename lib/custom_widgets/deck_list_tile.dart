@@ -11,7 +11,7 @@ import 'animated_progress_bar.dart';
 import 'animated_text.dart';
 
 class UserDeckTile extends StatelessWidget {
-  final DeckWithReviewCards item;
+  final DeckWithCards item;
   final Widget iconButtonTopRight;
   final Widget iconButtonBottomRight;
 
@@ -109,28 +109,37 @@ class UserDeckTile extends StatelessWidget {
                             totalCards: item.deck.totalCards,
                           ),
                           SizedBox(height: 4.0),
-                          Row(
-                            children: [
-                              AnimatedProgressBar(
-                                width: 150,
-                                height: 14,
-                                progress: item.deck.totalLearnedCards /
-                                    item.deck.totalCards,
-                                backgroundColor: const Color(0xffD9D9D9),
-                                progressColor: const Color(0xff40a5e8),
-                                innerProgressColor: const Color(0xff6db7f4),
-                              ),
-                              SizedBox(width: 16.0),
-                              Text(
-                                '${(item.deck.totalLearnedCards / item.deck.totalCards * 100).toStringAsFixed(0)}%',
-                                style: TextStyle(
-                                  fontSize: 16.0,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w900,
+                          (item.deck.totalCards == 0)
+                              ? const Text(
+                                  'Chưa có thẻ nào',
+                                  style: TextStyle(
+                                      fontSize: 16.0,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w600),
+                                )
+                              : Row(
+                                  children: [
+                                    AnimatedProgressBar(
+                                      width: 150,
+                                      height: 14,
+                                      progress: item.deck.totalLearnedCards /
+                                          item.deck.totalCards,
+                                      backgroundColor: const Color(0xffD9D9D9),
+                                      progressColor: const Color(0xff40a5e8),
+                                      innerProgressColor:
+                                          const Color(0xff6db7f4),
+                                    ),
+                                    SizedBox(width: 16.0),
+                                    Text(
+                                      '${(item.deck.totalLearnedCards / item.deck.totalCards * 100).toStringAsFixed(0)}%',
+                                      style: TextStyle(
+                                        fontSize: 16.0,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w900,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                            ],
-                          ),
                         ],
                       ),
                     ),
@@ -157,7 +166,7 @@ class UserDeckTile extends StatelessWidget {
 }
 
 class PublicDeckTile extends StatelessWidget {
-  final DeckWithReviewCards item;
+  final DeckWithCards item;
   final Widget iconButtonTopRight;
   final Widget iconButtonBottomRight;
 

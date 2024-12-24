@@ -66,12 +66,12 @@ class _SearchPageState extends State<SearchPage> {
 
   Future<List<SearchResult>> getSearchResults(String query) async {
     Logger.root.info('Getting search results...');
-    final List<DeckWithReviewCards> decksList = mockDecksList;
-    final List<Flashcard> cardsList = mockQuestions;
+    final List<DeckWithCards> decksList = GetIt.I<APIHanlder>().allDecks;
+    final List<Flashcard> cardsList = GetIt.I<APIHanlder>().allCards;
     final List<SearchResult> results = [];
     List<String> queryWords =
         removeDiacritics(query.toLowerCase()).split(RegExp(r'\s+'));
-    for (DeckWithReviewCards d in decksList) {
+    for (DeckWithCards d in decksList) {
       String rawName = removeDiacritics(d.deck.name.toString().toLowerCase());
       String rawDes =
           removeDiacritics(d.deck.description.toString().toLowerCase());
@@ -462,7 +462,7 @@ class _SearchPageState extends State<SearchPage> {
                                                                         as FlashcardSearch)
                                                                     .card,
                                                                 itemDeck: apiHandler
-                                                                    .idToDeckWithReviewCards[(searchedList[idx]
+                                                                    .idToDeckWithCards[(searchedList[idx]
                                                                             .data
                                                                         as FlashcardSearch)
                                                                     .card
@@ -482,7 +482,7 @@ class _SearchPageState extends State<SearchPage> {
                                                                     onPressed:
                                                                         null),
                                                                 iconButtonBottomRight: (apiHandler
-                                                                        .idToDeckWithReviewCards[(searchedList[idx].data
+                                                                        .idToDeckWithCards[(searchedList[idx].data
                                                                                 as FlashcardSearch)
                                                                             .card
                                                                             .deckId]!
