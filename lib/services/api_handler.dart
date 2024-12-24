@@ -14,10 +14,15 @@ import 'mock_data.dart';
 class APIHanlder {
   late ValueNotifier<bool> isLoggedIn;
   String accessToken = "";
+  ValueNotifier<bool> userDecksChanged = ValueNotifier<bool>(false);
   late List<DeckWithCards> userDecks;
+  ValueNotifier<bool> publicDecksChanged = ValueNotifier<bool>(false);
   late List<DeckWithCards> publicDecks;
+  ValueNotifier<bool> decksReviewChanged = ValueNotifier<bool>(false);
   late List<DeckWithReviewCards> decksReview;
+  ValueNotifier<bool> allCardsChanged = ValueNotifier<bool>(false);
   late List<Flashcard> allCards;
+  ValueNotifier<bool> allDecksChanged = ValueNotifier<bool>(false);
   late List<DeckWithCards> allDecks;
   late User user;
   Map<String, DeckWithReviewCards> idToDeckWithReviewCards = {};
@@ -25,17 +30,23 @@ class APIHanlder {
   final GoogleSearchSuggestions googleSearchSuggestions =
       GoogleSearchSuggestions();
   final storage = const FlutterSecureStorage();
+  late final Function() onRebuildMainPage;
   APIHandler() {}
+
+  void setOnRebuildMainPage(Function() rebuildMainPage) {
+    onRebuildMainPage = rebuildMainPage;
+  }
 
   void assignInitData(Map<String, dynamic> result) {
     if (result.containsKey('refresh_token')) {
-      storage.write(key: 'refresh_token', value: (result['refresh_token'] as String));
+      storage.write(
+          key: 'refresh_token', value: (result['refresh_token'] as String));
     }
+    accessToken = (result['access_token'] as String);
     userDecks = (result['user_decks'] as List<dynamic>)
             .map((deckJson) => DeckWithCards.fromJson(deckJson))
             .toList() ??
         [];
-    Logger.root.info(userDecks);
 
     publicDecks = (result['public_decks'] as List<dynamic>)
             .map((deckJson) => DeckWithCards.fromJson(deckJson))
@@ -86,5 +97,32 @@ class APIHanlder {
 
   void updateAccessToken(String token) {
     accessToken = token;
+  }
+
+  void onCopyDeckSuccess(Map<String, dynamic> result) {
+    DeckWithCards deck = DeckWithCards.fromJson(result['deck']);
+    DeckWithReviewCards deckReview =
+        DeckWithReviewCards.fromJson(result['deck_review']);
+    userDecks.add(deck);
+    decksReview.add(deckReview);
+    allDecks.add(deck);
+    allCards.addAll(deck.cards);
+    idToDeckWithReviewCards[deckReview.deck.id] = deckReview;
+    userDecksChanged.value ^= true;
+    decksReviewChanged.value ^= true;
+    allDecksChanged.value ^= true;
+    allCardsChanged.value ^= true;
+  }
+
+  void onDeleteDeckSuccess(String deckID) {
+    userDecks.removeWhere((deck) => deck.deck.id == deckID);
+    decksReview.removeWhere((deck) => deck.deck.id == deckID);
+    allDecks.removeWhere((deck) => deck.deck.id == deckID);
+    allCards.removeWhere((card) => card.deckId == deckID);
+    idToDeckWithReviewCards.remove(deckID);
+    userDecksChanged.value ^= true;
+    decksReviewChanged.value ^= true;
+    allDecksChanged.value ^= true;
+    allCardsChanged.value ^= true;
   }
 }

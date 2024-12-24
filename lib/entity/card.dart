@@ -34,7 +34,7 @@ class Flashcard {
     required this.cardType,
   });
   factory Flashcard.fromJson(Map<String, dynamic> json) {
-    String correctAnswer = json['correct_answer'] ?? '';
+    String correctAnswer = json['answer'] ?? '';
     List<String> wrongAnswers = List<String>.from(json['wrong_answers'] ?? []);
     List<String> answers = List.from(wrongAnswers);
     answers.add(correctAnswer);

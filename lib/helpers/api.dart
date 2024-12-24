@@ -1,8 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 import 'package:logging/logging.dart';
+
+import '../services/api_handler.dart';
 
 class APIHelper {
   static final String baseURL = dotenv.env['SERVER_API_BASE_URL']!;
@@ -10,6 +13,7 @@ class APIHelper {
       "User already exists with the given email";
   static const String needLogInAgain = "Need log in again";
   static const String logInError = 'Email hoặc mật khẩu không hợp lệ';
+  static const String generalError = 'Lỗi đã xảy ra';
 
   static Future<Map<String, dynamic>> getAllDataWithRefreshToken(
       String refreshToken) async {
@@ -97,6 +101,58 @@ class APIHelper {
       }
     } catch (e) {
       return {'error': "Lỗi xảy ra khi đăng ký tài khoản"};
+    }
+  }
+
+  static Future<Map<String, dynamic>> submitCopyDeckRequest(
+      String deckID) async {
+    final String apiUrl = '$baseURL/api/deck/copy';
+    final Map<String, dynamic> requestData = {'deck_id': deckID};
+    try {
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {
+          'Authorization': 'Bearer ${GetIt.I<APIHanlder>().accessToken}',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(requestData),
+      );
+      final Map<String, dynamic> responseBody = json.decode(response.body);
+      if (response.statusCode == 200) {
+        return responseBody;
+      } else if (response.statusCode == 401) {
+        return {'error': generalError};
+      } else {
+        return {'error': generalError};
+      }
+    } catch (e) {
+      return {'error': generalError};
+    }
+  }
+
+  static Future<Map<String, dynamic>> submitDeleteDeckRequest(
+      String deckID) async {
+    final String apiUrl = '$baseURL/api/deck/delete';
+    final Map<String, dynamic> requestData = {'deck_id': deckID};
+    try {
+      final response = await http.delete(
+        Uri.parse(apiUrl),
+        headers: {
+          'Authorization': 'Bearer ${GetIt.I<APIHanlder>().accessToken}',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(requestData),
+      );
+      final Map<String, dynamic> responseBody = json.decode(response.body);
+      if (response.statusCode == 200) {
+        return responseBody;
+      } else if (response.statusCode == 401) {
+        return {'error': generalError};
+      } else {
+        return {'error': generalError};
+      }
+    } catch (e) {
+      return {'error': generalError};
     }
   }
 }

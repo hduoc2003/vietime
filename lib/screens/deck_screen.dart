@@ -11,7 +11,11 @@ import 'package:vietime/screens/study_screen.dart';
 
 import '../custom_widgets/animated_progress_bar.dart';
 import '../custom_widgets/deck_popup_menu.dart';
+import '../custom_widgets/error_dialog.dart';
+import '../custom_widgets/snackbar.dart';
 import '../entity/deck.dart';
+import '../helpers/api.dart';
+import '../helpers/loader_dialog.dart';
 import '../helpers/validate.dart';
 import '../services/api_handler.dart';
 import '../services/mock_data.dart';
@@ -227,7 +231,23 @@ class _DeckScreenState extends State<DeckScreen> {
                   outerBoxColor: Color(0xff1783d1),
                   innerBoxColor: Color(0xff46a4e8),
                   textColor: Colors.white,
-                  onTap: () {},
+                  onTap: () {
+                    showLoaderDialog(context);
+                    APIHelper.submitCopyDeckRequest(widget.deckData.deck.id)
+                        .then((copyDeckResponse) {
+                      if (copyDeckResponse.containsKey("error")) {
+                        Navigator.pop(context);
+                        ErrorDialog.show(context);
+                      } else {
+                        Navigator.of(context).popUntil((route) => route.isFirst);
+                        GetIt.I<APIHanlder>().onCopyDeckSuccess(copyDeckResponse);
+                        ShowSnackBar().showSnackBar(
+                          context,
+                           "Đã lưu bộ thẻ vào bộ thẻ cá nhân",
+                        );
+                      }
+                    });
+                  },
                 )
               : ((widget.deckData.numBlueCards +
                           widget.deckData.numRedCards +
