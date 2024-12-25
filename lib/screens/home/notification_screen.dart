@@ -1,39 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:hive/hive.dart';
+import 'package:iconify_flutter/iconify_flutter.dart';
+import 'package:iconify_flutter/icons/carbon.dart';
 
-class NotificationPage extends StatelessWidget {
-  final List<NotificationModel> notifications = [
-    NotificationModel(
-      title: 'Meeting Tomorrow',
-      date: '2023-11-22',
-      content: 'Don\'t forget about the important meeting tomorrow at 10 AM.',
-    ),
-    NotificationModel(
-      title: 'New Message',
-      date: '2023-11-21',
-      content: 'You have a new message from John Doe.',
-    ),
-    NotificationModel(
-      title: 'Reminder',
-      date: '2023-11-20',
-      content: 'Reminder: Complete the project tasks by the end of the week.',
-    ),
-    NotificationModel(
-      title: 'Meeting Tomorrow',
-      date: '2023-11-18',
-      content: 'Don\'t forget about the important meeting tomorrow at 10 AM.',
-    ),
-    NotificationModel(
-      title: 'New Message',
-      date: '2023-11-11',
-      content: 'You have a new message from John Doe.',
-    ),
-    NotificationModel(
-      title: 'Reminder',
-      date: '2023-11-10',
-      content: 'Reminder: Complete the project tasks by the end of the week.',
-    ),
-    // Add more notifications as needed
-  ];
+import '../../services/api_handler.dart';
+import '../../services/theme_manager.dart';
+
+class NotificationPage extends StatefulWidget {
+  @override
+  _NotificationPageState createState() => _NotificationPageState();
+}
+
+class _NotificationPageState extends State<NotificationPage> {
+  List<String> notifications =
+      Hive.box('cache').get('notifcations', defaultValue: []).cast<String>();
 
   @override
   Widget build(BuildContext context) {
@@ -47,12 +28,14 @@ class NotificationPage extends StatelessWidget {
           return Padding(
             padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 8.0),
             child: NotificationWidget(
-              title: notifications[index].title,
-              date: notifications[index].date,
-              content: notifications[index].content,
+              title: "Sự thật thú vị",
+              date: notifications[notifications.length - index - 1].split(' ')[0],
+              content: notifications[notifications.length - index - 1].split(' ').skip(1).join(' '),
               onDelete: () {
-                // Handle delete action here
-                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                notifications.removeAt(index);
+                Hive.box('cache').put('notifcations', notifications);
+                setState(() {
+                });
               },
             ),
           );
@@ -77,7 +60,9 @@ class NotificationWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final MyColors myColors = Theme.of(context).extension<MyColors>()!;
     return Card(
+      color: myColors.cardBackground,
       elevation: 4.0,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -97,7 +82,8 @@ class NotificationWidget extends StatelessWidget {
                 Text(
                   date,
                   style: TextStyle(
-                    color: Colors.grey,
+                    fontSize: 16,
+                    color: Theme.of(context).colorScheme.secondary,
                   ),
                 ),
               ],
@@ -131,4 +117,59 @@ class NotificationModel {
     required this.date,
     required this.content,
   });
+}
+
+class NotificationIconRedDot extends StatelessWidget {
+  NotificationIconRedDot();
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder(
+        valueListenable: GetIt.I<APIHanlder>().newNotifcations,
+        builder: (
+          BuildContext context,
+          bool newNotifications,
+          Widget? child,
+        ) {
+          return Stack(
+            children: <Widget>[
+              IconButton(
+                icon: Iconify(
+                  Carbon.notification_filled,
+                  color: Color(0xffe8e01a), // Change color as needed
+                  size: 32,
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => NotificationPage()),
+                  );
+                  GetIt.I<APIHanlder>().newNotifcations.value = false;
+                },
+              ),
+              newNotifications ? _redDot() : SizedBox(),
+            ],
+          );
+        });
+  }
+
+  Widget _redDot() {
+    return Positioned(
+      right: 12,
+      top: 10,
+      child: Container(
+        decoration: new BoxDecoration(
+          color: Colors.red,
+          borderRadius: BorderRadius.circular(7),
+        ),
+        constraints: BoxConstraints(
+          minWidth: 12,
+          minHeight: 12,
+        ),
+        child: Container(
+          width: 1,
+          height: 1,
+        ),
+      ),
+    );
+  }
 }

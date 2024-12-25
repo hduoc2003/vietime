@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 
+import '../../custom_widgets/error_dialog.dart';
 import '../../custom_widgets/long_button.dart';
 import '../../custom_widgets/password_field_toggle.dart';
+import '../../custom_widgets/snackbar.dart';
+import '../../helpers/api.dart';
+import '../../helpers/loader_dialog.dart';
 
 class ChangePasswordPage extends StatelessWidget {
   final TextEditingController _oldPasswordController = TextEditingController();
   final TextEditingController _newPasswordController = TextEditingController();
   final TextEditingController _confirmNewPasswordController =
-  TextEditingController();
+      TextEditingController();
 
-  void _onPasswordChangedConfirm() {
-
-  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,7 +58,24 @@ class ChangePasswordPage extends StatelessWidget {
               innerBoxColor: Color(0xff46a4e8),
               textColor: Colors.white,
               onTap: () {
-                _onPasswordChangedConfirm();
+                showLoaderDialog(context);
+                APIHelper.submitUpdatePasswordUserRequest(
+                        _oldPasswordController.text,
+                        _newPasswordController.text)
+                    .then((updateUserResponse) {
+                  if (updateUserResponse.containsKey("error")) {
+                    Navigator.pop(context);
+                    ErrorDialog.show(context);
+                  } else {
+                    ShowSnackBar().showSnackBar(
+                      context,
+                      "Đã cập nhật mật khẩu thành công",
+                      noAction: true,
+                    );
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                  }
+                });
               },
             ),
           ),

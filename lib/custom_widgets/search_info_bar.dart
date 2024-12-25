@@ -39,12 +39,18 @@ class SearchInfoBar extends StatelessWidget {
                 Text(
                   'Lọc',
                   style: TextStyle(
-                    color: Colors.black,
                     fontSize: 17,
+                    color: Theme.of(context).iconTheme.color,
                   ),
                 ),
-                SizedBox(width: 10,),
-                Icon(Icons.filter_list, color: Colors.black, size: 30,),
+                SizedBox(
+                  width: 10,
+                ),
+                Icon(
+                  Icons.filter_list,
+                  size: 30,
+                  color: Theme.of(context).iconTheme.color,
+                ),
               ],
             ),
           )

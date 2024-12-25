@@ -87,7 +87,6 @@ class ThreeCardTypeNumbersRowWithCards extends StatelessWidget {
           learnedCards.toString(),
           style: TextStyle(
             fontSize: 16.0,
-            color: Colors.black,
             fontWeight: FontWeight.w900,
           ),
         ),
@@ -95,7 +94,6 @@ class ThreeCardTypeNumbersRowWithCards extends StatelessWidget {
           "/${totalCards}",
           style: TextStyle(
             fontSize: 16.0,
-            color: Colors.black,
             fontWeight: FontWeight.w900,
           ),
         ),

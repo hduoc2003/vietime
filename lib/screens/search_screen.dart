@@ -22,6 +22,7 @@ import '../custom_widgets/empty_screen.dart';
 import '../custom_widgets/search_bar.dart';
 import '../entity/card.dart';
 import '../helpers/string.dart';
+import '../services/theme_manager.dart';
 
 class SearchPage extends StatefulWidget {
   final String query;
@@ -65,7 +66,6 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Future<List<SearchResult>> getSearchResults(String query) async {
-    Logger.root.info('Getting search results...');
     final List<DeckWithCards> decksList = GetIt.I<APIHanlder>().allDecks;
     final List<Flashcard> cardsList = GetIt.I<APIHanlder>().allCards;
     final List<SearchResult> results = [];
@@ -92,12 +92,9 @@ class _SearchPageState extends State<SearchPage> {
       String content =
           removePunctuation(removeDiacritics(rawContent.toLowerCase()));
       int score = countMatchWords(content, queryWords);
-      Logger.root.info(content);
-      Logger.root.info(score);
       if (score == 0) {
         continue;
       }
-      Logger.root.info("OK");
       List<TextSpan> bestTextSpans = [];
       List<String> rawWords = rawContent.split(' ');
       List<String> words = content.split(' ');
@@ -110,9 +107,7 @@ class _SearchPageState extends State<SearchPage> {
         int segScore = 0;
         List<TextSpan> textSpans = [];
         textSpans.add(
-          const TextSpan(
-            text: "...",
-          ),
+          TextSpan(text: "...", style: Theme.of(context).textTheme.bodyMedium),
         );
         for (int i = st; i < words.length; ++i) {
           String word = words[i];
@@ -129,11 +124,13 @@ class _SearchPageState extends State<SearchPage> {
           }
           textSpans.add(TextSpan(
               text: "${rawWords[i]} ",
-              style: TextStyle(
-                fontWeight: (boldness == 2
-                    ? FontWeight.w900
-                    : (boldness == 1 ? FontWeight.w600 : FontWeight.normal)),
-              )));
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    fontWeight: (boldness == 2
+                        ? FontWeight.w900
+                        : (boldness == 1
+                            ? FontWeight.w600
+                            : FontWeight.normal)),
+                  )));
           segScore += boldness;
         }
         if (maxSegScore < segScore) {
@@ -153,7 +150,6 @@ class _SearchPageState extends State<SearchPage> {
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis,
                 text: TextSpan(
-                  style: const TextStyle(color: Colors.black),
                   children: bestTextSpans,
                 ),
               ))));
@@ -174,6 +170,7 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
+    final MyColors myColors = Theme.of(context).extension<MyColors>()!;
     double circleProgressSize = min(250, MediaQuery.of(context).size.width / 2);
     if (!status) {
       status = true;
@@ -264,6 +261,9 @@ class _SearchPageState extends State<SearchPage> {
                                                 ),
                                                 child: GestureDetector(
                                                   child: Chip(
+                                                    color: MaterialStateProperty
+                                                        .all<Color>(myColors
+                                                            .panelColor!),
                                                     label: Text(
                                                       searchHistories[index]
                                                           .toString(),

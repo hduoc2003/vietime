@@ -4,7 +4,12 @@ import 'package:flutter/material.dart';
 import '../entity/card.dart';
 import '../entity/deck.dart';
 import '../helpers/validate.dart';
+import '../screens/card_list_screen.dart';
+import '../screens/card_screen.dart';
+import '../screens/deck_screen.dart';
+import '../services/theme_manager.dart';
 import 'animated_text.dart';
+
 class CardSearchTile extends StatelessWidget {
   final Flashcard itemCard;
   final DeckWithCards itemDeck;
@@ -14,25 +19,40 @@ class CardSearchTile extends StatelessWidget {
 
   CardSearchTile(
       {required this.itemCard,
-        required this.itemDeck,
-        required this.foundTextWidget,
-        required this.iconButtonBottomRight,
-        required this.iconButtonTopRight});
+      required this.itemDeck,
+      required this.foundTextWidget,
+      required this.iconButtonBottomRight,
+      required this.iconButtonTopRight});
 
   @override
   Widget build(BuildContext context) {
+    final MyColors myColors = Theme.of(context).extension<MyColors>()!;
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => Placeholder(),
+            builder: (context) => DeckScreen(deckData: itemDeck),
+          ),
+        );
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => CardsListScreen(
+                  deckID: itemDeck.deck.id,
+                  isPublic: itemDeck.deck.isPublic,
+                  flashcards: itemDeck.cards)),
+        );
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CardScreen(flashcard: itemCard),
           ),
         );
       },
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.grey[100],
+          color: myColors.deckTileBackground,
           borderRadius: BorderRadius.circular(30.0),
         ),
         margin: const EdgeInsets.only(left: 5.0, right: 5.0, bottom: 8),
@@ -41,7 +61,7 @@ class CardSearchTile extends StatelessWidget {
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.grey[100],
+                  color: myColors.deckTileBackground,
                   borderRadius: BorderRadius.circular(30.0),
                 ),
                 padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 10),
@@ -61,24 +81,24 @@ class CardSearchTile extends StatelessWidget {
                         height: 75,
                         child: validateURL(itemDeck.deck.descriptionImgURL)
                             ? CachedNetworkImage(
-                          fit: BoxFit.cover,
-                          errorWidget: (context, _, __) => const Image(
-                            fit: BoxFit.cover,
-                            image:
-                            AssetImage('assets/deck_placeholder.png'),
-                          ),
-                          imageUrl: itemDeck.deck.descriptionImgURL,
-                          placeholder: (context, url) => const Image(
-                            fit: BoxFit.cover,
-                            image:
-                            AssetImage('assets/deck_placeholder.png'),
-                          ),
-                        )
+                                fit: BoxFit.cover,
+                                errorWidget: (context, _, __) => const Image(
+                                  fit: BoxFit.cover,
+                                  image:
+                                      AssetImage('assets/deck_placeholder.png'),
+                                ),
+                                imageUrl: itemDeck.deck.descriptionImgURL,
+                                placeholder: (context, url) => const Image(
+                                  fit: BoxFit.cover,
+                                  image:
+                                      AssetImage('assets/deck_placeholder.png'),
+                                ),
+                              )
                             : const Image(
-                          fit: BoxFit.cover,
-                          image:
-                          AssetImage('assets/deck_placeholder.png'),
-                        ),
+                                fit: BoxFit.cover,
+                                image:
+                                    AssetImage('assets/deck_placeholder.png'),
+                              ),
                       ),
                     ),
 
@@ -91,7 +111,8 @@ class CardSearchTile extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           AnimatedText(
-                            text: "Thẻ #7 - ${itemDeck.deck.name}",
+                            text:
+                                "Thẻ #${itemCard.index} - ${itemDeck.deck.name}",
                             pauseAfterRound: const Duration(seconds: 3),
                             showFadingOnlyWhenScrolling: false,
                             startAfter: const Duration(seconds: 3),

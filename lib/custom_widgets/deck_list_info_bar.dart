@@ -38,16 +38,22 @@ class DeckListInfoBar extends StatelessWidget {
           // Right-aligned icons: Filter, Add, Study All
           Row(
             children: [
+              // IconButton(
+              //   icon: Icon(Icons.book),
+              //   onPressed: onStudyAllPressed,
+              // ),
               IconButton(
-                icon: Icon(Icons.book),
-                onPressed: onStudyAllPressed,
-              ),
-              IconButton(
-                icon: Icon(Icons.add),
+                icon: Icon(
+                  Icons.add,
+                  color: Theme.of(context).iconTheme.color,
+                ),
                 onPressed: onAddPressed,
               ),
               IconButton(
-                icon: Icon(Icons.filter_list),
+                icon: Icon(
+                  Icons.filter_list,
+                  color: Theme.of(context).iconTheme.color,
+                ),
                 onPressed: onFilterPressed,
               ),
             ],

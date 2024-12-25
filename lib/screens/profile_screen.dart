@@ -1,11 +1,65 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:iconify_flutter/iconify_flutter.dart';
+import 'package:iconify_flutter/icons/mdi.dart';
 import 'package:iconify_flutter/icons/ph.dart';
 import 'package:vietime/custom_widgets/animated_progress_bar.dart';
 import 'package:colorful_iconify_flutter/icons/fxemoji.dart';
 import 'package:vietime/screens/settings/settings_screen.dart';
 
+import '../services/api_handler.dart';
+import '../services/theme_manager.dart';
+
+final List<String> rankLabels = [
+  "Bronze",
+  "Silver",
+  "Gold",
+  "Sapphire",
+  "Ruby",
+  "Emerald",
+];
+
+final List<String> romanNumImage = [
+  "I.png",
+  "II.png",
+  "III.png",
+  "IV.png",
+  "V.png",
+  "VI.png",
+];
+
+final List<String> rankImage = [
+  "bronze.png",
+  "silver.png",
+  "gold.png",
+  "sapphire.png",
+  "ruby.png",
+  "emerald.png"
+];
+final List<Color> rankColor = [
+  Color(0xffc29876),
+  Color(0xffc3d1dd),
+  Color(0xfffac432),
+  Color(0xff2ca6e2),
+  Color(0xffee5251),
+  Color(0xff7abd18),
+];
+
+final List<Color> rankInnerColor = [
+  Color(0xffE8BB91),
+  Color(0xffE0EAF2),
+  Color(0xffFDEA65),
+  Color(0xff5CCAFF),
+  Color(0xffFE8787),
+  Color(0xff97E322),
+];
+
 class ProfilePage extends StatefulWidget {
+  final Function setDarkMode;
+  final Function setLightMode;
+  ProfilePage({required this.setLightMode, required this.setDarkMode});
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
@@ -13,6 +67,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
+    final MyColors myColors = Theme.of(context).extension<MyColors>()!;
     double progressBarWidth = MediaQuery.of(context).size.width * 0.7;
     double wallpaperHeight = MediaQuery.of(context).size.height / 3.5 - 20;
     return Scaffold(
@@ -20,230 +75,273 @@ class _ProfilePageState extends State<ProfilePage> {
         children: [
           SingleChildScrollView(
             child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Stack(
-                    children: [
-                      Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: wallpaperHeight,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.rectangle,
-                          image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: AssetImage('assets/wallpaper.jpg'),
-                          ),
+              child: ValueListenableBuilder(
+                  valueListenable: GetIt.I<APIHanlder>().userChanged,
+                  builder: (
+                    BuildContext context,
+                    bool hidden,
+                    Widget? child,
+                  ) {
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Stack(
+                          children: [
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              height: wallpaperHeight,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.rectangle,
+                                image: DecorationImage(
+                                  fit: BoxFit.cover,
+                                  image: AssetImage('assets/wallpaper.jpg'),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  left: 16, top: wallpaperHeight / 1.8),
+                              child: Container(
+                                width: 140,
+                                height: 140,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    width: 4.0,
+                                    color: myColors.homeNameColor!
+                                  ),
+                                ),
+                                child: CircleAvatar(
+                                  backgroundColor: myColors.backgroundColor2,
+                                  radius: 48,
+                                  backgroundImage:
+                                      AssetImage('assets/user_avatar.png'),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                            left: 16, top: wallpaperHeight / 1.8),
-                        child: Container(
-                          width: 140,
-                          height: 140,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: Colors.white,
-                              width: 4.0,
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 16.0),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              GetIt.I<APIHanlder>().user.name,
+                              style: TextStyle(
+                                fontSize: 28,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
-                          child: CircleAvatar(
-                            radius: 48,
-                            backgroundImage:
-                                AssetImage('assets/user_avatar.png'),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 16.0),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              'Tham gia vào Tháng ${GetIt.I<APIHanlder>().user.createdAt.month}, '
+                              '${GetIt.I<APIHanlder>().user.createdAt.year}',
+                              style: TextStyle(
+                                  wordSpacing: 1,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.grey[500]!),
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 16.0),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'HynDuf',
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 16.0),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'Tham gia vào Tháng 11, 2023',
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w900,
-                            color: Colors.grey[500]!),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 5.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        TextButton(
-                          onPressed: () {
-                            // Add your logic for 'X followers' button
-                          },
-                          child: Text(
-                            '2 followers',
-                            style: TextStyle(
-                                color: Colors.blue,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w900),
-                          ),
-                        ),
-                        Text(
-                          '|',
-                          style: TextStyle(
-                              fontSize: 18,
-                              color: Colors.blue,
-                              fontWeight: FontWeight.w900),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            // Add your logic for 'Y following' button
-                          },
-                          child: Text(
-                            '1 following',
-                            style: TextStyle(
-                                color: Colors.blue,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w900),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Divider(),
-                  SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Column(
-                        children: [
-                          Image.asset(
-                            'assets/bronze.png', // Replace with your ranking icon asset
-                            height: 58,
-                            width: 58,
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            'II', // Replace with your roman character
-                            style: TextStyle(
-                                fontWeight: FontWeight.w900,
-                                color: Colors.brown,
-                                fontSize: 18),
-                          ),
-                        ],
-                      ),
-                      SizedBox(width: 16),
-                      Column(
-                        children: [
-                          AnimatedProgressBar(
-                              width: progressBarWidth,
-                              height: 23,
-                              progress: 0.8),
-                          SizedBox(height: 8),
-                          Row(
+                        Padding(
+                          padding: const EdgeInsets.only(left: 5.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Iconify(Ph.lightning_fill, color: Colors.yellow),
-                              SizedBox(width: 4),
+                              TextButton(
+                                onPressed: () {
+                                  // Add your logic for 'X followers' button
+                                },
+                                child: Text(
+                                  '2 followers',
+                                  style: TextStyle(
+                                      color: Colors.blue,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w900),
+                                ),
+                              ),
                               Text(
-                                '13 / 20',
+                                '|',
                                 style: TextStyle(
-                                  fontWeight: FontWeight.w900,
-                                  fontSize: 18,
+                                    fontSize: 18,
+                                    color: Colors.blue,
+                                    fontWeight: FontWeight.w900),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  // Add your logic for 'Y following' button
+                                },
+                                child: Text(
+                                  '1 following',
+                                  style: TextStyle(
+                                      color: Colors.blue,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w900),
                                 ),
                               ),
                             ],
                           ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  Divider(),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0, vertical: 8),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Heading
-                        Text(
-                          'Thông số',
-                          style: TextStyle(
-                            fontSize: 24.0, // Adjust the font size as needed
-                            fontWeight: FontWeight.w900,
-                          ),
                         ),
-
-                        SizedBox(
-                            height:
-                                16.0), // Add some space between heading and grid
-
-                        // Grid
-                        GridView.count(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 12.0,
-                          mainAxisSpacing: 12.0,
-                          childAspectRatio: (350 / 141),
-                          shrinkWrap: true,
+                        Divider(),
+                        SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            // Streak cell
-                            GridCell(
-                              icon: Iconify(
-                                Fxemoji.fire,
-                                size: 30,
-                              ),
-                              title: '5',
-                              subtitle: 'Streak',
+                            Column(
+                              children: [
+                                Image.asset(
+                                  'assets/${rankImage[min(6, GetIt.I<APIHanlder>().user.level) - 1]}', // Replace with your ranking icon asset
+                                  height: 58,
+                                  width: 58,
+                                ),
+                                SizedBox(height: 8),
+                                Image.asset(
+                                  'assets/${romanNumImage[min(6, GetIt.I<APIHanlder>().user.level) - 1]}', // Replace with your ranking icon asset
+                                  height: 20,
+                                  width: 20,
+                                ),
+                                SizedBox(height: 8),
+                              ],
                             ),
-                            GridCell(
-                              icon: Image.asset(
-                                'assets/bolt.png',
-                                height: 30,
-                                fit: BoxFit.cover,
-                              ),
-                              title: '1000',
-                              subtitle: 'Kinh nghiệm',
-                            ),
-                            GridCell(
-                              icon: Image.asset(
-                                'assets/bronze.png',
-                                height: 30,
-                                fit: BoxFit.cover,
-                              ),
-                              title: 'Bronze',
-                              subtitle: 'Xếp hạng',
-                            ),
-                            GridCell(
-                              icon: Image.asset(
-                                'assets/medal.png',
-                                height: 30,
-                                fit: BoxFit.cover,
-                              ),
-                              title: '3',
-                              subtitle: 'Thành tích',
+                            SizedBox(width: 16),
+                            Column(
+                              children: [
+                                AnimatedProgressBar(
+                                    width: progressBarWidth,
+                                    height: 23,
+                                    progress: GetIt.I<APIHanlder>().user.xp /
+                                        GetIt.I<APIHanlder>().user.xpToLevelUp,
+                                    progressColor: rankColor[min(6,
+                                            GetIt.I<APIHanlder>().user.level) -
+                                        1],
+                                    innerProgressColor: rankInnerColor[min(6,
+                                            GetIt.I<APIHanlder>().user.level) -
+                                        1]),
+                                SizedBox(height: 8),
+                                Row(
+                                  children: [
+                                    Iconify(Ph.lightning_fill,
+                                        color: Colors.yellow),
+                                    SizedBox(width: 4),
+                                    Text(
+                                      '${GetIt.I<APIHanlder>().user.xp} / ${GetIt.I<APIHanlder>().user.xpToLevelUp}',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w900,
+                                        fontSize: 18,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
                           ],
                         ),
+                        Divider(),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0, vertical: 8),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Heading
+                              Text(
+                                'Thông số',
+                                style: TextStyle(
+                                  fontSize:
+                                      24.0, // Adjust the font size as needed
+                                  fontWeight: FontWeight.w900,
+                                ),
+                              ),
+
+                              SizedBox(
+                                  height:
+                                      12.0), // Add some space between heading and grid
+
+                              // Grid
+                              GridView.count(
+                                crossAxisCount: 2,
+                                crossAxisSpacing: 12.0,
+                                mainAxisSpacing: 12.0,
+                                childAspectRatio: (350 / 141),
+                                shrinkWrap: true,
+                                children: [
+                                  // Streak cell
+                                  GridCell(
+                                    icon: Iconify(
+                                      Fxemoji.fire,
+                                      size: 30,
+                                    ),
+                                    title: GetIt.I<APIHanlder>()
+                                        .user
+                                        .streak
+                                        .toString(),
+                                    subtitle: 'Streak',
+                                  ),
+                                  GridCell(
+                                    icon: Image.asset(
+                                      'assets/bolt.png',
+                                      height: 30,
+                                      fit: BoxFit.cover,
+                                    ),
+                                    title: (GetIt.I<APIHanlder>().user.level *
+                                                (GetIt.I<APIHanlder>()
+                                                        .user
+                                                        .level -
+                                                    1) *
+                                                50 +
+                                            GetIt.I<APIHanlder>().user.xp)
+                                        .toString(),
+                                    subtitle: 'Kinh nghiệm',
+                                  ),
+                                  GridCell(
+                                    icon: Image.asset(
+                                      'assets/${rankImage[min(6, GetIt.I<APIHanlder>().user.level) - 1]}',
+                                      height: 30,
+                                      fit: BoxFit.cover,
+                                    ),
+                                    title: rankLabels[min(6,
+                                            GetIt.I<APIHanlder>().user.level) -
+                                        1],
+                                    subtitle: 'Xếp hạng',
+                                  ),
+                                  ValueListenableBuilder(
+                                      valueListenable: GetIt.I<APIHanlder>()
+                                          .userDecksChanged,
+                                      builder: (
+                                        BuildContext context,
+                                        bool hidden,
+                                        Widget? child,
+                                      ) {
+                                        return GridCell(
+                                          icon: Iconify(
+                                            Mdi.cards_playing_club_multiple,
+                                            color: Colors.purple,
+                                            size: 30,
+                                          ),
+                                          title: GetIt.I<APIHanlder>()
+                                              .userDecks
+                                              .length
+                                              .toString(),
+                                          subtitle: 'Số bộ thẻ',
+                                        );
+                                      })
+                                ],
+                              ),
+                            ],
+                          ),
+                        )
                       ],
-                    ),
-                  )
-                ],
-              ),
+                    );
+                  }),
             ),
           ),
           Positioned(
@@ -254,13 +352,16 @@ class _ProfilePageState extends State<ProfilePage> {
               width: 55.0,
               child: FittedBox(
                 child: FloatingActionButton(
-                  backgroundColor: Colors.white,
+                  backgroundColor: myColors.backgroundColor2,
                   elevation: 5,
                   onPressed: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => SettingsPage(),
+                        builder: (context) => SettingsPage(
+                          setDarkMode: widget.setDarkMode,
+                          setLightMode: widget.setLightMode,
+                        ),
                       ),
                     );
                   },
@@ -272,7 +373,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   shape: CircleBorder(
                     side: BorderSide(
-                      color: Colors.grey[200]!, // Set border color
+                      color: Colors.grey[200]!, //
                       width: 2.0, // Set border width
                     ),
                   ),
@@ -288,9 +389,9 @@ class _ProfilePageState extends State<ProfilePage> {
 }
 
 class GridCell extends StatelessWidget {
-  final Widget icon; // Icon for the left side
-  final String title; // Main text (number)
-  final String subtitle; // Subtitle explaining
+  final Widget icon;
+  final String title;
+  final String subtitle;
 
   const GridCell({
     required this.icon,
