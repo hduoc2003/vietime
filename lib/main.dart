@@ -9,6 +9,7 @@ import 'package:get_it/get_it.dart';
 import 'package:logging/logging.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'package:iconify_flutter/iconify_flutter.dart';
 import 'package:iconify_flutter/icons/ri.dart';
@@ -20,6 +21,7 @@ import 'package:vietime/screens/login_screen.dart';
 import 'package:vietime/screens/profile_screen.dart';
 import 'package:vietime/screens/search_screen.dart';
 import 'package:vietime/services/api_handler.dart';
+import 'package:vietime/services/theme_manager.dart';
 
 import 'custom_widgets/custom_physics.dart';
 import 'custom_widgets/snackbar.dart';
@@ -33,20 +35,24 @@ Future<void> main() async {
     await Hive.initFlutter();
   }
   await openHiveBox('settings');
+  await openHiveBox('publicDeckViews');
   await openHiveBox('cache', limit: true);
   await dotenv.load();
   await initAPIHandler();
   await initLogging();
-  runApp(MyApp());
+  runApp(ChangeNotifierProvider<ThemeNotifier>(
+    create: (_) => new ThemeNotifier(),
+    child: MyApp(),
+  ));
   await Future.delayed(const Duration(milliseconds: 1));
   FlutterNativeSplash.remove();
 }
 
 Future<void> initAPIHandler() async {
   final APIHanlder apiHanlder = APIHanlder();
+  GetIt.I.registerSingleton<APIHanlder>(apiHanlder);
   await apiHanlder.initData();
   apiHanlder.initNecessaryData();
-  GetIt.I.registerSingleton<APIHanlder>(apiHanlder);
 }
 
 Future<void> openHiveBox(String boxName, {bool limit = false}) async {
@@ -86,6 +92,10 @@ class _MyAppState extends State<MyApp> {
 
   void _onRebuildMainPage() {
     setState(() {});
+  }
+
+  void _onResetHomePage() {
+    _selectedIndex.value = 0;
   }
 
   void _onItemTapped(int index) {
@@ -131,109 +141,123 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: MyApp.title,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: ValueListenableBuilder<bool>(
-          valueListenable: GetIt.I<APIHanlder>().isLoggedIn,
-          builder: (context, value, child) {
-            return value
-                ? Scaffold(
-                    resizeToAvoidBottomInset: false,
-                    body: PopScope(
-                      canPop: false,
-                      onPopInvoked: (bool didPop) {
-                        if (didPop) {
-                          return;
-                        }
-                        handleWillPop(context);
-                      },
-                      child: SafeArea(
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                children: [
-                                  Expanded(
-                                    child: PageView(
-                                      physics: NeverScrollableScrollPhysics(),
-                                      onPageChanged: (index) {
-                                        _selectedIndex.value = index;
-                                      },
-                                      controller: _pageController,
-                                      children: [
-                                        HomePage(),
-                                        SearchPage(
-                                          query: "",
-                                        ),
-                                        // GamePage(),
-                                        ProfilePage(),
-                                      ],
+    return Consumer<ThemeNotifier>(
+        builder: (context, theme, _) => MaterialApp(
+              title: MyApp.title,
+              theme: theme.getTheme(),
+              home: ValueListenableBuilder<bool>(
+                  valueListenable: GetIt.I<APIHanlder>().isLoggedIn,
+                  builder: (context, value, child) {
+                    return value
+                        ? Scaffold(
+                            resizeToAvoidBottomInset: false,
+                            body: PopScope(
+                              canPop: false,
+                              onPopInvoked: (bool didPop) {
+                                if (didPop) {
+                                  return;
+                                }
+                                handleWillPop(context);
+                              },
+                              child: SafeArea(
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        children: [
+                                          Expanded(
+                                            child: PageView(
+                                              physics:
+                                                  NeverScrollableScrollPhysics(),
+                                              onPageChanged: (index) {
+                                                _selectedIndex.value = index;
+                                              },
+                                              controller: _pageController,
+                                              children: [
+                                                HomePage(),
+                                                SearchPage(
+                                                  query: "",
+                                                ),
+                                                // GamePage(),
+                                                ProfilePage(
+                                                  setDarkMode: () {
+                                                    theme.setDarkMode();
+                                                  },
+                                                  setLightMode: () {
+                                                    theme.setLightMode();
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    bottomNavigationBar: SafeArea(
-                      child: ValueListenableBuilder(
-                          valueListenable: _selectedIndex,
-                          builder: (BuildContext context, int indexValue,
-                              Widget? child) {
-                            return AnimatedContainer(
-                              duration: const Duration(milliseconds: 100),
-                              height: 60,
-                              child: SalomonBottomBar(
-                                currentIndex: indexValue,
-                                onTap: (i) => _onItemTapped(i),
-                                items: [
-                                  /// Home
-                                  SalomonBottomBarItem(
-                                    // icon: Icon(Iconsax.home_1),
-                                    icon: const Iconify(Ri.home_smile_2_fill,
-                                        color: Colors.purple),
-                                    title: Text("Home"),
-                                    selectedColor: Colors.purple,
-                                  ),
+                            bottomNavigationBar: SafeArea(
+                              child: ValueListenableBuilder(
+                                  valueListenable: _selectedIndex,
+                                  builder: (BuildContext context,
+                                      int indexValue, Widget? child) {
+                                    return AnimatedContainer(
+                                      duration:
+                                          const Duration(milliseconds: 100),
+                                      height: 60,
+                                      child: SalomonBottomBar(
+                                        currentIndex: indexValue,
+                                        onTap: (i) => _onItemTapped(i),
+                                        items: [
+                                          /// Home
+                                          SalomonBottomBarItem(
+                                            // icon: Icon(Iconsax.home_1),
+                                            icon: const Iconify(
+                                                Ri.home_smile_2_fill,
+                                                color: Colors.purple),
+                                            title: Text("Home"),
+                                            selectedColor: Colors.purple,
+                                          ),
 
-                                  /// Search
-                                  SalomonBottomBarItem(
-                                    icon: const Iconify(
-                                      Ri.search_eye_fill,
-                                      color: Colors.orange,
-                                    ),
-                                    title: Text("Search"),
-                                    selectedColor: Colors.orange,
-                                  ),
+                                          /// Search
+                                          SalomonBottomBarItem(
+                                            icon: const Iconify(
+                                              Ri.search_eye_fill,
+                                              color: Colors.orange,
+                                            ),
+                                            title: Text("Search"),
+                                            selectedColor: Colors.orange,
+                                          ),
 
-                                  /// Profile
-                                  // SalomonBottomBarItem(
-                                  //   icon: Iconify(Ri.game_fill, color: Colors.green),
-                                  //   title: Text("Game"),
-                                  //   selectedColor: Colors.green,
-                                  // ),
+                                          /// Profile
+                                          // SalomonBottomBarItem(
+                                          //   icon: Iconify(Ri.game_fill, color: Colors.green),
+                                          //   title: Text("Game"),
+                                          //   selectedColor: Colors.green,
+                                          // ),
 
-                                  /// Profile
-                                  SalomonBottomBarItem(
-                                    icon: Iconify(Ri.user_5_fill,
-                                        color: Colors.blue),
-                                    title: Text("Profile"),
-                                    selectedColor: Colors.blue,
-                                  ),
-                                ],
-                              ),
-                            );
-                          }),
-                    ),
-                  )
-                : LoginPage();
-          }),
-    );
+                                          /// Profile
+                                          SalomonBottomBarItem(
+                                            icon: Iconify(Ri.user_5_fill,
+                                                color: Colors.blue),
+                                            title: Text("Profile"),
+                                            selectedColor: Colors.blue,
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }),
+                            ),
+                          )
+                        : LoginPage(onResetHomePage: _onResetHomePage);
+                  }),
+            ));
+  }
+
+  void changeTheme(bool isDarkMode) {
+    setState(() {
+      isDarkMode = isDarkMode;
+    });
   }
 }

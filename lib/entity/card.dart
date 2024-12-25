@@ -1,10 +1,13 @@
 class Flashcard {
   final String id;
   final String deckId;
-  final String question;
-  final String correctAnswer;
-  final List<String> wrongAnswers;
-  final List<String> answers;
+  String question;
+  String questionImgLabel;
+  String questionImgURL;
+  int index;
+  String correctAnswer;
+  List<String> wrongAnswers;
+  List<String> answers;
   final DateTime createdAt;
   final String userId;
   DateTime lastReview;
@@ -20,6 +23,9 @@ class Flashcard {
     required this.id,
     required this.deckId,
     required this.question,
+    required this.questionImgLabel,
+    required this.questionImgURL,
+    this.index = 0,
     required this.correctAnswer,
     required this.wrongAnswers,
     required this.answers,
@@ -42,6 +48,9 @@ class Flashcard {
       id: json['id'] ?? '',
       deckId: json['deck_id'] ?? '',
       question: json['question'] ?? '',
+      questionImgLabel: json['question_img_label'] ?? '',
+      questionImgURL: json['question_img_url'] ?? '',
+      index: json['index'] ?? 0,
       correctAnswer: correctAnswer,
       wrongAnswers: wrongAnswers,
       answers: answers,

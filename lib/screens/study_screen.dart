@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:iconify_flutter/iconify_flutter.dart';
@@ -15,7 +16,9 @@ import '../custom_widgets/long_button.dart';
 import '../custom_widgets/snackbar.dart';
 import '../helpers/api.dart';
 import '../helpers/loader_dialog.dart';
+import '../helpers/validate.dart';
 import '../services/api_handler.dart';
+import '../services/theme_manager.dart';
 
 //ignore: must_be_immutable
 class StudyScreen extends StatefulWidget {
@@ -60,6 +63,7 @@ class _StudyScreenState extends State<StudyScreen> with WidgetsBindingObserver {
     }
     currentCardType = widget.questions[0].cardType;
     totalCards = blueCard * 2 + redCard + greenCard;
+    widget.questions[0].answers.shuffle();
     // Start the timer when the widget is created
     _startTimer();
     // Add the observer to listen for app lifecycle changes
@@ -128,6 +132,7 @@ class _StudyScreenState extends State<StudyScreen> with WidgetsBindingObserver {
     if (currentQuestionIndex < widget.questions.length - 1) {
       questionsUpdated.value ^= true;
       currentQuestionIndex++;
+      widget.questions[currentQuestionIndex].answers.shuffle();
       _pageController.animateToPage(
         currentQuestionIndex,
         duration: Duration(milliseconds: 300),
@@ -152,7 +157,10 @@ class _StudyScreenState extends State<StudyScreen> with WidgetsBindingObserver {
 
   void onExitLearn() {
     _timer.cancel();
-    // Navigate to the summary page and replace the current route
+    if (numCorrect + numIncorrect == 0) {
+      Navigator.pop(context);
+      return;
+    }
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
@@ -168,6 +176,7 @@ class _StudyScreenState extends State<StudyScreen> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    final MyColors myColors = Theme.of(context).extension<MyColors>()!;
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -200,6 +209,7 @@ class _StudyScreenState extends State<StudyScreen> with WidgetsBindingObserver {
                               _pc.open();
                             },
                             child: SlidingUpPanel(
+                                color: myColors.panelColor!,
                                 controller: _pc,
                                 minHeight: 85,
                                 maxHeight: 520,
@@ -215,8 +225,8 @@ class _StudyScreenState extends State<StudyScreen> with WidgetsBindingObserver {
                                         _navigateToNextQuestion,
                                     increaseProgress: _increaseProgress),
                                 collapsed: Container(
-                                  decoration: const BoxDecoration(
-                                      color: Colors.white,
+                                  decoration: BoxDecoration(
+                                      color: myColors.panelColor,
                                       borderRadius: BorderRadius.only(
                                         topLeft: Radius.circular(24.0),
                                         topRight: Radius.circular(24.0),
@@ -249,17 +259,71 @@ class _StudyScreenState extends State<StudyScreen> with WidgetsBindingObserver {
                                     ],
                                   ),
                                 ),
-                                body: ListView(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.all(18.0),
-                                      child: Text(
-                                        widget.questions[currentQuestionIndex]
-                                            .question,
-                                        style: TextStyle(fontSize: 20.0),
+                                body: SingleChildScrollView(
+                                  child: Column(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(18.0),
+                                        child: Text(
+                                          widget.questions[currentQuestionIndex]
+                                              .question,
+                                          style: TextStyle(fontSize: 20.0),
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                      validateURL(widget
+                                              .questions[currentQuestionIndex]
+                                              .questionImgURL)
+                                          ? Column(
+                                              children: [
+                                                Container(
+                                                  constraints: BoxConstraints(
+                                                    maxWidth:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.91,
+                                                    maxHeight:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .height *
+                                                            0.3,
+                                                  ),
+                                                  child: CachedNetworkImage(
+                                                    fit: BoxFit.cover,
+                                                    errorWidget:
+                                                        (context, _, __) =>
+                                                            const Image(
+                                                      fit: BoxFit.cover,
+                                                      image: AssetImage(
+                                                          'assets/image_loading.jpg'),
+                                                    ),
+                                                    imageUrl: widget
+                                                        .questions[
+                                                            currentQuestionIndex]
+                                                        .questionImgURL,
+                                                    placeholder:
+                                                        (context, url) =>
+                                                            const Image(
+                                                      fit: BoxFit.cover,
+                                                      image: AssetImage(
+                                                          'assets/image_loading.jpg'),
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(height: 10.0),
+                                                Text(
+                                                  widget
+                                                      .questions[
+                                                          currentQuestionIndex]
+                                                      .questionImgLabel,
+                                                  style:
+                                                      TextStyle(fontSize: 16.0),
+                                                ),
+                                              ],
+                                            )
+                                          : SizedBox()
+                                    ],
+                                  ),
                                 )),
                           );
                         },
@@ -453,21 +517,18 @@ class PanelHeaderRectangle extends StatelessWidget {
                       width: 15, // Adjust the width of the inner rectangle
                       height: 5, // Adjust the height of the inner rectangle
                       decoration: BoxDecoration(
-                        color: Color(
-                            0xffC7C6C6), // Change the inner rectangle color
+                        color: Color(0xffC7C6C6),
                         borderRadius: BorderRadius.circular(
                             10), // Adjust the inner border radius
                       ),
                     ),
                   ),
                   Container(
-                    width: 30, // Adjust the width of the inner rectangle
-                    height: 5, // Adjust the height of the inner rectangle
+                    width: 30,
+                    height: 5,
                     decoration: BoxDecoration(
-                      color:
-                          Color(0xffC7C6C6), // Change the inner rectangle color
-                      borderRadius: BorderRadius.circular(
-                          10), // Adjust the inner border radius
+                      color: Color(0xffC7C6C6),
+                      borderRadius: BorderRadius.circular(10),
                     ),
                   ),
                 ]
@@ -475,24 +536,20 @@ class PanelHeaderRectangle extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(top: 10.0, bottom: 3.0),
                     child: Container(
-                      width: 30, // Adjust the width of the inner rectangle
-                      height: 5, // Adjust the height of the inner rectangle
+                      width: 30,
+                      height: 5,
                       decoration: BoxDecoration(
-                        color: Color(
-                            0xffC7C6C6), // Change the inner rectangle color
-                        borderRadius: BorderRadius.circular(
-                            10), // Adjust the inner border radius
+                        color: Color(0xffC7C6C6),
+                        borderRadius: BorderRadius.circular(10),
                       ),
                     ),
                   ),
                   Container(
-                    width: 15, // Adjust the width of the inner rectangle
-                    height: 5, // Adjust the height of the inner rectangle
+                    width: 15,
+                    height: 5,
                     decoration: BoxDecoration(
-                      color:
-                          Color(0xffC7C6C6), // Change the inner rectangle color
-                      borderRadius: BorderRadius.circular(
-                          10), // Adjust the inner border radius
+                      color: Color(0xffC7C6C6),
+                      borderRadius: BorderRadius.circular(10),
                     ),
                   ),
                 ],
@@ -524,6 +581,7 @@ class _AnswersExpandedPanelState extends State<AnswersExpandedPanel> {
   int isCorrect = -1;
   @override
   Widget build(BuildContext context) {
+    final MyColors myColors = Theme.of(context).extension<MyColors>()!;
     return Column(
       children: [
         PanelHeaderRectangle(reverseOrder: false),
@@ -584,20 +642,11 @@ class _AnswersExpandedPanelState extends State<AnswersExpandedPanel> {
                                         ? Color(0xff85f274)
                                         : (widget.selectedAnswers[index]
                                             ? Color(0xfff27474)
-                                            : Color(0xffC7C6C6)))
+                                            : myColors.grey300!))
                                     : widget.selectedAnswers[index]
                                         ? Color(0xff74CCF2)
-                                        : Color(0xffC7C6C6)),
-                                (isCheckAnswerButtonClicked
-                                    ? (widget.answers[index] ==
-                                            widget.correctAnswer
-                                        ? Color(0xffdefcd9)
-                                        : (widget.selectedAnswers[index]
-                                            ? Color(0xfffcd9d9)
-                                            : Colors.white))
-                                    : widget.selectedAnswers[index]
-                                        ? Color(0xffd9f6fc)
-                                        : Colors.white)
+                                        : myColors.grey300!),
+                                myColors.panelColor!
                               ],
                             ),
                             border: Border.all(
@@ -607,10 +656,10 @@ class _AnswersExpandedPanelState extends State<AnswersExpandedPanel> {
                                       ? Color(0xff85f274)
                                       : (widget.selectedAnswers[index]
                                           ? Color(0xfff27474)
-                                          : Color(0xffC7C6C6)))
+                                          : myColors.grey300!))
                                   : widget.selectedAnswers[index]
                                       ? Color(0xff74CCF2)
-                                      : Color(0xffC7C6C6)),
+                                      : myColors.grey300!),
                               width: 3.0,
                             ),
                             borderRadius: BorderRadius.circular(12.0),
@@ -680,15 +729,16 @@ class _AnswersExpandedPanelState extends State<AnswersExpandedPanel> {
                 ),
               ),
               Positioned(
-                bottom: isCheckAnswerButtonClicked ? 0 : -130,
+                bottom: isCheckAnswerButtonClicked ? 0 : -140,
                 left: 0,
                 right: 0,
                 child: AnimatedContainer(
                   duration: Duration(
                       milliseconds: 180), // Adjust the animation duration
-                  height: isCheckAnswerButtonClicked ? 130 : 0,
-                  color:
-                      (isCorrect == 1 ? Color(0xffd6fcb8) : Color(0xfffcb8b8)),
+                  height: isCheckAnswerButtonClicked ? 140 : 0,
+                  color: (isCorrect == 1
+                      ? myColors.greenBackground
+                      : myColors.redBackground),
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Align(
@@ -698,8 +748,8 @@ class _AnswersExpandedPanelState extends State<AnswersExpandedPanel> {
                           Iconify(
                             Teenyicons.tick_circle_solid,
                             color: (isCorrect == 1
-                                ? Color(0xff3a8c40)
-                                : Color(0xffc43535)),
+                                ? Color(0xff1cb028)
+                                : Color(0xffe02828)),
                             size: 20,
                           ),
                           SizedBox(width: 10),
@@ -709,10 +759,10 @@ class _AnswersExpandedPanelState extends State<AnswersExpandedPanel> {
                                 : 'Không chính xác!'),
                             style: TextStyle(
                               color: (isCorrect == 1
-                                  ? Color(0xff3a8c40)
-                                  : Color(0xffc43535)),
+                                  ? Color(0xff1cb028)
+                                  : Color(0xffe02828)),
                               fontWeight: FontWeight.w900,
-                              fontSize: 20,
+                              fontSize: 25,
                             ),
                           ),
                         ],
@@ -727,16 +777,18 @@ class _AnswersExpandedPanelState extends State<AnswersExpandedPanel> {
                 child: LongButton(
                   text: (isCheckAnswerButtonClicked ? 'TIẾP TỤC' : 'KIỂM TRA'),
                   outerBoxColor: (isCorrect == -1
-                      ? Color(0xffC7C6C6)
+                      ? myColors.buttonTextColor!
                       : ((!isCheckAnswerButtonClicked || isCorrect == 1)
                           ? Color(0xff3a8c40)
                           : Color(0xffc43535))), // Set your desired color
                   innerBoxColor: (isCorrect == -1
-                      ? Color(0xfff0f2f0)
+                      ? myColors.buttonIdleColor!
                       : ((!isCheckAnswerButtonClicked || isCorrect == 1)
                           ? Color(0xff75E840)
                           : Color(0xffe84040))), // Set your desired color
-                  textColor: Colors.white, // Set your desired color
+                  textColor: (isCorrect == -1
+                      ? myColors.buttonTextColor!
+                      : Colors.white), // Set your desired color
                   onTap: () {
                     if (isCorrect == -1) {
                       return;
@@ -825,6 +877,7 @@ class _StatsBoxState extends State<StatsBox>
 
   @override
   Widget build(BuildContext context) {
+    final MyColors myColors = Theme.of(context).extension<MyColors>()!;
     return Container(
       // Wrap with a Container to give it a fixed size
       width: 110, // Adjust the width as needed
@@ -852,7 +905,7 @@ class _StatsBoxState extends State<StatsBox>
                       child: Text(
                         widget.title,
                         style: TextStyle(
-                          color: Colors.white,
+                          color: myColors.panelColor,
                           fontSize: 13,
                           fontWeight: FontWeight.w900,
                         ),
@@ -868,7 +921,7 @@ class _StatsBoxState extends State<StatsBox>
                   width: 99,
                   height: 65,
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: myColors.panelColor,
                     borderRadius: BorderRadius.circular(15),
                   ),
                   child: Row(

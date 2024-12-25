@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:hive/hive.dart';
 import 'package:vietime/custom_widgets/snackbar.dart';
 import 'package:vietime/entity/deck.dart';
+
+import '../helpers/api.dart';
+import '../services/api_handler.dart';
 
 class LoveDeckButton extends StatefulWidget {
   final DeckWithCards deckItem;
@@ -74,6 +79,26 @@ class _LoveDeckButtonState extends State<LoveDeckButton>
           } else {
             _controller.reverse();
           }
+          widget.deckItem.deck.isFavorite = !liked;
+          if (widget.deckItem.deck.isPublic) {
+            List<String> favoritePublicDecks = Hive.box('settings')
+                .get('favoritePublicDecks', defaultValue: []).cast<String>();
+            if (!liked) {
+              favoritePublicDecks.add(widget.deckItem.deck.id);
+            } else {
+              favoritePublicDecks.remove(widget.deckItem.deck.id);
+            }
+            Hive.box('settings')
+                .put('favoritePublicDecks', favoritePublicDecks);
+            GetIt.I<APIHanlder>().publicDecksChanged.value ^= true;
+          } else {
+            APIHelper.submitFavoriteDeckRequest(widget.deckItem.deck.id, !liked)
+                .then((likeDeckResponse) {
+              if (likeDeckResponse.containsKey("error")) {
+                // TODO: Retry or something
+              }
+            });
+          }
           setState(() {
             liked = !liked;
           });
@@ -81,6 +106,8 @@ class _LoveDeckButtonState extends State<LoveDeckButton>
             ShowSnackBar().showSnackBar(
               context,
               liked ? "Đã thêm vào mục Yêu thích" : "Đã xóa khỏi mục Yêu thích",
+              duration: Duration(milliseconds: 2200),
+              noAction: true,
             );
           }
         },

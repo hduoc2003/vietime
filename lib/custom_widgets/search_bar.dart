@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:logging/logging.dart';
 
+import '../services/theme_manager.dart';
+
 class CustomSearchBar extends StatefulWidget {
   final Widget body;
   final bool haveText;
@@ -45,7 +47,7 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
 
   @override
   Widget build(BuildContext context) {
-    Logger.root.info("Rebuilding custom search bar...");
+    final MyColors myColors = Theme.of(context).extension<MyColors>()!;
     final ValueNotifier<bool> hide = ValueNotifier<bool>(!widget.haveText);
 
     return Stack(
@@ -69,7 +71,7 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(20.0),
                 child: ColoredBox(
-                  color: Colors.grey[200]!,
+                  color: myColors.deckTileBackground!,
                   child: SizedBox(
                     height: 55.0,
                     child: Padding(
@@ -180,8 +182,8 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
                   return suggestedList.isEmpty
                       ? const SizedBox()
                       : Card(
-                          color: Colors.grey[100],
-                          surfaceTintColor: Colors.grey[200],
+                          color: myColors.panelColor,
+                          surfaceTintColor: myColors.grey200,
                           margin: const EdgeInsets.symmetric(
                             horizontal: 18.0,
                           ),

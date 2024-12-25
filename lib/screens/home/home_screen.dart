@@ -2,14 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:iconify_flutter/iconify_flutter.dart';
 import 'package:iconify_flutter/icons/ic.dart';
+import 'package:iconify_flutter/icons/ion.dart';
 import 'package:iconify_flutter/icons/mdi.dart';
 import 'package:iconify_flutter/icons/ri.dart';
 import 'package:vietime/screens/deck_list_screen.dart';
 import 'package:vietime/screens/home/widgets/deck_horizontal_list.dart';
 import 'package:iconify_flutter/icons/carbon.dart';
 
+import '../../helpers/loader_dialog.dart';
 import '../../services/api_handler.dart';
 import '../../services/mock_data.dart';
+import '../../services/theme_manager.dart';
 import 'notification_screen.dart';
 
 class HomePage extends StatefulWidget {
@@ -26,14 +29,10 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      //White
-      color: Color(0xFFFFFFFF),
       child: Scaffold(
-        //Transparent
-        backgroundColor: Color(0x00000000),
         body: Column(
           children: <Widget>[
-            getAppBarHome(),
+            getAppBarHome(context),
             getUserDeckWidget(),
             SizedBox(
               height: 15,
@@ -45,13 +44,17 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget getAppBarHome() {
+  Widget getAppBarHome(BuildContext context) {
+    final MyColors myColors = Theme.of(context).extension<MyColors>()!;
     return Row(
       children: <Widget>[
         Padding(
           padding:
               const EdgeInsets.only(left: 20.0, right: 20, bottom: 20, top: 15),
           child: Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(30.0),
+                border: Border.all(color: Colors.white, width: 3)),
             width: 60,
             height: 60,
             child: Image.asset('assets/user_avatar.png'),
@@ -68,18 +71,27 @@ class _HomePageState extends State<HomePage> {
                 style: TextStyle(
                   fontWeight: FontWeight.w500,
                   fontSize: 21,
-                  color: Color(0xFF3A5160), //grey
+                  color: myColors.homeWelcomeColor,
                 ),
               ),
-              Text(
-                "HynDuf",
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  fontWeight: FontWeight.w900,
-                  fontSize: 25,
-                  color: Color(0xFF17262A), //darker
-                ),
-              ),
+              ValueListenableBuilder(
+                  valueListenable: GetIt.I<APIHanlder>().userChanged,
+                  builder: (
+                    BuildContext context,
+                    bool hidden,
+                    Widget? child,
+                  ) {
+                    return Text(
+                      GetIt.I<APIHanlder>().user.name.split(' ').last,
+                      textAlign: TextAlign.left,
+                      maxLines: 1,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w900,
+                        fontSize: 25,
+                        color: myColors.homeNameColor,
+                      ),
+                    );
+                  })
             ],
           ),
         ),
@@ -87,32 +99,24 @@ class _HomePageState extends State<HomePage> {
           padding: const EdgeInsets.symmetric(vertical: 20.0),
           child: GestureDetector(
             onTap: () {
+              showLoaderDialog(context);
+              GetIt.I<APIHanlder>().initData().then((_) {
+                Navigator.pop(context);
+              });
               setState(() {
                 isHeartIconClicked ^= true;
               });
             },
             child: Iconify(
-              isHeartIconClicked ? Ri.heart_2_fill : Ri.heart_2_line,
-              color: Color(0xffe30e51), // Change color as needed
-              size: 30,
+              Mdi.reload,
+              color: Colors.pink,
+              size: 32,
             ),
           ),
         ),
-        GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => NotificationPage()),
-            );
-          },
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Iconify(
-              Carbon.notification_filled,
-              color: Color(0xffe8e01a), // Change color as needed
-              size: 30,
-            ),
-          ),
+        Padding(
+          padding: const EdgeInsets.all(14.0),
+          child: NotificationIconRedDot(),
         ),
       ],
     );

@@ -1,11 +1,13 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 
+import '../services/theme_manager.dart';
+
 class AnimatedProgressBar extends StatelessWidget {
   final double width;
   final double height;
   final double progress;
-  final Color backgroundColor;
+  Color backgroundColor;
   final Color progressColor;
   final Color innerProgressColor;
 
@@ -20,6 +22,8 @@ class AnimatedProgressBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final MyColors myColors = Theme.of(context).extension<MyColors>()!;
+    backgroundColor = myColors.progressBarBackground!;
     double innerProgressHeight = 0.275 * height;
     double innerPadding = 0.0715 * width;
     double innerPadding1 = 0.0536 * width;

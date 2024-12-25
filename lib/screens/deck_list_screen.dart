@@ -5,6 +5,7 @@ import 'package:iconify_flutter/icons/carbon.dart';
 import 'package:iconify_flutter/icons/ri.dart';
 import 'package:vietime/custom_widgets/deck_list_info_bar.dart';
 import 'package:vietime/custom_widgets/deck_search.dart';
+import 'package:vietime/screens/create_deck_screen.dart';
 
 import '../custom_widgets/deck_list_tile.dart';
 import '../custom_widgets/deck_popup_menu.dart';
@@ -25,7 +26,7 @@ class DeckListScreen extends StatelessWidget {
           centerTitle: true,
           actions: [
             IconButton(
-              icon: const Iconify(Ri.search_eye_line),
+              icon: Iconify(Ri.search_eye_line, color: Theme.of(context).iconTheme.color,),
               tooltip: "Tìm kiếm",
               onPressed: () {
                 showSearch(
@@ -50,7 +51,11 @@ class DeckListScreen extends StatelessWidget {
                   DeckListInfoBar(
                     numberOfDecks: decksList.length,
                     onAddPressed: () {
-                      // Add button pressed
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => CreateDeckScreen()),
+                      );
                     },
                     onFilterPressed: () {
                       // Filter button pressed
@@ -69,18 +74,25 @@ class DeckListScreen extends StatelessWidget {
                         if (item.deck.isPublic) {
                           return PublicDeckTile(
                               item: item,
-                              iconButtonTopRight: DeckPopupMenu(
+                              iconButtonTopRight: PublicDeckPopupMenu(
                                 deckItem: item,
-                                icon: const Iconify(Carbon.settings_adjust),
+                                icon: Iconify(
+                                  Carbon.settings_adjust,
+                                  color: Theme.of(context).iconTheme.color,
+                                ),
                               ),
                               iconButtonBottomRight:
                                   LoveDeckButton(deckItem: item));
                         } else {
                           return UserDeckTile(
                               item: item,
-                              iconButtonTopRight: DeckPopupMenu(
+                              iconButtonTopRight: UserDeckPopupMenu(
                                 deckItem: item,
-                                icon: const Iconify(Carbon.settings_adjust),
+                                icon: Iconify(
+                                  Carbon.settings_adjust,
+                                  color: Theme.of(context).iconTheme.color,
+                                ),
+                                isPopSecond: false,
                               ),
                               iconButtonBottomRight:
                                   LoveDeckButton(deckItem: item));

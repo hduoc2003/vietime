@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../services/theme_manager.dart';
+
 class PasswordFieldWithToggle extends StatefulWidget {
   final TextEditingController controller;
   final String title;
@@ -27,6 +29,7 @@ class _PasswordFieldWithToggleState extends State<PasswordFieldWithToggle> {
 
   @override
   Widget build(BuildContext context) {
+    final MyColors myColors = Theme.of(context).extension<MyColors>()!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -42,7 +45,7 @@ class _PasswordFieldWithToggleState extends State<PasswordFieldWithToggle> {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15.0),
             border: Border.all(
-              color: Colors.grey[300]!,
+              color: myColors.grey300!,
               width: 3.0,
             ),
           ),
@@ -62,7 +65,7 @@ class _PasswordFieldWithToggleState extends State<PasswordFieldWithToggle> {
                 suffixIcon: IconButton(
                   icon: Icon(
                     _passwordVisible ? Icons.visibility : Icons.visibility_off,
-                    color: Theme.of(context).primaryColorDark,
+                    color: Theme.of(context).iconTheme.color,
                   ),
                   onPressed: () {
                     _onTap();

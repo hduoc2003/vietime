@@ -15,6 +15,7 @@ import '../../../custom_widgets/animated_text.dart';
 import '../../../custom_widgets/custom_physics.dart';
 import '../../../entity/deck.dart';
 import '../../../services/api_handler.dart';
+import '../../../services/theme_manager.dart';
 import '../../deck_screen.dart';
 
 class DeckHorizontalList extends StatelessWidget {
@@ -76,6 +77,7 @@ class DeckHorizontalList extends StatelessWidget {
 }
 
 Widget getUserDeckTile(DeckWithCards item, BuildContext context) {
+  final MyColors myColors = Theme.of(context).extension<MyColors>()!;
   return ValueListenableBuilder(
       valueListenable: GetIt.I<APIHanlder>().userDecksChanged,
       builder: (
@@ -94,7 +96,8 @@ Widget getUserDeckTile(DeckWithCards item, BuildContext context) {
           },
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.grey[100], // Add a slightly grey background color
+              color: myColors
+                  .deckTileBackground, // Add a slightly grey background color
               borderRadius:
                   BorderRadius.circular(30.0), // Optional: Add rounded corners
             ),
@@ -164,9 +167,7 @@ Widget getUserDeckTile(DeckWithCards item, BuildContext context) {
                         ? const Text(
                             'Chưa có thẻ nào',
                             style: TextStyle(
-                                fontSize: 16.0,
-                                color: Colors.black,
-                                fontWeight: FontWeight.w600),
+                                fontSize: 16.0, fontWeight: FontWeight.w600),
                           )
                         : Row(
                             children: [
@@ -184,7 +185,6 @@ Widget getUserDeckTile(DeckWithCards item, BuildContext context) {
                                 '${(item.deck.totalLearnedCards / item.deck.totalCards * 100).toStringAsFixed(0)}%',
                                 style: TextStyle(
                                     fontSize: 16.0,
-                                    color: Colors.black,
                                     fontWeight: FontWeight.w900),
                               ),
                             ],
@@ -199,150 +199,151 @@ Widget getUserDeckTile(DeckWithCards item, BuildContext context) {
 }
 
 Widget getPublicDeckTile(DeckWithCards item, BuildContext context) {
-  return GestureDetector(
-    onTap: () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => DeckScreen(deckData: item),
-        ),
-      );
-    },
-    child: Container(
-      decoration: BoxDecoration(
-        color: Colors.grey[100], // Add a slightly grey background color
-        borderRadius:
-            BorderRadius.circular(30.0), // Optional: Add rounded corners
-      ),
-      padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10),
-      margin: EdgeInsets.symmetric(horizontal: 5.0, vertical: 5),
-      child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        // Leading Section
-        Card(
-          margin: EdgeInsets.zero,
-          elevation: 5,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15.0),
-          ),
-          clipBehavior: Clip.antiAlias,
-          child: SizedBox(
-            width: 75,
-            height: 75,
-            child: validateURL(item.deck.descriptionImgURL)
-                ? CachedNetworkImage(
-                    fit: BoxFit.cover,
-                    errorWidget: (context, _, __) => const Image(
-                      fit: BoxFit.cover,
-                      image: AssetImage('assets/deck_placeholder.png'),
-                    ),
-                    imageUrl: item.deck.descriptionImgURL,
-                    placeholder: (context, url) => const Image(
-                      fit: BoxFit.cover,
-                      image: AssetImage('assets/deck_placeholder.png'),
-                    ),
-                  )
-                : const Image(
-                    fit: BoxFit.cover,
-                    image: AssetImage('assets/deck_placeholder.png'),
-                  ),
-          ),
-        ),
-
-        // Padding between leading and title/subtitle
-        SizedBox(width: 16.0),
-
-        // Title and Subtitle Section
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              AnimatedText(
-                text: item.deck.name,
-                pauseAfterRound: const Duration(
-                  seconds: 3,
+  final MyColors myColors = Theme.of(context).extension<MyColors>()!;
+  return ValueListenableBuilder(
+      valueListenable: GetIt.I<APIHanlder>().publicDecksChanged,
+      builder: (
+        BuildContext context,
+        bool hidden,
+        Widget? child,
+      ) {
+        return GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => DeckScreen(deckData: item),
+              ),
+            );
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              color: myColors
+                  .deckTileBackground, // Add a slightly grey background color
+              borderRadius:
+                  BorderRadius.circular(30.0), // Optional: Add rounded corners
+            ),
+            padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10),
+            margin: EdgeInsets.symmetric(horizontal: 5.0, vertical: 5),
+            child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              // Leading Section
+              Card(
+                margin: EdgeInsets.zero,
+                elevation: 5,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15.0),
                 ),
-                showFadingOnlyWhenScrolling: false,
-                startAfter: const Duration(
-                  seconds: 3,
+                clipBehavior: Clip.antiAlias,
+                child: SizedBox(
+                  width: 75,
+                  height: 75,
+                  child: validateURL(item.deck.descriptionImgURL)
+                      ? CachedNetworkImage(
+                          fit: BoxFit.cover,
+                          errorWidget: (context, _, __) => const Image(
+                            fit: BoxFit.cover,
+                            image: AssetImage('assets/deck_placeholder.png'),
+                          ),
+                          imageUrl: item.deck.descriptionImgURL,
+                          placeholder: (context, url) => const Image(
+                            fit: BoxFit.cover,
+                            image: AssetImage('assets/deck_placeholder.png'),
+                          ),
+                        )
+                      : const Image(
+                          fit: BoxFit.cover,
+                          image: AssetImage('assets/deck_placeholder.png'),
+                        ),
                 ),
-                style:
-                    const TextStyle(fontWeight: FontWeight.w900, fontSize: 17),
-                crossAxisAlignment: CrossAxisAlignment.start,
-                defaultAlignment: TextAlign.start,
               ),
-              SizedBox(height: 4.0),
-              Row(
-                children: [
-                  Text(
-                    "Số lượng: ",
-                    style: TextStyle(
-                        fontSize: 16.0,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w500),
-                  ),
-                  Text(
-                    "${item.deck.totalCards}",
-                    style: TextStyle(
-                        fontSize: 16.0,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w900),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 6.0, bottom: 2),
-                    child: Iconify(
-                      Mdi.cards_playing,
-                      color: Colors.purple,
-                      size: 20.0, // Adjust the size as needed
+
+              // Padding between leading and title/subtitle
+              SizedBox(width: 16.0),
+
+              // Title and Subtitle Section
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AnimatedText(
+                      text: item.deck.name,
+                      pauseAfterRound: const Duration(
+                        seconds: 3,
+                      ),
+                      showFadingOnlyWhenScrolling: false,
+                      startAfter: const Duration(
+                        seconds: 3,
+                      ),
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w900, fontSize: 17),
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      defaultAlignment: TextAlign.start,
                     ),
-                  ),
-                ],
+                    SizedBox(height: 4.0),
+                    Row(
+                      children: [
+                        Text(
+                          "Số lượng: ",
+                          style: TextStyle(
+                              fontSize: 16.0, fontWeight: FontWeight.w500),
+                        ),
+                        Text(
+                          "${item.deck.totalCards}",
+                          style: TextStyle(
+                              fontSize: 16.0, fontWeight: FontWeight.w900),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 6.0, bottom: 2),
+                          child: Iconify(
+                            Mdi.cards_playing,
+                            color: Colors.purple,
+                            size: 20.0, // Adjust the size as needed
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                        width: 8.0), // Add some space between the two texts
+                    Row(
+                      children: [
+                        Text(
+                          "Đánh giá: ",
+                          style: TextStyle(
+                              fontSize: 16.0, fontWeight: FontWeight.w500),
+                        ),
+                        Text(
+                          "${item.deck.rating.toStringAsFixed(1)}",
+                          style: TextStyle(
+                              fontSize: 16.0, fontWeight: FontWeight.w900),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 6.0, bottom: 2),
+                          child: Icon(
+                            Icons.star,
+                            color: Color(0xffedc202),
+                            size: 20.0, // Adjust the size as needed
+                          ),
+                        ),
+                        Text(
+                          " ~ ${item.deck.views}",
+                          style: TextStyle(
+                              fontSize: 16.0, fontWeight: FontWeight.w900),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 6.0, bottom: 2),
+                          child: Iconify(
+                            Ion.ios_eye,
+                            color: Colors.green,
+                            size: 20.0, // Adjust the size as needed
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-              SizedBox(width: 8.0), // Add some space between the two texts
-              Row(
-                children: [
-                  Text(
-                    "Đánh giá: ",
-                    style: TextStyle(
-                        fontSize: 16.0,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w500),
-                  ),
-                  Text(
-                    "${item.deck.rating.toStringAsFixed(1)}",
-                    style: TextStyle(
-                        fontSize: 16.0,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w900),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 6.0, bottom: 2),
-                    child: Icon(
-                      Icons.star,
-                      color: Color(0xffedc202),
-                      size: 20.0, // Adjust the size as needed
-                    ),
-                  ),
-                  Text(
-                    " ~ ${item.deck.views}",
-                    style: TextStyle(
-                        fontSize: 16.0,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w900),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 6.0, bottom: 2),
-                    child: Iconify(
-                      Ion.ios_eye,
-                      color: Colors.green,
-                      size: 20.0, // Adjust the size as needed
-                    ),
-                  ),
-                ],
-              ),
-            ],
+            ]),
           ),
-        ),
-      ]),
-    ),
-  );
+        );
+      });
 }

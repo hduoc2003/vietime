@@ -14,17 +14,14 @@ class ShowSnackBar {
         SnackBar(
           duration: duration,
           elevation: 6,
-          backgroundColor: Colors.grey[900],
           behavior: SnackBarBehavior.floating,
           content: Text(
             title,
-            style: const TextStyle(color: Colors.white),
           ),
           action: noAction
               ? null
               : action ??
               SnackBarAction(
-                textColor: Colors.grey[200],
                 label: "OK",
                 onPressed: () {},
               ),

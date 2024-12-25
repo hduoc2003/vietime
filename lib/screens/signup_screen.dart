@@ -11,7 +11,8 @@ import '../helpers/loader_dialog.dart';
 import '../services/api_handler.dart';
 
 class SignUpPage extends StatefulWidget {
-  SignUpPage();
+  final Function onResetHomePage;
+  SignUpPage({required this.onResetHomePage});
   @override
   _SignUpPageState createState() => _SignUpPageState();
 }
@@ -122,6 +123,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     Navigator.pop(context);
                     GetIt.I<APIHanlder>().isLoggedIn.value = true;
                     Navigator.pop(context);
+                    widget.onResetHomePage();
                   }
                 });
               },

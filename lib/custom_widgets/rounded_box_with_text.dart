@@ -7,7 +7,6 @@ class RoundedBoxWithText extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 5),
       height: 100.0,
       decoration: BoxDecoration(
-          color: Colors.white,
           borderRadius: BorderRadius.circular(30.0),
           border: Border.all(color: Colors.grey[300]!, width: 3)),
       child: Center(

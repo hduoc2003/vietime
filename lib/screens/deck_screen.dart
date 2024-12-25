@@ -1,12 +1,16 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:hive/hive.dart';
 import 'package:iconify_flutter/iconify_flutter.dart';
 import 'package:iconify_flutter/icons/ion.dart';
 import 'package:iconify_flutter/icons/mdi.dart';
 import 'package:iconify_flutter/icons/ri.dart';
+import 'package:intl/intl.dart';
+import 'package:logging/logging.dart';
 import 'package:vietime/custom_widgets/long_button.dart';
 import 'package:vietime/custom_widgets/love_button.dart';
+import 'package:vietime/screens/card_list_screen.dart';
 import 'package:vietime/screens/study_screen.dart';
 
 import '../custom_widgets/animated_progress_bar.dart';
@@ -18,7 +22,6 @@ import '../helpers/api.dart';
 import '../helpers/loader_dialog.dart';
 import '../helpers/validate.dart';
 import '../services/api_handler.dart';
-import '../services/mock_data.dart';
 
 class DeckScreen extends StatefulWidget {
   final DeckWithCards deckData;
@@ -30,6 +33,22 @@ class DeckScreen extends StatefulWidget {
 }
 
 class _DeckScreenState extends State<DeckScreen> {
+  @override
+  void initState() {
+    super.initState();
+    if (widget.deckData.deck.isPublic) {
+      int curViews = Hive.box('publicDeckViews')
+          .get(widget.deckData.deck.id, defaultValue: -1);
+      if (curViews == -1) {
+        curViews = widget.deckData.deck.views;
+      }
+      Hive.box('publicDeckViews').put(
+        widget.deckData.deck.id,
+        curViews + 1,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     String descriptionImgPath = widget.deckData.deck.descriptionImgURL;
@@ -112,7 +131,16 @@ class _DeckScreenState extends State<DeckScreen> {
                             color: Colors.purple,
                             size: 30,
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => CardsListScreen(
+                                      deckID: widget.deckData.deck.id,
+                                      isPublic: widget.deckData.deck.isPublic,
+                                      flashcards: widget.deckData.cards)),
+                            );
+                          },
                         ),
                         SizedBox(
                           width: 5,
@@ -120,13 +148,14 @@ class _DeckScreenState extends State<DeckScreen> {
                         LoveDeckButton(
                           deckItem: widget.deckData,
                           size: 30,
+                          showSnack: true,
                         ),
                         if (!widget.deckData.deck.isPublic)
                           SizedBox(
                             width: 5,
                           ),
                         if (!widget.deckData.deck.isPublic)
-                          DeckPopupMenu(
+                          UserDeckPopupMenu(
                             deckItem: widget.deckData,
                             icon: const Iconify(
                               Ri.settings_4_fill,
@@ -172,11 +201,13 @@ class _DeckScreenState extends State<DeckScreen> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Text('Ngày tạo: 22/11/2023'),
+                                        Text(
+                                            'Ngày tạo: ${DateFormat('dd/MM/yyyy').format(widget.deckData.deck.createdAt)}'),
                                         SizedBox(
                                           height: 3,
                                         ),
-                                        Text('Vị trí: Hà Nội'),
+                                        Text(
+                                            'Vị trí: ${widget.deckData.deck.position}'),
                                       ],
                                     ),
                                   ),
@@ -203,7 +234,6 @@ class _DeckScreenState extends State<DeckScreen> {
                                           'Chưa có thẻ nào',
                                           style: TextStyle(
                                               fontSize: 16.0,
-                                              color: Colors.black,
                                               fontWeight: FontWeight.w600),
                                         )
                                       : const SizedBox(),
@@ -263,6 +293,7 @@ class _DeckScreenState extends State<DeckScreen> {
                                 ShowSnackBar().showSnackBar(
                                   context,
                                   "Đã lưu bộ thẻ vào bộ thẻ cá nhân",
+                                  noAction: true,
                                 );
                               }
                             });
@@ -429,7 +460,6 @@ class _DeckScreenState extends State<DeckScreen> {
                                   text:
                                       "Các đánh giá về các bộ thẻ được xác thực kỹ "
                                       "càng trước khi được tính vào thông số cuối cùng",
-                                  style: TextStyle(color: Colors.black),
                                 ),
                               ],
                             ),
@@ -467,7 +497,10 @@ class _DeckScreenState extends State<DeckScreen> {
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.info_outline),
+                  icon: Icon(
+                    Icons.info_outline,
+                    color: Theme.of(context).iconTheme.color,
+                  ),
                   onPressed: () {
                     // Show dialog for more information
                     showDialog(
@@ -480,7 +513,6 @@ class _DeckScreenState extends State<DeckScreen> {
                               children: [
                                 TextSpan(
                                   text: "Màu ",
-                                  style: TextStyle(color: Colors.black),
                                 ),
                                 TextSpan(
                                   text: "xanh dương",
@@ -492,7 +524,6 @@ class _DeckScreenState extends State<DeckScreen> {
                                   text:
                                       " nghĩa là những thẻ mới người dùng chưa học bao giờ. "
                                       "\n\nMàu ",
-                                  style: TextStyle(color: Colors.black),
                                 ),
                                 TextSpan(
                                   text: "đỏ",
@@ -504,7 +535,6 @@ class _DeckScreenState extends State<DeckScreen> {
                                   text:
                                       " nghĩa là những thẻ người dùng đã quên cần học lại. "
                                       "\n\nMàu ",
-                                  style: TextStyle(color: Colors.black),
                                 ),
                                 TextSpan(
                                   text: "xanh lá cây",
@@ -515,7 +545,6 @@ class _DeckScreenState extends State<DeckScreen> {
                                 TextSpan(
                                   text:
                                       " nghĩa là những thẻ người dùng cần ôn tập.",
-                                  style: TextStyle(color: Colors.black),
                                 ),
                               ],
                             ),
@@ -559,7 +588,6 @@ class _DeckScreenState extends State<DeckScreen> {
                   widget.deckData.deck.totalCards.toString(),
                   style: TextStyle(
                     fontSize: 18.0,
-                    color: Colors.black,
                     fontWeight: FontWeight.w900,
                   ),
                 ),
@@ -589,7 +617,6 @@ class _DeckScreenState extends State<DeckScreen> {
                   widget.deckData.deck.totalLearnedCards.toString(),
                   style: TextStyle(
                     fontSize: 18.0,
-                    color: Colors.black,
                     fontWeight: FontWeight.w900,
                   ),
                 ),
@@ -597,7 +624,6 @@ class _DeckScreenState extends State<DeckScreen> {
                   "/${widget.deckData.deck.totalCards}",
                   style: TextStyle(
                     fontSize: 18.0,
-                    color: Colors.black,
                     fontWeight: FontWeight.w900,
                   ),
                 ),
@@ -613,7 +639,6 @@ class _DeckScreenState extends State<DeckScreen> {
                   "  (đã học / tổng số)",
                   style: TextStyle(
                     fontSize: 16.0,
-                    color: Colors.black,
                     fontWeight: FontWeight.w600,
                   ),
                 ),

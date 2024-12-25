@@ -13,6 +13,7 @@ class Deck {
   int curNewCards;
   int curReviewCards;
   String descriptionImgURL;
+  String position;
   int totalCards;
   int totalLearnedCards;
   int views;
@@ -32,6 +33,7 @@ class Deck {
     this.curNewCards = 0,
     this.curReviewCards = 0,
     this.descriptionImgURL = "",
+    this.position = "",
     required this.totalCards,
     required this.totalLearnedCards,
     this.views = 0,
@@ -52,6 +54,7 @@ class Deck {
       curNewCards: json['cur_new_cards'] ?? 0,
       curReviewCards: json['cur_review_cards'] ?? 0,
       descriptionImgURL: json['description_img_url'] ?? '',
+      position: json['position'] ?? '',
       totalCards: json['total_cards'] ?? 0,
       totalLearnedCards: json['total_learned_cards'] ?? 0,
       views: json['views'] ?? 0,

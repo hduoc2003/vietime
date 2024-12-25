@@ -12,7 +12,9 @@ import 'package:vietime/helpers/string.dart';
 
 import '../entity/deck.dart';
 import '../helpers/validate.dart';
+import '../screens/create_deck_screen.dart';
 import '../screens/deck_screen.dart';
+import '../services/theme_manager.dart';
 import 'deck_list_info_bar.dart';
 import 'deck_popup_menu.dart';
 
@@ -26,7 +28,10 @@ class DeckSearch extends SearchDelegate {
     return [
       if (query.isEmpty)
         IconButton(
-          icon: const Iconify(Ri.search_eye_line),
+          icon: Iconify(
+            Ri.search_eye_line,
+            color: Theme.of(context).iconTheme.color,
+          ),
           tooltip: "Tìm kiêm",
           onPressed: () {},
         )
@@ -36,8 +41,9 @@ class DeckSearch extends SearchDelegate {
             query = '';
           },
           tooltip: "Xóa",
-          icon: const Icon(
+          icon: Icon(
             Icons.clear_rounded,
+            color: Theme.of(context).iconTheme.color,
           ),
         ),
     ];
@@ -46,7 +52,10 @@ class DeckSearch extends SearchDelegate {
   @override
   Widget buildLeading(BuildContext context) {
     return IconButton(
-      icon: const Icon(Icons.arrow_back_rounded),
+      icon: Icon(
+        Icons.arrow_back_rounded,
+        color: Theme.of(context).iconTheme.color,
+      ),
       tooltip: "Quay lại",
       onPressed: () {
         close(context, null);
@@ -135,14 +144,12 @@ class DeckSearch extends SearchDelegate {
                     "Đánh giá: ",
                     style: TextStyle(
                       fontSize: 14.0,
-                      color: Colors.black,
                     ),
                   ),
                   Text(
                     "${suggestionList[index].deck.rating.toStringAsFixed(1)}",
                     style: TextStyle(
                       fontSize: 14.0,
-                      color: Colors.black,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -158,7 +165,6 @@ class DeckSearch extends SearchDelegate {
                     " ~ ${suggestionList[index].deck.views}",
                     style: TextStyle(
                       fontSize: 14.0,
-                      color: Colors.black,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -237,7 +243,10 @@ class DeckSearch extends SearchDelegate {
         DeckListInfoBar(
           numberOfDecks: suggestionList.length,
           onAddPressed: () {
-            // Add button pressed
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => CreateDeckScreen()),
+            );
           },
           onFilterPressed: () {
             // Filter button pressed
@@ -256,17 +265,23 @@ class DeckSearch extends SearchDelegate {
               if (item.deck.isPublic) {
                 return PublicDeckTile(
                     item: item,
-                    iconButtonTopRight: DeckPopupMenu(
+                    iconButtonTopRight: PublicDeckPopupMenu(
                       deckItem: item,
-                      icon: const Iconify(Carbon.settings_adjust),
+                      icon: Iconify(
+                        Carbon.settings_adjust,
+                        color: Theme.of(context).iconTheme.color,
+                      ),
                     ),
                     iconButtonBottomRight: LoveDeckButton(deckItem: item));
               } else {
                 return UserDeckTile(
                     item: item,
-                    iconButtonTopRight: DeckPopupMenu(
+                    iconButtonTopRight: UserDeckPopupMenu(
                       deckItem: item,
-                      icon: const Iconify(Carbon.settings_adjust),
+                      icon: Iconify(
+                        Carbon.settings_adjust,
+                        color: Theme.of(context).iconTheme.color,
+                      ),
                     ),
                     iconButtonBottomRight: LoveDeckButton(deckItem: item));
               }
@@ -277,30 +292,23 @@ class DeckSearch extends SearchDelegate {
 
   @override
   ThemeData appBarTheme(BuildContext context) {
+    final MyColors myColors = Theme.of(context).extension<MyColors>()!;
     final ThemeData theme = Theme.of(context);
     return theme.copyWith(
-      primaryColor: Theme.of(context).colorScheme.secondary,
-      textSelectionTheme:
-          const TextSelectionThemeData(cursorColor: Colors.black),
-      hintColor: Colors.black54,
-      primaryIconTheme: theme.primaryIconTheme.copyWith(color: Colors.black),
       textTheme: theme.textTheme.copyWith(
-        titleLarge: const TextStyle(
-            fontSize: 18, fontWeight: FontWeight.normal, color: Colors.black),
+        titleLarge:
+            const TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor:
-            Colors.grey[200], // Set the background color of the rounded box
+        fillColor: myColors.deckTileBackground,
         focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide.none, // Remove the border for focused state
-          borderRadius: BorderRadius.circular(
-              50.0), // Set border radius for rounded corners
+          borderSide: BorderSide.none,
+          borderRadius: BorderRadius.circular(50.0),
         ),
         enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide.none, // Remove the border for normal state
-          borderRadius: BorderRadius.circular(
-              50.0), // Set border radius for rounded corners
+          borderSide: BorderSide.none,
+          borderRadius: BorderRadius.circular(50.0),
         ),
         contentPadding: EdgeInsets.symmetric(horizontal: 18.0),
       ),
