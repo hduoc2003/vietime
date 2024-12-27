@@ -457,10 +457,12 @@ class _DeckScreenState extends State<DeckScreen> {
                             text: TextSpan(
                               children: [
                                 TextSpan(
-                                  text:
-                                      "Các đánh giá về các bộ thẻ được xác thực kỹ "
-                                      "càng trước khi được tính vào thông số cuối cùng",
-                                ),
+                                    text:
+                                        "Các đánh giá về các bộ thẻ được xác thực kỹ "
+                                        "càng trước khi được tính vào thông số cuối cùng",
+                                    style: TextStyle(
+                                        color:
+                                            Theme.of(context).iconTheme.color)),
                               ],
                             ),
                           ),
@@ -512,8 +514,10 @@ class _DeckScreenState extends State<DeckScreen> {
                             text: TextSpan(
                               children: [
                                 TextSpan(
-                                  text: "Màu ",
-                                ),
+                                    text: "Màu ",
+                                    style: TextStyle(
+                                        color:
+                                            Theme.of(context).iconTheme.color)),
                                 TextSpan(
                                   text: "xanh dương",
                                   style: TextStyle(
@@ -521,10 +525,12 @@ class _DeckScreenState extends State<DeckScreen> {
                                       fontWeight: FontWeight.w900),
                                 ),
                                 TextSpan(
-                                  text:
-                                      " nghĩa là những thẻ mới người dùng chưa học bao giờ. "
-                                      "\n\nMàu ",
-                                ),
+                                    text:
+                                        " nghĩa là những thẻ mới người dùng chưa học bao giờ. "
+                                        "\n\nMàu ",
+                                    style: TextStyle(
+                                        color:
+                                            Theme.of(context).iconTheme.color)),
                                 TextSpan(
                                   text: "đỏ",
                                   style: TextStyle(
@@ -532,10 +538,12 @@ class _DeckScreenState extends State<DeckScreen> {
                                       fontWeight: FontWeight.w900),
                                 ),
                                 TextSpan(
-                                  text:
-                                      " nghĩa là những thẻ người dùng đã quên cần học lại. "
-                                      "\n\nMàu ",
-                                ),
+                                    text:
+                                        " nghĩa là những thẻ người dùng đã quên cần học lại. "
+                                        "\n\nMàu ",
+                                    style: TextStyle(
+                                        color:
+                                            Theme.of(context).iconTheme.color)),
                                 TextSpan(
                                   text: "xanh lá cây",
                                   style: TextStyle(
@@ -543,9 +551,11 @@ class _DeckScreenState extends State<DeckScreen> {
                                       fontWeight: FontWeight.w900),
                                 ),
                                 TextSpan(
-                                  text:
-                                      " nghĩa là những thẻ người dùng cần ôn tập.",
-                                ),
+                                    text:
+                                        " nghĩa là những thẻ người dùng cần ôn tập.",
+                                    style: TextStyle(
+                                        color:
+                                            Theme.of(context).iconTheme.color)),
                               ],
                             ),
                           ),
